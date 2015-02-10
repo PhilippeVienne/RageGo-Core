@@ -22,4 +22,32 @@ public class FakeGenerator {
     public static Intersection generateIntersection(int column, int line, GameBoard board) {
         return new Intersection(column,line,board);
     }
+
+    public static Intersection generateNeighbourgIntersection(Intersection i1) {
+        switch (((int)(Math.random()*4))){
+            case 0:
+                return generateIntersection(i1.getColumn()-1,i1.getLine(),i1.getBoard());
+            case 1:
+                return generateIntersection(i1.getColumn()+1,i1.getLine(),i1.getBoard());
+            case 2:
+                return generateIntersection(i1.getColumn(),i1.getLine()-1,i1.getBoard());
+            case 3:
+            default:
+                return generateIntersection(i1.getColumn(),i1.getLine()+1,i1.getBoard());
+        }
+    }
+
+    public static Intersection generateNotNeighbourgIntersection(Intersection i1) {
+        switch (((int)(Math.random()*4))){
+            case 0:
+                return generateIntersection(i1.getColumn()-1,i1.getLine()-1,i1.getBoard());
+            case 1:
+                return generateIntersection(i1.getColumn()+1,i1.getLine()+1,i1.getBoard());
+            case 2:
+                return generateIntersection(i1.getColumn()-1,i1.getLine()-1,i1.getBoard());
+            case 3:
+            default:
+                return generateIntersection(i1.getColumn()+1,i1.getLine()+1,i1.getBoard());
+        }
+    }
 }

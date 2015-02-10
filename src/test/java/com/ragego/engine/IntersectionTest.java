@@ -11,6 +11,8 @@ public class IntersectionTest {
     private final static GameBoard g1 = FakeGenerator.generateSimpleBoard();
     private final static GameBoard g2 = FakeGenerator.generateSimpleBoard();
     private final static Intersection i1 = FakeGenerator.generateIntersection(1,2,g1);
+    private final static Intersection asidei1 = FakeGenerator.generateNeighbourgIntersection(i1);
+    private final static Intersection notasidei1 = FakeGenerator.generateNotNeighbourgIntersection(i1);
     private final static Intersection i2 = FakeGenerator.generateIntersection(1,2,g2);
 
     @Test
@@ -34,5 +36,16 @@ public class IntersectionTest {
     @Test
     public void testEqualsWorks() throws Exception {
         assertEquals(i1,new Intersection(i1.getColumn(),i1.getLine(),i1.getBoard()));
+    }
+
+    @Test
+    public void testIsAsideOf() throws Exception {
+        assertEquals(true,i1.isAsideOf(asidei1));
+        assertEquals(false,i1.isAsideOf(notasidei1));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIsAsideOfError() throws Exception {
+        i1.isAsideOf(null);
     }
 }
