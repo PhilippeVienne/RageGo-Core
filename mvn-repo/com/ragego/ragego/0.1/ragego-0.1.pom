@@ -32,10 +32,21 @@
     <groupId>com.ragego</groupId>
     <artifactId>ragego</artifactId>
     <version>0.1</version>
+    <organization>
+        <name>INSA Lyon - Département Premier Cycle</name>
+        <url>http://www.insa-lyon.fr</url>
+    </organization>
     <developers>
         <developer>
             <name>Philippe Vienne</name>
             <email>philippe.vienne@insa-lyon.fr</email>
+            <organization>INSA Lyon</organization>
+            <organizationUrl>http://insa-lyon.fr</organizationUrl>
+            <timezone>CET</timezone>
+        </developer>
+        <developer>
+            <name>Benoit Renault</name>
+            <email>benoit.renault@insa-lyon.fr</email>
             <organization>INSA Lyon</organization>
             <organizationUrl>http://insa-lyon.fr</organizationUrl>
             <timezone>CET</timezone>
@@ -173,7 +184,6 @@
                         <id>default</id>
                         <reports>
                             <report>javadoc</report>
-                            <report>test-javadoc</report>
                         </reports>
                     </reportSet>
                     <reportSet>
