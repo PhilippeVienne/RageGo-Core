@@ -1,7 +1,5 @@
 package com.ragego.engine;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * A coordinate on the GameBoard.
  * @author Philippe Vienne
@@ -86,7 +84,6 @@ public class Intersection {
 
     /**
      * Test if a position is neighbour to this one.
-     * <p>
      *     A neighbour is a position on :
      * <ul>
      *     <li>column less 1</li>
@@ -94,7 +91,6 @@ public class Intersection {
      *     <li>line plus 1</li>
      *     <li>line less 1</li>
      * </ul>
-     * </p>
      * <p>This function has the same result for a.isAsideOf(b) and
      * b.isAsideOf(a)</p>
      * @param position The position to test

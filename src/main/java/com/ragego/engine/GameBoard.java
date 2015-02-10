@@ -5,13 +5,11 @@ import java.util.HashMap;
 /**
  * Represent a board of Go.
  *
- * <p>
  * On this board, intersections are represented with numerical coordinates :
  * <ul>
  *  <li>The first coordinate is the column from left to right.</li>
  *  <li>The second coordinate is the line from top to bottom.</li>
  * </ul>
- * </p>
  * <p>Each intersection is assigned to a shape, empty (or assigned to something special)</p>
  *
  * @author Philippe Vienne
