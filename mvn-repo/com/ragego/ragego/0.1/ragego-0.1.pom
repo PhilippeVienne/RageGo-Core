@@ -69,6 +69,15 @@
             <name>RageGo GitHub repo</name>
             <layout>git</layout>
         </repository>
+
+        <repository>
+            <id>ragego-mvn-repo</id>
+            <url>https://raw.github.com/${repositoryOwner}/${repositoryName}/gh-pages/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
     </repositories>
     <url>${site.url}</url>
 
