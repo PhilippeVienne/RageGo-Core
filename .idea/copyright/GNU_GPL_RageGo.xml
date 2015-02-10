@@ -1,9 +1,0 @@
-<component name="CopyrightManager">
-  <copyright>
-    <option name="notice" value="RageGo is a Game and GameEngine for Go Game (Jeu de Go)&#10;Copyright (C) &amp;#36;today.year  Philippe VIENNE (for code)&#10;Copyright (C) &amp;#36;today.year  Benoit RENAULT (for code and graphics)&#10;Copyright (C) &amp;#36;today.year  Pierre-Armand NICQ (for graphics)&#10;&#10;This program is free software: you can redistribute it and/or modify&#10;it under the terms of the GNU General Public License as published by&#10;the Free Software Foundation, either version 3 of the License, or&#10;(at your option) any later version.&#10;&#10;This program is distributed in the hope that it will be useful,&#10;but WITHOUT ANY WARRANTY; without even the implied warranty of&#10;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#10;GNU General Public License for more details.&#10;&#10;You should have received a copy of the GNU General Public License&#10;along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.&#10;&#10;The graphical (pictures, assets, logo ...) work is licensed under the &#10;Creative Commons Attribution-ShareAlike 3.0 Unported License. To view &#10;a copy of this license, visit &lt;http://creativecommons.org/licenses/by-sa/3.0/&gt;&#10;or send a letter to &lt;Creative Commons, PO Box 1866, Mountain View, CA 94042, USA&gt;." />
-    <option name="keyword" value="Copyright" />
-    <option name="allowReplaceKeyword" value="" />
-    <option name="myName" value="GNU GPL RageGo" />
-    <option name="myLocal" value="true" />
-  </copyright>
-</component>
