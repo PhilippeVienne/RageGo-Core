@@ -16,25 +16,60 @@ import java.util.HashMap;
  */
 public class GameBoard {
 
+    /**
+     * Default size for a Go board.
+     */
+    public static final int DEFAULT_BOARD_SIZE = 19;
+
     private Player firstPlayer;
     private Player secondPlayer;
+    private int boardSize = DEFAULT_BOARD_SIZE;
 
     /**
      * Store the elements on bord by {@link com.ragego.engine.Intersection}
      */
     private HashMap<Intersection, GoElement> board;
 
+    /**
+     * Create an real empty board.
+     * This constructor is suitable only for test purpose. 
+     */
     public GameBoard() {
-        this(null, null);
-    }
-
-    public GameBoard(Player firstPlayer, Player secondPlayer) {
-        this.firstPlayer = firstPlayer;
-        this.secondPlayer = secondPlayer;
+        this(null, null,DEFAULT_BOARD_SIZE);
     }
 
     /**
-     * Retrive something on Intersection
+     * Create a board with the default size. 
+     * @param firstPlayer The first player (conventional white stone player)
+     * @param secondPlayer The second player (conventional black stone player)
+     */
+    public GameBoard(Player firstPlayer, Player secondPlayer) {
+        this(firstPlayer, secondPlayer, DEFAULT_BOARD_SIZE);
+    }
+
+    /**
+     * Create a board with a custom size.
+     * @param firstPlayer The first player (conventional white stone player)
+     * @param secondPlayer The second player (conventional black stone player)
+     * @param boardSize Number of column for this board
+     */
+    public GameBoard(Player firstPlayer, Player secondPlayer, int boardSize) {
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
+        this.boardSize = boardSize;
+        this.board = new HashMap<>(this.boardSize*this.boardSize);
+    }
+
+    /**
+     * Retrieve the size of this board.
+     * @return The number of column and lines on board
+     */
+    public int getBoardSize() {
+        return boardSize;
+    }
+
+    /**
+     * Retrieve something on Intersection
      *
      * @param intersection The intersection where the element should be
      * @return The element or null if it's empty
