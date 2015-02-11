@@ -22,9 +22,8 @@ public class GameBoard {
     /**
      * Store the elements on bord by {@link com.ragego.engine.Intersection}
      */
-    private HashMap<Intersection,GoElement> board;
+    private HashMap<Intersection, GoElement> board;
 
-<<<<<<< HEAD
     public GameBoard() {
         this(null, null);
     }
@@ -35,18 +34,20 @@ public class GameBoard {
     }
 
     /**
-     * Retrive something on Intersection 
+     * Retrive something on Intersection
+     *
      * @param intersection The intersection where the element should be
      * @return The element or null if it's empty
      */
-    public GoElement getElement(Intersection intersection){
-        if(intersection.getBoard()!=this)
+    public GoElement getElement(Intersection intersection) {
+        if (intersection.getBoard() != this)
             throw new IllegalArgumentException("Not on good board");
-        return board.getOrDefault(intersection,null);
+        return board.getOrDefault(intersection, null);
     }
 
     /**
-     * Retrieve the white player 
+     * Retrieve the white player
+     *
      * @return The player or null if it's empty
      */
     public Player getFirstPlayer() {
@@ -55,11 +56,10 @@ public class GameBoard {
 
     /**
      * Retrieve the black player.
+     *
      * @return The player or null if it's empty
      */
     public Player getSecondPlayer() {
         return secondPlayer;
     }
-=======
->>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
 }

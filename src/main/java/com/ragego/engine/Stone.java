@@ -50,11 +50,8 @@ public class Stone {
     public void setShape(Shape shape) {
         this.shape = shape;
     }
-<<<<<<< HEAD
 
     public Player getPlayer() {
         return player;
     }
-=======
->>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
 }
