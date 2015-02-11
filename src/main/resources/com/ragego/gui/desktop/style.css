@@ -1,0 +1,11 @@
+
+
+#pane{
+    -fx-background-image: url("wood.jpg");
+    -fx-background-position: center center;
+}
+
+#board{
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0);
+}

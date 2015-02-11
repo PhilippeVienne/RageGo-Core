@@ -76,10 +76,23 @@ public class GameBoard {
      */
     public GoElement getElement(Intersection intersection) {
         if (intersection.getBoard() != this)
-            throw new IllegalArgumentException("Not on good board");
+            throw new BadBoardException();
         return board.getOrDefault(intersection, null);
     }
 
+    /**
+     * Put an element to an intersection.
+     * This function don't check that the element checks go rules. 
+     * @param intersection One of intersection of this board
+     * @param element The element to put
+     */
+    public void setElement(Intersection intersection, GoElement element){
+        if(intersection.getBoard() != this){
+            throw new BadBoardException();
+        }
+        board.put(intersection,element);
+    }
+    
     /**
      * Retrieve the white player
      *
@@ -96,5 +109,27 @@ public class GameBoard {
      */
     public Player getSecondPlayer() {
         return secondPlayer;
+    }
+
+    /**
+     * Exception occurs when you are manipulating a wrong board.
+     */
+    public static class BadBoardException extends IllegalArgumentException{
+
+        public BadBoardException() {
+            super("Not on good board");
+        }
+
+        public BadBoardException(String s) {
+            super(s);
+        }
+
+        public BadBoardException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public BadBoardException(Throwable cause) {
+            super("Not on good board",cause);
+        }
     }
 }
