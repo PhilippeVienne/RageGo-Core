@@ -1,5 +1,9 @@
 package com.ragego.engine;
 
+<<<<<<< HEAD
+=======
+import javax.swing.text.Position;
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
 import java.util.ArrayList;
 
 /**
@@ -22,6 +26,7 @@ public class Shape implements GoElement{
 
     private ArrayList<Stone> stones = new ArrayList<>();
     private GameBoard board;
+<<<<<<< HEAD
     private Player player;
 
     public Shape(Player player, GameBoard board, Stone... stones) {
@@ -40,18 +45,31 @@ public class Shape implements GoElement{
             addStone(s);
     }
     
+=======
+
+
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
     @Override
     public ArrayList<Intersection> getPositions() {
         ArrayList<Intersection> pos = new ArrayList<>();
         for(Stone s:stones)
             pos.add(s.getPosition());
+<<<<<<< HEAD
         return pos;
+=======
+        return null;
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
     }
 
     /**
      * Add a stone to this shape.
+<<<<<<< HEAD
      * @param stone The stone to add to this shape
      * @return This shape
+=======
+     * @param stone
+     * @return
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
      */
     public Shape addStone(Stone stone){
         canStoneBeAdded(stone);
@@ -60,6 +78,7 @@ public class Shape implements GoElement{
         return this;
     }
 
+<<<<<<< HEAD
     /**
      * Check if a stone can be a part of this shape.
      * A stone can be added, if it belongs to one of liberty of current stones.
@@ -78,6 +97,14 @@ public class Shape implements GoElement{
      * @param stone The stone to test
      * @return true if it's on on liberty
      */
+=======
+    private void canStoneBeAdded(Stone stone) {
+        boolean isOnLiberty = isOnShapeLiberty(stone);
+        if(!isOnLiberty&&!stones.isEmpty())
+            throw new IllegalArgumentException("Can not be added to shape");
+    }
+
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
     private boolean isOnShapeLiberty(Stone stone) {
         boolean isOnLiberty = false;
         for(Intersection p:getPositions()) {
@@ -106,6 +133,7 @@ public class Shape implements GoElement{
             stone.setBoard(board);
         this.board = board;
     }
+<<<<<<< HEAD
 
     /**
      * Update the player of this shape. 
@@ -114,4 +142,6 @@ public class Shape implements GoElement{
     private void setPlayer(Player player) {
         this.player = player;
     }
+=======
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
 }

@@ -24,6 +24,7 @@
  -----------------------------------------------------------------------------*/
 
 /**
- * Created by pvienne on 09/02/15.
+ * Define how we can play to a Go Game on a computer.
+ * This package implements a go game with
  */
 package com.ragego.engine;

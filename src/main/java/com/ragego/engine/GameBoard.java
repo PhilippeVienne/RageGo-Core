@@ -24,6 +24,7 @@ public class GameBoard {
      */
     private HashMap<Intersection,GoElement> board;
 
+<<<<<<< HEAD
     public GameBoard() {
         this(null, null);
     }
@@ -59,4 +60,6 @@ public class GameBoard {
     public Player getSecondPlayer() {
         return secondPlayer;
     }
+=======
+>>>>>>> 7c128c15a804cac1c79c9c762749f87f5dd47695
 }
