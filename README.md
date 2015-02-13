@@ -36,3 +36,4 @@ the implementation of the AI.
 
 - Online Mode (Stretch Goal)
 Allows multiplayer play and possible exchanges between players.
+Will only be implemented if described above features are so.
