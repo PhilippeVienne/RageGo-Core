@@ -1,6 +1,8 @@
 package com.ragego.engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Represent a board of Go.
@@ -21,6 +23,11 @@ public class GameBoard {
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
 
+    /**
+     * This params contain an historic of all know situation
+     */
+    private ArrayList<BoardSnap> snapshots = new ArrayList<>();
+
     private Player firstPlayer;
     private Player secondPlayer;
     private int boardSize = DEFAULT_BOARD_SIZE;
@@ -28,7 +35,7 @@ public class GameBoard {
     /**
      * Store the elements on bord by {@link com.ragego.engine.Intersection}
      */
-    private HashMap<Intersection, GoElement> board;
+    private HashMap<Intersection, Stone> board;
 
     /**
      * Create an real empty board.
@@ -61,6 +68,19 @@ public class GameBoard {
     }
 
     /**
+     * Check that we can play on this intersection.
+     * @param player Player which is playing
+     * @param intersection Intersection where we want to play
+     * @return true if it's correct following the Go rules to play on this row.
+     */
+    public boolean canPlay(Player player, Intersection intersection) throws GoRuleViolation{
+        checkBoardForIntersection(intersection);
+        if(null != getElement(intersection)) return false;
+
+        return false;
+    }
+
+    /**
      * Retrieve the size of this board.
      * @return The number of column and lines on board
      */
@@ -74,10 +94,29 @@ public class GameBoard {
      * @param intersection The intersection where the element should be
      * @return The element or null if it's empty
      */
-    public GoElement getElement(Intersection intersection) {
+    public Stone getElement(Intersection intersection) {
+        checkBoardForIntersection(intersection);
+        return board.getOrDefault(intersection, null);
+    }
+
+    /**
+     * Check that intersection is on the current board.
+     * @param intersection The intersection to check
+     * @throws com.ragego.engine.GameBoard.BadBoardException If it's not the good board
+     */
+    private void checkBoardForIntersection(Intersection intersection) throws BadBoardException{
         if (intersection.getBoard() != this)
             throw new BadBoardException();
-        return board.getOrDefault(intersection, null);
+    }
+
+    /**
+     * Check and remove dead stones.
+     * @return The dead stones
+     */
+    public Stone[] computeDeadStone(){
+        ArrayList<Stone> deads = new ArrayList<>();
+
+        return deads.toArray(new Stone[deads.size()]);
     }
 
     /**
@@ -86,13 +125,51 @@ public class GameBoard {
      * @param intersection One of intersection of this board
      * @param element The element to put
      */
-    public void setElement(Intersection intersection, GoElement element){
-        if(intersection.getBoard() != this){
-            throw new BadBoardException();
-        }
+    public void setElement(Intersection intersection, Stone element){
+        checkBoardForIntersection(intersection);
+        Shape shape = searchForShapesAround(intersection, element.getPlayer());
+        if(shape == null)
+            shape = new Shape(element.getPlayer(),this,element);
+        else
+            shape.addStone(element);
+        element.setShape(shape);
         board.put(intersection,element);
     }
-    
+
+    /**
+     * Lookup for a shape which can be connected to an intersection.
+     * If there is multiple shapes which can be connected, return a fusion of
+     * them.
+     * @param intersection The intersection where we lookup
+     * @param player The player which should be the owner of shape
+     * @return The shape to associate with or null if there is not one.
+     */
+    private Shape searchForShapesAround(Intersection intersection, Player player) {
+        ArrayList<Shape> shapes = new ArrayList<>(4);
+        for (Intersection neighbours : intersection.getNeighboursIntersections()) {
+            if(getElement(neighbours).getPlayer() == player) {
+                Shape shape = getElement(neighbours).getShape();
+                if(shape == null)
+                    throw new IllegalStateException("A stone have no associated shape.");
+                shapes.add(shape);
+            }
+        }
+        Iterator<Shape> shapeIterator = shapes.iterator();
+        switch (shapes.size()){
+            case 0:
+                return null;
+            case 1:
+                return shapeIterator.next();
+            case 2:
+            case 3:
+            case 4:
+                Shape newShape = shapeIterator.next();
+                shapeIterator.forEachRemaining(newShape::unionWith);
+                return  newShape;
+        }
+        return null; // We never never should go here
+    }
+
     /**
      * Retrieve the white player
      *
@@ -109,6 +186,20 @@ public class GameBoard {
      */
     public Player getSecondPlayer() {
         return secondPlayer;
+    }
+
+    /**
+     * Create a primitive-type representation of the game.
+     * @return A table where : 0 is an empty row, 1 for first player, 2 for second
+     */
+    public int[][] getRepresentation(){
+        int[][] data = new int[boardSize][boardSize];
+        board.forEach((intersection, goElement) -> {
+            data[intersection.getColumn()][intersection.getLine()] =
+                    goElement.getPlayer() == firstPlayer ?
+                            1 : 2;
+        });
+        return data;
     }
 
     /**

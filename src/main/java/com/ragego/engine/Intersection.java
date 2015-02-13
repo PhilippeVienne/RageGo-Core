@@ -104,4 +104,13 @@ public class Intersection {
                 ((column - 1) == position.column && line == position.line) ||
                 ((column + 1) == position.column && line == position.line);
     }
+
+    public Intersection[] getNeighboursIntersections() {
+        return new Intersection[]{
+                new Intersection(column+1,line,board),
+                new Intersection(column-1,line,board),
+                new Intersection(column,line+1,board),
+                new Intersection(column,line-1,board),
+        };
+    }
 }

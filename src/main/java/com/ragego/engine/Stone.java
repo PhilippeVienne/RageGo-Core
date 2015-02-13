@@ -54,4 +54,8 @@ public class Stone {
     public Player getPlayer() {
         return player;
     }
+
+    public Shape getShape() {
+        return shape;
+    }
 }

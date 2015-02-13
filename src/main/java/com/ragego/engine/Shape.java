@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * <a href="http://en.wikipedia.org/wiki/Shape_%28Go%29">See Wikipedia</a>
  * @author Philippe Vienne
  */
-public class Shape implements GoElement{
+public class Shape {
 
     private ArrayList<Stone> stones = new ArrayList<>();
     private GameBoard board;
@@ -39,8 +39,7 @@ public class Shape implements GoElement{
         for(Stone s:stones)
             addStone(s);
     }
-    
-    @Override
+
     public ArrayList<Intersection> getPositions() {
         ArrayList<Intersection> pos = new ArrayList<>();
         for(Stone s:stones)
@@ -113,5 +112,14 @@ public class Shape implements GoElement{
      */
     private void setPlayer(Player player) {
         this.player = player;
+    }
+
+    /**
+     * Fusion multiple shapes.
+     * @param shape the shape to fusion
+     */
+    public void unionWith(Shape shape) {
+        shape.stones.forEach(this::addStone);
+        shape.stones = new ArrayList<>();
     }
 }
