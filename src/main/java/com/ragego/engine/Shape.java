@@ -40,13 +40,6 @@ public class Shape {
             addStone(s);
     }
 
-    public ArrayList<Intersection> getPositions() {
-        ArrayList<Intersection> pos = new ArrayList<>();
-        for(Stone s:stones)
-            pos.add(s.getPosition());
-        return pos;
-    }
-
     /**
      * Add a stone to this shape.
      * @param stone The stone to add to this shape
@@ -78,14 +71,13 @@ public class Shape {
      * @return true if it's on on liberty
      */
     private boolean isOnShapeLiberty(Stone stone) {
-        boolean isOnLiberty = false;
-        for(Intersection p:getPositions()) {
-            if (p.isAsideOf(stone.getPosition())) {
-                isOnLiberty = true;
-                break;
+        final Intersection stonePosition = stone.getPosition();
+        for(Stone s:stones) {
+            if (s.getPosition().isAsideOf(stonePosition)) {
+                return true;
             }
         }
-        return isOnLiberty;
+        return false;
     }
 
     /**
@@ -119,7 +111,39 @@ public class Shape {
      * @param shape the shape to fusion
      */
     public void unionWith(Shape shape) {
-        shape.stones.forEach(this::addStone);
+        shape.stones.forEach(this::addStonePrivate);
         shape.stones = new ArrayList<>();
     }
+
+    /**
+     * Force add of stone to the shape
+     * @param stone the stone to add
+     */
+    private void addStonePrivate(Stone stone) {
+        if(stone.getShape() != null){
+            stone.getShape().stones.remove(stone);
+        }
+        stone.setShape(this);
+        stones.add(stone);
+    }
+
+    /**
+     * Count liberty of a shape.
+     * @return Number of liberty of shape
+     */
+    public int countLiberty(){
+        final int[] liberty = {0};
+        stones.forEach((stone)-> liberty[0] += stone.countLiberty());
+        return liberty[0];
+    }
+
+    /**
+     * Detect if this shape is dead.
+     * A shape is alive only if its liberty is not null and contains more than one stone.
+     * @return true if you should consider this shape alive
+     */
+    public boolean isAlive() {
+        return stones.size() > 0 && countLiberty() > 0;
+    }
+
 }

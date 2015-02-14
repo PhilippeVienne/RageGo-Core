@@ -5,6 +5,16 @@ package com.ragego.engine;
  */
 public class GoRuleViolation extends Exception {
 
+    public GoRuleViolation(Type type) {
+        super();
+        switch (type){
+
+            case KO:
+
+                break;
+        }
+    }
+
     enum Type{
         KO,
     }

@@ -16,6 +16,10 @@ public class BoardSnap {
         data = board.getRepresentation();
     }
 
+    public BoardSnap(int[][] representation) {
+        data = Arrays.copyOf(representation,representation.length);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof BoardSnap && equals(data, ((BoardSnap) obj).data);

@@ -58,4 +58,21 @@ public class Stone {
     public Shape getShape() {
         return shape;
     }
+
+    /**
+     * Count liberty for a stone.
+     * For each neighbour position of this stone, liberty is increased of one if the intersection is empty.
+     * @return The liberty count for this shape
+     */
+    public int countLiberty() {
+        int liberty = 0;
+        for (Intersection intersection : position.getNeighboursIntersections()) {
+            if(board.isEmpty(intersection)) liberty++;
+        }
+        return liberty;
+    }
+
+    public void setCaptivated() {
+        capturated = !capturated;
+    }
 }

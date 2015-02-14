@@ -30,6 +30,10 @@ public class GameBoard {
 
     private Player firstPlayer;
     private Player secondPlayer;
+    /**
+     * This should be {@link #secondPlayer} or {@link #firstPlayer}
+     */
+    private Player currentPlayer;
     private int boardSize = DEFAULT_BOARD_SIZE;
 
     /**
@@ -74,10 +78,35 @@ public class GameBoard {
      * @return true if it's correct following the Go rules to play on this row.
      */
     public boolean canPlay(Player player, Intersection intersection) throws GoRuleViolation{
-        checkBoardForIntersection(intersection);
-        if(null != getElement(intersection)) return false;
+        { // Check we are playing on the current board
+            checkBoardForIntersection(intersection);
+        }
+        { // Rule 7 :  Placing a stone of their color on an empty intersection.
+            if(null != getElement(intersection)) return false;
+        }
+        { // Rule 8 : A play may not recreate a previous position from the game.
+            final int[][] representation = getRepresentation();
+            representation[intersection.getColumn()][intersection.getLine()] = getPlayerSign(player);
+            if(snapshots.contains(new BoardSnap(representation))) throw new GoRuleViolation(GoRuleViolation.Type.KO);
+        }
+        // No rule violation
+        return true;
+    }
 
-        return false;
+    /**
+     * Get a player symbole for int representation
+     * @param player The player who we want to get sign
+     * @return The number to use
+     */
+    private int getPlayerSign(Player player) {
+        if(player == null)
+            return 0;
+        else if(player == firstPlayer)
+            return 1;
+        else if(player == secondPlayer)
+            return 2;
+        else
+            throw new IllegalArgumentException("Not a player on this board.");
     }
 
     /**
@@ -114,9 +143,26 @@ public class GameBoard {
      * @return The dead stones
      */
     public Stone[] computeDeadStone(){
-        ArrayList<Stone> deads = new ArrayList<>();
+        HashMap<Intersection,Stone> deadStones = new HashMap<>();
+        board.forEach((intersection,stone)->{
+            if(stone!=null&&stone.getShape()!=null&&!stone.getShape().isAlive()) deadStones.put(intersection, stone);
+        });
+        deadStones.forEach(board::remove);
+        deadStones.forEach(this::deadStone);
+        return deadStones.values().toArray(new Stone[deadStones.size()]);
+    }
 
-        return deads.toArray(new Stone[deads.size()]);
+    /**
+     * Do necessary calls to register a stone as dead.
+     * @param intersection Intersection where the stone was
+     * @param stone The stone to kill
+     */
+    private void deadStone(Intersection intersection, Stone stone) {
+        board.remove(intersection,stone);
+        stone.setBoard(null);
+        stone.setCaptivated();
+        stone.setShape(null);
+        stone.setPosition(null);
     }
 
     /**
@@ -200,6 +246,24 @@ public class GameBoard {
                             1 : 2;
         });
         return data;
+    }
+
+    /**
+     * Check if intersection is empty.
+     * @param intersection The intersection to check
+     * @return true if no stones are on this intersection
+     */
+    public boolean isEmpty(Intersection intersection) {
+        return !board.containsKey(intersection);
+    }
+
+    /**
+     * Check if intersection is not empty.
+     * @param intersection The intersection to check
+     * @return false if no stones are on this intersection
+     */
+    public boolean isNotEmpty(Intersection intersection) {
+        return !isEmpty(intersection);
     }
 
     /**
