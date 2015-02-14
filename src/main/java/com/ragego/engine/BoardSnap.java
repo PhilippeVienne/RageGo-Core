@@ -9,29 +9,32 @@ import java.util.Arrays;
 public class BoardSnap {
 
     private int[][] data;
+    private String dataAsString;
 
     public BoardSnap(GameBoard board){
         if(board == null)
             throw new IllegalArgumentException("Board can not be null");
         data = board.getRepresentation();
+        updateString();
     }
 
     public BoardSnap(int[][] representation) {
         data = Arrays.copyOf(representation,representation.length);
+        updateString();
+    }
+
+    private void updateString(){
+        StringBuilder builder = new StringBuilder();
+        for (int[] column : data) {
+            for (int i : column) {
+                builder.append(i);
+            }
+        }
+        dataAsString = builder.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof BoardSnap && equals(data, ((BoardSnap) obj).data);
-    }
-
-    private boolean equals(int[][] data, int[][] data1) {
-        if(data.length != data1.length)
-            return false;
-        for (int i = 0; i < data.length; i++) {
-            if(!Arrays.equals(data[i],data1[i]))
-                return false;
-        }
-        return true;
+        return (this == obj) || ((obj instanceof BoardSnap) && (dataAsString != null) && (((BoardSnap) obj).dataAsString != null) && dataAsString.equals(((BoardSnap) obj).dataAsString));
     }
 }

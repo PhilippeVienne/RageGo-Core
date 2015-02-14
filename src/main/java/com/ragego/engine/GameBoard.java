@@ -72,6 +72,40 @@ public class GameBoard {
     }
 
     /**
+     * Play a new move.
+     * Apply the Rule 7 to make a new move.
+     */
+    public void nextMove(){
+        Player previousPlayer;
+        { // Update the player
+            previousPlayer = currentPlayer == null ? getSecondPlayer() : currentPlayer;
+            currentPlayer = currentPlayer == getFirstPlayer() ? getSecondPlayer() : getFirstPlayer();
+        }
+        { // Spread events that a turn is starting
+            final BoardSnap snapBefore = new BoardSnap(this);
+            getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+            getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+            if (!new BoardSnap(this).equals(snapBefore)) {
+                throw new IllegalStateException("A player has modified the board, and this should not be");
+            }
+        }
+        // Play the turn
+        currentPlayer.getListener().newTurn(this,currentPlayer);
+        // Compute the dead stones
+        computeDeadStone(previousPlayer);
+        computeDeadStone(currentPlayer);
+        { // Spread events that a turn is ended
+            final BoardSnap snapAfter = new BoardSnap(this);
+            getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+            getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+            if (!new BoardSnap(this).equals(snapAfter)) {
+                throw new IllegalStateException("A player has modified the board, and this should not be");
+            }
+            snapshots.add(snapAfter);
+        }
+    }
+
+    /**
      * Check that we can play on this intersection.
      * @param player Player which is playing
      * @param intersection Intersection where we want to play
@@ -141,11 +175,13 @@ public class GameBoard {
     /**
      * Check and remove dead stones.
      * @return The dead stones
+     * @param player The player who we want to remove stones
      */
-    public Stone[] computeDeadStone(){
+    public Stone[] computeDeadStone(Player player){
         HashMap<Intersection,Stone> deadStones = new HashMap<>();
         board.forEach((intersection,stone)->{
-            if(stone!=null&&stone.getShape()!=null&&!stone.getShape().isAlive()) deadStones.put(intersection, stone);
+            if(stone!=null&&stone.getPlayer() == player&&stone.getShape()!=null&&!stone.getShape().isAlive())
+                deadStones.put(intersection, stone);
         });
         deadStones.forEach(board::remove);
         deadStones.forEach(this::deadStone);
