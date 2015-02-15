@@ -2,4 +2,5 @@ com.ragego.ai
 com.ragego.engine
 com.ragego.gameplay
 com.ragego.gui.android
+com.ragego.gui.console
 com.ragego.gui.desktop
