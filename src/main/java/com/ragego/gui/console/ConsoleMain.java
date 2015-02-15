@@ -26,7 +26,7 @@ public class ConsoleMain implements TurnListener{
             board.nextMove();
             play();
         } catch (Exception e){
-            System.err.println("Il est mort, Jim");
+            System.err.println("Il est mort, Jim.");
         }
     }
 
@@ -70,25 +70,25 @@ public class ConsoleMain implements TurnListener{
 
     @Override
     public void newTurn(GameBoard board, Player player) {
-        System.out.println(player.getDisplayName()+" à ton tour");
+        System.out.println(player.getDisplayName()+", à ton tour");
         Intersection intersection;
         boolean play;
         do{
             intersection = readIntersection(board);
             if(intersection.getLine() < 0 || intersection.getColumn() < 0 ||
                     intersection.getColumn() >= board.getBoardSize() || intersection.getLine() >= board.getBoardSize()) {
-                System.out.println("Euh le Goban fait " + board.getBoardSize() + " de taille, donne des coordonées à l'intérieur");
+                System.out.println("Euh le Goban fait " + board.getBoardSize() + " de taille, donne des coordonées à l'intérieur.");
                 play = false;
             } else {
                 try {
                     play = board.canPlay(player, intersection);
                 } catch (GoRuleViolation goRuleViolation) {
-                    System.out.println("Tu viole une des règle du go !");
+                    System.out.println("Tu violes une des règle du Go !");
                     play = false;
                 }
             }
             if(!play)
-                System.out.println("Tu ne peut pas jouer sur cette case");
+                System.out.println("Tu ne peux pas jouer sur cette case");
         } while (!play);
         final Stone element = new Stone();
         element.setBoard(board);
@@ -98,13 +98,13 @@ public class ConsoleMain implements TurnListener{
 
     private Intersection readIntersection(GameBoard board) {
         try {
-            System.out.print("Tu veux jouer sur (écrit sous forme ligne-colonne) : ");
+            System.out.print("Tu veux jouer sur (écris sous forme colonne-ligne) : ");
             String values = new Scanner(System.in).nextLine();
             if(!values.matches("[A-Z][0-9]+"))
                 throw new Exception("Not good format");
             return new Intersection(((int)(values.split("[0-9]",2)[0].charAt(0)))-65, Integer.parseInt(values.split("[A-Z]",2)[1])-1, board);
         } catch(Exception e){
-            System.out.println("Ecrit bien sous la forme A5 où 5 est la ligne et A la colonne !");
+            System.out.println("Ecris bien sous la forme \"A5\" où A est la colonne et 5 est la ligne !");
             return readIntersection(board);
         }
     }
