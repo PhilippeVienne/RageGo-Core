@@ -128,7 +128,7 @@
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.11</version>
                 <configuration>
-                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
+                    <message>Creating site for ${project.artifactId} ${project.version}</message>
                     <noJekyll>true</noJekyll>
                     <branch>refs/heads/gh-pages</branch>                       <!-- remote branch name -->
                     <includes><include>**/*</include></includes>

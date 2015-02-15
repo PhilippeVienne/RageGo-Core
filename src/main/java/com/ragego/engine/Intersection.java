@@ -66,20 +66,8 @@ public class Intersection {
      * @return true if they are identical.
      */
     @Override
-    public boolean equals(Object o){
-        if(o==null) return false; // the instance could not be equal to a null entry
-        if(o instanceof Intersection){
-            boolean boards = false;
-            if(board!=null&&((Intersection) o).board!=null) // If they are not null
-                boards = board.equals(((Intersection) o).board); // Then board should be equals
-            else // Otherwise boards should be both null
-                boards = (board == null && ((Intersection) o).board == null);
-            return  boards &&
-                    ((Intersection) o).column == column && // Columns identical
-                    ((Intersection) o).line == line; // Line identical
-        } else {
-            return false; // an intersection could not be equal to other type than Intersection
-        }
+    public boolean equals(Object o) {
+        return o != null && o instanceof Intersection && hashCode() == o.hashCode();
     }
 
     /**
@@ -112,5 +100,10 @@ public class Intersection {
                 new Intersection(column,line+1,board),
                 new Intersection(column,line-1,board),
         };
+    }
+
+    @Override
+    public int hashCode() {
+        return (board!=null?board.hashCode()*10000:0)+line*100+column;
     }
 }

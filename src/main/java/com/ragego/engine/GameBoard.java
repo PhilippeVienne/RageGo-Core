@@ -116,11 +116,11 @@ public class GameBoard {
             checkBoardForIntersection(intersection);
         }
         { // Rule 7 :  Placing a stone of their color on an empty intersection.
-            if(null != getElement(intersection)) return false;
+            if(isNotEmpty(intersection)) return false;
         }
         { // Rule 8 : A play may not recreate a previous position from the game.
             final int[][] representation = getRepresentation();
-            representation[intersection.getColumn()][intersection.getLine()] = getPlayerSign(player);
+            representation[intersection.getLine()][intersection.getColumn()] = getPlayerSign(player);
             if(snapshots.contains(new BoardSnap(representation))) throw new GoRuleViolation(GoRuleViolation.Type.KO);
         }
         // No rule violation
@@ -215,6 +215,7 @@ public class GameBoard {
         else
             shape.addStone(element);
         element.setShape(shape);
+        element.setPosition(intersection);
         board.put(intersection,element);
     }
 
@@ -229,7 +230,7 @@ public class GameBoard {
     private Shape searchForShapesAround(Intersection intersection, Player player) {
         ArrayList<Shape> shapes = new ArrayList<>(4);
         for (Intersection neighbours : intersection.getNeighboursIntersections()) {
-            if(getElement(neighbours).getPlayer() == player) {
+            if(getElement(neighbours) != null && getElement(neighbours).getPlayer() == player) {
                 Shape shape = getElement(neighbours).getShape();
                 if(shape == null)
                     throw new IllegalStateException("A stone have no associated shape.");
@@ -272,15 +273,14 @@ public class GameBoard {
 
     /**
      * Create a primitive-type representation of the game.
+     * First index is for line, second is for column
      * @return A table where : 0 is an empty row, 1 for first player, 2 for second
      */
     public int[][] getRepresentation(){
         int[][] data = new int[boardSize][boardSize];
-        board.forEach((intersection, goElement) -> {
-            data[intersection.getColumn()][intersection.getLine()] =
-                    goElement.getPlayer() == firstPlayer ?
-                            1 : 2;
-        });
+        board.forEach((intersection, goElement) -> data[intersection.getLine()][intersection.getColumn()] =
+                goElement.getPlayer() == firstPlayer ?
+                        1 : 2);
         return data;
     }
 
@@ -309,18 +309,6 @@ public class GameBoard {
 
         public BadBoardException() {
             super("Not on good board");
-        }
-
-        public BadBoardException(String s) {
-            super(s);
-        }
-
-        public BadBoardException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public BadBoardException(Throwable cause) {
-            super("Not on good board",cause);
         }
     }
 }

@@ -37,7 +37,7 @@ public class Stone {
 
     /**
      * Update the postion af a stone an a board
-     * @param position
+     * @param position Position to set for this stone
      */
     public void setPosition(Intersection position) {
         this.position = position;
@@ -74,5 +74,9 @@ public class Stone {
 
     public void setCaptivated() {
         capturated = !capturated;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

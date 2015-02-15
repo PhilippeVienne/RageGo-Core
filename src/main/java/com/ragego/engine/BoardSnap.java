@@ -1,5 +1,7 @@
 package com.ragego.engine;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -24,13 +26,19 @@ public class BoardSnap {
     }
 
     private void updateString(){
-        StringBuilder builder = new StringBuilder();
-        for (int[] column : data) {
-            for (int i : column) {
-                builder.append(i);
+        byte[] bytes = new byte[data.length*data[0].length];
+        for (int i1 = 0, dataLength = data.length; i1 < dataLength; i1++) {
+            int[] line = data[i1];
+            for (int i2 = 0, columnLength = line.length; i2 < columnLength; i2++) {
+                int i = line[i2];
+                bytes[i1*dataLength+i2] = (byte) i;
             }
         }
-        dataAsString = builder.toString();
+        try {
+            dataAsString = new String(MessageDigest.getInstance("MD5").digest(bytes));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
