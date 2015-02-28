@@ -11,15 +11,23 @@ import java.nio.file.Paths;
 
 
 /**
- * Created by brenault on 28/02/2015.
+ * Defines the Tile object, which is the basic element of the map
+ * @author brenault
  */
 public class Tile extends Parent{
     static String imgName = "goban_piece_middle.png";
     
     private int x, y; // Coordinates of the tile in the staggered system
     private double xPi, yPi; // Coordinates of the tile in pixels
-    public ImageView content;
-    
+    public ImageView content; // ImageView of the tile
+
+    /**
+     * Initializes attributes, fetches sprite and affects it to the right spot
+     * @param ax x-coordinate
+     * @param ay y-coordinate
+     * @param axPi x-coordinate in pixels
+     * @param ayPi y-coordinate in pixels
+     */
     public Tile(int ax, int ay , double axPi, double ayPi) throws IOException {
         x = ax;
         y = ay;
@@ -33,16 +41,29 @@ public class Tile extends Parent{
         content.setX(axPi);
         content.setY(ayPi);
     }
-    
+
+    /**
+     * x getter
+     */
     public int getX (){
         return x;
     }
+    
+    /**
+     * y getter
+     */
     public int getY (){
         return y;
     }
+    /**
+     * xPi getter
+     */
     public double getXPi (){
         return xPi;
     }
+    /**
+     * yPi getter
+     */
     public double getYPi (){
         return yPi;
     }
