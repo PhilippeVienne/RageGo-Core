@@ -3,6 +3,7 @@ package com.ragego.gui.desktop;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ public class Tile extends Parent{
     private int x, y; // Coordinates of the tile in the staggered system
     private double xPi, yPi; // Coordinates of the tile in pixels
     public ImageView content; // ImageView of the tile
+    double coeff = 0.5; // Resizing coefficient
 
     /**
      * Initializes attributes, fetches sprite and affects it to the right spot
@@ -28,18 +30,23 @@ public class Tile extends Parent{
      * @param axPi x-coordinate in pixels
      * @param ayPi y-coordinate in pixels
      */
-    public Tile(int ax, int ay , double axPi, double ayPi) throws IOException {
+    public Tile(int ax, int ay , double axPi, double ayPi, double aCoeff) throws IOException {
         x = ax;
         y = ay;
-        xPi = axPi;
-        yPi = ayPi;
+        coeff = aCoeff;
+        xPi = coeff*axPi;
+        yPi = coeff*ayPi;
         
         InputStream is = Files.newInputStream(Paths.get("src/main/resources/com/ragego/gui/desktop/" + imgName));
         Image tileSprite = new Image(is);
         content = new ImageView(tileSprite);
+        content.setFitWidth(coeff*tileSprite.getWidth());
+        content.setPreserveRatio(true);
+        content.setSmooth(true);
+        content.setCache(true);
         
-        content.setX(axPi);
-        content.setY(ayPi);
+        content.setX(xPi);
+        content.setY(yPi);
     }
 
     /**
@@ -66,5 +73,11 @@ public class Tile extends Parent{
      */
     public double getYPi (){
         return yPi;
+    }
+    /**
+     * ImageView of the tile getter
+     */
+    public ImageView getTileContent() {
+        return content;        
     }
 }
