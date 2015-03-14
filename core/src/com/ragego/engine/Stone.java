@@ -1,10 +1,15 @@
 package com.ragego.engine;
 
+import java.util.HashMap;
+
 /**
  * This is the piece with which you play.
  * todo: Write some docs here
  */
 public class Stone {
+
+    private static HashMap<Intersection,Stone> stones = new HashMap<>();
+
     private GameBoard board;
     private boolean capturated=false;
     private Player player;
@@ -78,5 +83,9 @@ public class Stone {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public static Stone get(Intersection intersection) {
+        return null;
     }
 }
