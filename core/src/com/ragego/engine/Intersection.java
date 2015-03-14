@@ -1,10 +1,15 @@
 package com.ragego.engine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * A coordinate on the GameBoard.
  * @author Philippe Vienne
  */
 public class Intersection {
+
+    private static HashMap<Integer,Intersection> intersections = new HashMap<>(GameBoard.DEFAULT_BOARD_SIZE*GameBoard.DEFAULT_BOARD_SIZE);
 
     private int column;
     private int line;
@@ -56,6 +61,7 @@ public class Intersection {
         this.column = column;
         this.line = line;
         this.board = board;
+        intersections.put(hashCode(),this);
     }
 
     /**
@@ -104,6 +110,25 @@ public class Intersection {
 
     @Override
     public int hashCode() {
+        return computeUniqueKey(column,line,board);
+    }
+
+    /**
+     * Compute an unique identifier for an intersection.
+     * This function suppose that line and column are inferior to 100.
+     * @param column Column associated to this intersection
+     * @param line Line associated to this intersection
+     * @param board Board where the intersection is
+     * @return An unique (probably not granted) identifier
+     */
+    private static int computeUniqueKey(int column, int line, GameBoard board){
         return (board!=null?board.hashCode()*10000:0)+line*100+column;
+    }
+
+    public static Intersection get(int column, int line, GameBoard board) {
+        if(intersections.containsKey(computeUniqueKey(column, line, board)))
+            return intersections.get(computeUniqueKey(column, line, board));
+        else
+            return new Intersection(column, line, board);
     }
 }
