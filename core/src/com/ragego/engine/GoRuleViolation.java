@@ -5,7 +5,7 @@ package com.ragego.engine;
  */
 public class GoRuleViolation extends Exception {
 
-    public GoRuleViolation(Type type) {
+    public GoRuleViolation(Type type, String message) {
         super();
         switch (type){
 
@@ -16,7 +16,7 @@ public class GoRuleViolation extends Exception {
     }
 
     enum Type{
-        KO,
+        KO, SUCIDE,
     }
 
 }

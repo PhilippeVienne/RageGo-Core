@@ -47,8 +47,10 @@ public class Shape {
      */
     public Shape addStone(Stone stone){
         canStoneBeAdded(stone);
-        stone.setShape(this);
-        stones.add(stone);
+        if(stone.getShape() != this)
+            stone.setShape(this);
+        if(!stones.contains(stone))
+            stones.add(stone);
         return this;
     }
 

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.ragego.screens.MenuScreen;
 
 public class RageGoGame extends Game {
 	SpriteBatch batch;
@@ -13,7 +12,7 @@ public class RageGoGame extends Game {
 	
 	@Override
 	public void create () {
-        setScreen(new MenuScreen());
+        //setScreen(new MenuScreen());
         Gdx.input.setCursorPosition(50,50);
 	}
 
