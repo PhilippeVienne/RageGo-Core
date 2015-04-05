@@ -12,9 +12,24 @@ public class Stone {
 
     private GameBoard board;
     private boolean capturated=false;
-    private Player player;
-    private Intersection position;
+    private final Player player;
+    private final Intersection position;
     private Shape shape;
+
+    public Stone(){
+        this(null,null);
+    }
+
+    public Stone(Intersection intersection){
+        this(intersection,null);
+    }
+
+    public Stone(Intersection intersection, Player player){
+        this.position = intersection;
+        this.player = player;
+        if(intersection!=null)
+            this.board = intersection.getBoard();
+    }
 
     /**
      * @return true if stone is on board
@@ -38,14 +53,6 @@ public class Stone {
      */
     public GameBoard getBoard() {
         return board;
-    }
-
-    /**
-     * Update the postion af a stone an a board
-     * @param p Position to set for this stone
-     */
-    public void setPosition(Intersection p) {
-        this.position = p;
     }
 
     public Intersection getPosition() {
@@ -72,17 +79,13 @@ public class Stone {
     public int countLiberty() {
         int liberty = 0;
         for (Intersection intersection : position.getNeighboursIntersections()) {
-            if(board.isEmpty(intersection)) liberty++;
+            if(board.isEmpty(intersection) && board.isValidIntersection(intersection)) liberty++;
         }
         return liberty;
     }
 
     public void setCaptivated() {
         capturated = !capturated;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public static Stone get(Intersection intersection) {
