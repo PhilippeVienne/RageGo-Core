@@ -113,7 +113,7 @@ public class StandardGameFormatIO implements FormatIO {
         boolean isReadingCloseChild = false;
         boolean isReadingRoof = false;
         int position = 0;
-        if(datas.length<1)return;
+        if(datas.length<1)return parent;
         if(datas[0] == ';'){
             position++;
         }
