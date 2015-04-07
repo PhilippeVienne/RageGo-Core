@@ -123,7 +123,7 @@ public class StandardGameFormatIO implements FormatIO {
                 Node node = new Node(builder.toString());
                 builder = new StringBuilder();
             }
-            else if(isReadingNode&&!isReadingRoof&&)
+            else if(isReadingNode&&!isReadingRoof){} // TODO Continue to work on this
         } while (position!=datas.length);
         return parent;
     }
