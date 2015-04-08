@@ -47,7 +47,12 @@ public class GameBoard {
      * Declare if we want to delete the dead stones.
      * This is useful to not delete dead stones in rule test mode.
      */
-    private boolean isDeletingDeadStones = true;
+    private boolean is_deleting_dead_stones = true;
+
+    /**
+     * Declare if IA functions are callable.
+     */
+    private boolean ia_functions_enabled = false;
 
     /**
      * Create an real empty board.
@@ -97,11 +102,11 @@ public class GameBoard {
                     return null;
                 });
         }
-        isDeletingDeadStones = false;
+        is_deleting_dead_stones = false;
         // Play the turn
         currentPlayer.getListener().newTurn(this,currentPlayer);
         // Compute the dead stones
-        isDeletingDeadStones = true;
+        is_deleting_dead_stones = true;
         computeDeadStone(previousPlayer);
         computeDeadStone(currentPlayer);
         lastNode.recomputeHash();
@@ -208,6 +213,14 @@ public class GameBoard {
                 setElement(node.getIntersection(),node.getStone());
                 break;
             case IA_SPECIAL_ACTION:
+                try {
+                    IAPlayer iaPlayer = (IAPlayer) currentPlayer;
+                    ia_functions_enabled = true;
+                    iaPlayer.makeSpecialTurn();
+                    ia_functions_enabled = false;
+                } catch (ClassCastException e) {
+                    throw new RuntimeException("Player is not an IAPlayer");
+                }
                 break;
         }
     }
@@ -273,7 +286,7 @@ public class GameBoard {
         });
 
         // If we are in test mode we only delete stones from the board but we wont they know they are deleted
-        if (isDeletingDeadStones) deadStones.forEach(this::deadStone);
+        if (is_deleting_dead_stones) deadStones.forEach(this::deadStone);
         else deadStones.forEach(board::remove);
 
         // Return set of dead stones
@@ -432,6 +445,80 @@ public class GameBoard {
             e.printStackTrace();
         }
         return digest;
+    }
+
+    //////////////////////////////////////////////////////////:
+    ////        Functions for IA
+
+    /**
+     * Get the board.
+     */
+    public HashMap<Intersection,Stone> ia_getBoard(){
+        checkIAMode();
+        return board;
+    }
+
+    /**
+     * Create a stone and compute dead stones.
+     * Put a stone on intersection and compute dead stones.
+     * If there is already a stone, it deletes it and creates a new one.
+     * @param intersection Where to place the stone.
+     * @param player The player who owns the stone.
+     * @return The new stone
+     */
+    public Stone ia_createStoneAndComputeDead(Intersection intersection, Player player){
+        Stone stone = ia_createStone(intersection, player);
+        computeDeadStone(getOpponent(player));
+        computeDeadStone(player);
+        return stone;
+    }
+
+    /**
+     * Create a stone.
+     * Put a stone on intersection and wait end of turn before compute dead stones.
+     * If there is already a stone, it deletes it and creates a new one.
+     * @param intersection Where to place the stone.
+     * @param player The player who owns the stone.
+     * @return The new stone
+     */
+    public Stone ia_createStone(Intersection intersection, Player player){
+        checkIAMode();
+        if(getElement(intersection)!=null) ia_deleteStone(getElement(intersection));
+        Stone stone = new Stone(intersection,player);
+        setElement(intersection,stone);
+        return stone;
+    }
+
+    /**
+     * Delete a stone.
+     * Delete a stone from the board whithout any side effects.
+     * @param stone The stone to delete.
+     */
+    public void ia_deleteStone(Stone stone){
+        checkIAMode();
+        deadStone(stone.getPosition(),stone);
+    }
+
+    /**
+     * Move a stone.
+     * This move a stone to a new location. If there is already a stone, it does nothing.
+     * @param stone The stone to move
+     * @param intersection The new intersection
+     * @return The new Stone moved to the position or the old if it was not possible
+     */
+    public Stone ia_moveStone(Stone stone, Intersection intersection){
+        checkIAMode();
+        checkBoardForIntersection(intersection);
+        if(getElement(intersection)!=null)return stone;
+        Stone newStone = new Stone(intersection,stone.getPlayer());
+        deadStone(stone.getPosition(), stone);
+        setElement(intersection,newStone);
+        return newStone;
+    }
+
+    private void checkIAMode() {
+        if(!ia_functions_enabled)
+            throw new IllegalStateException("You can not call IA functions here !");
     }
 
     /**
