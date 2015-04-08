@@ -1,6 +1,6 @@
 package com.ragego.utils;
 
-import com.ragego.engine.BoardSnap;
+import com.ragego.engine.GameNode;
 import com.ragego.engine.GameBoard;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public interface FormatIO {
      * Execute {@link #readRaw(java.io.File)} with data stored in this class.
      * @return See {@link #readRaw(java.io.File)}
      */
-    public BoardSnap[] readRaw() throws IOException;
+    public GameNode[] readRaw() throws IOException;
 
     /**
      * Read raw data from a file.
@@ -51,7 +51,7 @@ public interface FormatIO {
      * @return An array of sucessing position during the game.
      *         Index 0 is the first state and last index is the last state.
      */
-    public BoardSnap[] readRaw(File file) throws IOException;
+    public GameNode[] readRaw(File file) throws IOException;
 
     /**
      * Execute {@link #read(java.io.File,com.ragego.engine.GameBoard)} with data stored in this class.
