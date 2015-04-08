@@ -135,7 +135,7 @@ public class Shape {
      */
     public int countLiberty(){
         final int[] liberty = {0};
-        stones.forEach((stone)-> liberty[0] += stone.countLiberty());
+        stones.forEach((stone) -> liberty[0] += stone.countLiberty());
         return liberty[0];
     }
 
@@ -148,4 +148,7 @@ public class Shape {
         return stones.size() > 0 && countLiberty() > 0;
     }
 
+    public ArrayList<Stone> getStones() {
+        return stones;
+    }
 }

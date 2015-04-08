@@ -74,25 +74,26 @@ public class ConsoleMain implements TurnListener {
     public void newTurn(GameBoard board, Player player) {
         System.out.println(player.getDisplayName() + ", à ton tour");
         Intersection intersection;
-        boolean play;
-        do {
+        GameNode node = null;
+        while(node==null) {
             intersection = readIntersection(board);
             if (!board.isValidIntersection(intersection)) {
                 System.out.println("Euh le Goban fait " + board.getBoardSize() + " de taille, donne des coordonées à l'intérieur.");
-                play = false;
+                node = null;
             } else {
                 try {
-                    play = board.canPlay(player, intersection);
+                    node = new GameNode(board,null, GameNode.Action.PUT_STONE,intersection,player);
+                    if(!board.canPlay(node)) {
+                        System.out.println("Tu ne peux pas jouer sur cette case");
+                        node = null;
+                    }
                 } catch (GoRuleViolation goRuleViolation) {
                     System.out.println("Tu violes une des règle du Go !");
-                    play = false;
+                    node = null;
                 }
             }
-            if (!play)
-                System.out.println("Tu ne peux pas jouer sur cette case");
-        } while (!play);
-        final Stone element = new Stone(intersection,player);
-        board.setElement(intersection, element);
+        }
+        board.play(node);
     }
 
     private Iterator<String> coupsIterator = new Iterator<String>() {
