@@ -1,8 +1,11 @@
 package com.ragego.engine;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 
 /**
  * Represent a board of Go.
@@ -24,9 +27,9 @@ public class GameBoard {
     public static final int DEFAULT_BOARD_SIZE = 19;
 
     /**
-     * This params contain an historic of all know situation
+     * Register the last validated node in the game.
      */
-    private ArrayList<BoardSnap> snapshots = new ArrayList<>();
+    private GameNode lastNode;
 
     private Player firstPlayer;
     private Player secondPlayer;
@@ -74,6 +77,7 @@ public class GameBoard {
         this.secondPlayer = secondPlayer;
         this.boardSize = boardSize;
         this.board = new HashMap<>(this.boardSize*this.boardSize);
+        lastNode=new GameNode(this, GameNode.Action.START_GAME);
     }
 
     /**
@@ -87,12 +91,11 @@ public class GameBoard {
             currentPlayer = currentPlayer == getFirstPlayer() ? getSecondPlayer() : getFirstPlayer();
         }
         { // Spread events that a turn is starting
-            final BoardSnap snapBefore = new BoardSnap(this);
-            getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
-            getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
-            if (!new BoardSnap(this).equals(snapBefore)) {
-                throw new IllegalStateException("A player has modified the board, and this should not be");
-            }
+                doNotEditBoard(()->{
+                    getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+                    getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+                    return null;
+                });
         }
         isDeletingDeadStones = false;
         // Play the turn
@@ -101,28 +104,49 @@ public class GameBoard {
         isDeletingDeadStones = true;
         computeDeadStone(previousPlayer);
         computeDeadStone(currentPlayer);
+        lastNode.recomputeHash();
+        lastNode.lock();
         { // Spread events that a turn is ended
-            final BoardSnap snapAfter = new BoardSnap(this);
-            getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
-            getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
-            if (!new BoardSnap(this).equals(snapAfter)) {
-                throw new IllegalStateException("A player has modified the board, and this should not be");
-            }
-            snapshots.add(snapAfter);
+            doNotEditBoard(() -> {
+                getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+                getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+                return null;
+            });
+        }
+    }
+
+    private void doNotEditBoard(Callable<Void> callable) {
+        final String signature = getBoardHash();
+        try {
+            callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException("Error during event handling",e);
+        }
+        if (!signature.equals(getBoardHash())) {
+            throw new IllegalStateException("A player has modified the board, and this should not be");
         }
     }
 
     /**
      * Check that we can play on this intersection.
-     * @param player Player which is playing
-     * @param intersection Intersection where we want to play
+     * @param node The {@link GameNode} which represent what you want to play.
      * @return true if it's correct following the Go rules to play on this row.
      */
-    public boolean canPlay(Player player, Intersection intersection) throws GoRuleViolation{
+    public boolean canPlay(GameNode node) throws GoRuleViolation{
+        // Save old board to restore after use
         HashMap<Intersection,Stone> oldBoard = new HashMap<>(board);
+
+        // Result storage
         GoRuleViolation.Type type = null;
         boolean isViolatingRule = false;
         String message = null;
+
+        // Register the node as child of current (temporary)
+        lastNode.addChild(node);
+
+        // Retrive useful data from the node
+        Intersection intersection=node.getIntersection();
+        Player player=node.getPlayer();
         Stone testStone = new Stone(intersection,player);
         { // Check we are playing on the current board
             checkBoardForIntersection(intersection);
@@ -141,22 +165,51 @@ public class GameBoard {
                     isViolatingRule = true;
                 }
         }
+        board = new HashMap<>(oldBoard); // Reset the computing
         if(!isViolatingRule){ // Rule 8 : A play may not recreate a previous position from the game.
             setElement(intersection, testStone);
             computeDeadStone(getOpponent(player));
             computeDeadStone(player);
-            if(snapshots.contains(new BoardSnap(getRepresentation()))){
+            node.recomputeHash();
+            if(node.isMakingKO()){
                 type = GoRuleViolation.Type.KO;
                 message = "You made a position that exists";
                 isViolatingRule = true;
             }
         }
         board = oldBoard;
+        lastNode.removeChild(node);
+        // No inspection due to a false inspection result.
+        //noinspection ConstantConditions
         if(message!=null&&isViolatingRule){
             throw new GoRuleViolation(type,message);
         }
         // No rule violation
         return true;
+    }
+
+    public void play(GameNode node){
+        try {
+            if(!canPlay(node)){
+                throw new IllegalArgumentException("The wanted action is violating a Go rule");
+            }
+        } catch (GoRuleViolation goRuleViolation) {
+            throw new IllegalArgumentException("The wanted action is violating a Go rule",goRuleViolation);
+        }
+        node.setParent(lastNode);
+        lastNode = node;
+        switch (node.getAction()){
+
+            case START_GAME:
+                break;
+            case PASS:
+                break;
+            case PUT_STONE:
+                setElement(node.getIntersection(),node.getStone());
+                break;
+            case IA_SPECIAL_ACTION:
+                break;
+        }
     }
 
     /**
@@ -211,14 +264,19 @@ public class GameBoard {
      */
     public Stone[] computeDeadStone(Player player){
         HashMap<Intersection,Stone> deadStones = new HashMap<>();
+
+        // Look for dead stones.
+        // On each shape, check if it's alive.
         board.forEach((intersection,stone)->{
             if(stone!=null&&stone.getPlayer() == player&&stone.getShape()!=null&&!stone.getShape().isAlive())
-                deadStones.put(intersection, stone);
+                stone.getShape().getStones().forEach((deadStone)-> deadStones.put(deadStone.getPosition(),deadStone));
         });
-        if(isDeletingDeadStones) {
-            deadStones.forEach(board::remove);
-            deadStones.forEach(this::deadStone);
-        }
+
+        // If we are in test mode we only delete stones from the board but we wont they know they are deleted
+        if (isDeletingDeadStones) deadStones.forEach(this::deadStone);
+        else deadStones.forEach(board::remove);
+
+        // Return set of dead stones
         return deadStones.values().toArray(new Stone[deadStones.size()]);
     }
 
@@ -238,7 +296,7 @@ public class GameBoard {
      * @param intersection One of intersection of this board
      * @param element The element to put
      */
-    public void setElement(Intersection intersection, Stone element){
+    private void setElement(Intersection intersection, Stone element){
         checkBoardForIntersection(intersection);
         Shape shape = searchForShapesAround(intersection, element.getPlayer());
         if(shape == null)
@@ -309,8 +367,7 @@ public class GameBoard {
     public int[][] getRepresentation(){
         int[][] data = new int[boardSize][boardSize];
         board.forEach((intersection, goElement) -> data[intersection.getLine()][intersection.getColumn()] =
-                goElement.getPlayer() == firstPlayer ?
-                        1 : 2);
+        getPlayerSign(goElement.getPlayer()));
         return data;
     }
 
@@ -352,6 +409,29 @@ public class GameBoard {
      */
     public boolean isValidIntersection(Intersection intersection) {
         return intersection.getColumn()>=0&&intersection.getColumn()<boardSize&&intersection.getLine()>=0&&intersection.getLine()<boardSize;
+    }
+
+    /**
+     * Get a string of the board state.
+     * Compute a string which is unique in function of board stones positions.
+     */
+    public String getBoardHash(){
+        String digest = "error";
+        int[][] data = getRepresentation();
+        byte[] bytes = new byte[data.length*data[0].length];
+        for (int i1 = 0, dataLength = data.length; i1 < dataLength; i1++) {
+            int[] line = data[i1];
+            for (int i2 = 0, columnLength = line.length; i2 < columnLength; i2++) {
+                int i = line[i2];
+                bytes[i1*dataLength+i2] = (byte) i;
+            }
+        }
+        try {
+            digest = new String(MessageDigest.getInstance("MD5").digest(bytes));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return digest;
     }
 
     /**
