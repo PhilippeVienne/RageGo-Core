@@ -1,4 +1,4 @@
-# RageGo [![Build Status](https://travis-ci.org/PhilippeGeek/RageGo.svg?branch=master)](https://travis-ci.org/PhilippeGeek/RageGo)[![Coverage Status](https://coveralls.io/repos/PhilippeGeek/RageGo/badge.svg)](https://coveralls.io/r/PhilippeGeek/RageGo)[![Join the chat at https://gitter.im/PhilippeGeek/RageGo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PhilippeGeek/RageGo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# RageGo [![Build Status](https://travis-ci.org/PhilippeGeek/RageGo.svg?branch=master)](https://travis-ci.org/PhilippeGeek/RageGo) [![Join the chat at https://gitter.im/PhilippeGeek/RageGo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PhilippeGeek/RageGo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 RageGo : Role-play and Aesthetic Game Engine for Go
 
