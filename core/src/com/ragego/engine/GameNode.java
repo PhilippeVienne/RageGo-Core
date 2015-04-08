@@ -1,7 +1,5 @@
 package com.ragego.engine;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 
 /**
@@ -192,7 +190,7 @@ public class GameNode {
      * Normally you should call this function only one time.
      * @param gameNode The GameNode to set as parent (should not be null)
      */
-    public void setParent(@NotNull GameNode gameNode){
+    public void setParent(GameNode gameNode){
         if(gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
         if(!gameNode.hasChild(this)){
             gameNode.addChild(this);
