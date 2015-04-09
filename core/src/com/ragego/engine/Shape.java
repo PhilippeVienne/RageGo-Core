@@ -114,6 +114,7 @@ public class Shape {
      */
     public void unionWith(Shape shape) {
         shape.stones.forEach(this::addStonePrivate);
+        shape.stones.forEach(shape.stones::remove);
         shape.stones = new ArrayList<>();
     }
 
@@ -122,9 +123,6 @@ public class Shape {
      * @param stone the stone to add
      */
     private void addStonePrivate(Stone stone) {
-        if(stone.getShape() != null){
-            stone.getShape().stones.remove(stone);
-        }
         stone.setShape(this);
         stones.add(stone);
     }
