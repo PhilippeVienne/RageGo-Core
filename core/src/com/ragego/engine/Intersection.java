@@ -42,22 +42,12 @@ public class Intersection {
     }
 
     /**
-     * Create a representation of an Intersection without a board.
-     * @param column Column associated : numbers from left to right
-     * @param line Line associated : numbers from top to bottom
-     * @deprecated It's bad to use without board, what are you doing ?
-     */
-    public Intersection(int column, int line) {
-        this(column,line,null);
-    }
-
-    /**
      * Create a representation of an Intersection with an attached board.
      * @param column Column associated : numbers from left to right
      * @param line Line associated : numbers from top to bottom
      * @param board Attached board
      */
-    public Intersection(int column, int line, GameBoard board) {
+    protected Intersection(int column, int line, GameBoard board) {
         this.column = column;
         this.line = line;
         this.board = board;
@@ -99,13 +89,19 @@ public class Intersection {
                 ((column + 1) == position.column && line == position.line);
     }
 
-    public Intersection[] getNeighboursIntersections() {
-        return new Intersection[]{
-                new Intersection(column+1,line,board),
-                new Intersection(column-1,line,board),
-                new Intersection(column,line+1,board),
-                new Intersection(column,line-1,board),
-        };
+    /**
+     * Get neighbours of this intersection.
+     * @return Array of intersection. The size depends of number of neighbours
+     */
+    public ArrayList<Intersection> getNeighboursIntersections() {
+        ArrayList<Intersection> neighbours = new ArrayList<>(4);
+        for(Intersection i:new Intersection[]{
+                get(column+1,line,board),
+                get(column-1,line,board),
+                get(column,line+1,board),
+                get(column,line-1,board),
+        }) if(board.isValidIntersection(i)) neighbours.add(i);
+        return neighbours;
     }
 
     @Override
@@ -125,10 +121,33 @@ public class Intersection {
         return (board!=null?board.hashCode()*10000:0)+line*100+column;
     }
 
+    /**
+     * Retrive an intersection.
+     * If the intersection has already been created, return it. Otherwise, create a new Intersection.
+     * @param column Column associated : numbers from left to right
+     * @param line Line associated : numbers from top to bottom
+     * @param board Attached board
+     * @return The representation of the intersection
+     */
     public static Intersection get(int column, int line, GameBoard board) {
         if(intersections.containsKey(computeUniqueKey(column, line, board)))
             return intersections.get(computeUniqueKey(column, line, board));
         else
             return new Intersection(column, line, board);
+    }
+
+    /**
+     * Retrieve an intersection from a SGF format.
+     * @param coordinate Two letters string which represent the coordinate.
+     * @param board Attached board
+     * @return Representation of the intersection
+     */
+    public static Intersection get(String coordinate, GameBoard board){
+        coordinate = coordinate.toLowerCase();
+        if(!coordinate.matches("[a-t]{2}")){
+            throw new IllegalArgumentException("Can not create an intersection with coordinate "+coordinate);
+        }
+        int column = ((int)coordinate.charAt(0))-'a', line = ((int)coordinate.charAt(1))-'a';
+        return get(column,line,board);
     }
 }

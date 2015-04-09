@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
  *  <li>The second coordinate is the line from top to bottom.</li>
  * </ul>
  * <p>Each intersection is assigned to a shape, empty (or assigned to something special)</p>
+ * <p>First player has black color and the second is white.</p>
  *
  * @author Philippe Vienne
  */
@@ -445,6 +446,35 @@ public class GameBoard {
             e.printStackTrace();
         }
         return digest;
+    }
+
+    /**
+     * Get the black player.
+     * In Go rules, the black player start the game so this function is an easy way to access to first player.
+     * @return The first player
+     * @see #getFirstPlayer()
+     */
+    public Player getBlackPlayer(){
+        return getFirstPlayer();
+    }
+
+    /**
+     * Get the white player.
+     * In Go rules, the white player do not start the game so this function is an easy way to access to second player.
+     * @return The second player
+     * @see #getSecondPlayer()
+     */
+    public Player getWhitePlayer(){
+        return getSecondPlayer();
+    }
+
+    /**
+     * Get letter that represent for player.
+     * W is for White player and B is for Black player.
+     * @return The letter capitalized
+     */
+    public char getLetterForPlayer(Player player){
+        return getBlackPlayer() == player?'B':(getWhitePlayer()==player?'W':'?');
     }
 
     //////////////////////////////////////////////////////////:

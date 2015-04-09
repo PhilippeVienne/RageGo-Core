@@ -1,6 +1,7 @@
 package com.ragego.engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * State of the game.
@@ -14,6 +15,10 @@ import java.util.ArrayList;
  */
 public class GameNode {
 
+    /**
+     * Describe if this node is loked.
+     * A locked node is unable to refresh the hash from GameBoard. It prevent manipulation of history.
+     */
     private boolean locked=false;
 
     /**
@@ -73,6 +78,13 @@ public class GameNode {
      * one child when you are playing.
      */
     private ArrayList<GameNode> children = new ArrayList<>();
+
+    /**
+     * Property for this node.
+     * You can set properties to a Game node. This is usefull for the main game node to set information data. This
+     * data use code from SGF format.
+     */
+    private HashMap<String, String> properties = new HashMap<>();
 
     /**
      * Create a node from a given Game board.
@@ -263,6 +275,24 @@ public class GameNode {
     }
 
     /**
+     * Get value of a property of this node.
+     * @return The value or null if there is not one.
+     */
+    public String getProperty(String key){
+        return properties.get(key);
+    }
+
+    /**
+     * Set value as property of this node.
+     * @param key The key used for this property.
+     * @param value The stored value.
+     * @return Previous value if there is one.
+     */
+    public String setProperty(String key, String value){
+        return properties.put(key, value);
+    }
+
+    /**
      * Check if this instance has parent.
      * @return true if it's an orphan.
      */
@@ -270,6 +300,12 @@ public class GameNode {
         return parent!=null;
     }
 
+    /**
+     * Compare nodes to chech if they are the same.
+     * Two nodes are identical if they has the same hash code.
+     * @param obj The object to compare.
+     * @return True on identical GameNode.
+     */
     @Override
     public boolean equals(Object obj) {
         return (this == obj) || ((obj instanceof GameNode) && (boardHash != null) && (((GameNode) obj).boardHash != null) && boardHash.equals(((GameNode) obj).boardHash));
