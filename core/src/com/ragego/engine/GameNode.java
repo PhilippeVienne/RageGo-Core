@@ -337,6 +337,6 @@ public class GameNode {
         START_GAME,
         PASS,
         PUT_STONE,
-        IA_SPECIAL_ACTION
+        NOTHING, IA_SPECIAL_ACTION
     }
 }
