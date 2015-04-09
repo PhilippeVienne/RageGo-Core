@@ -121,12 +121,13 @@ public class StandardGameFormatIO implements FormatIO {
                 throw sgfError("No game tree found!");
 
             if (ttype == '(') {
+                tokenizer.pushBack();
                 break;
             }
         }
 
         // Now we can start to read, we call recursive
-        parseNode(null, true);
+        parseBranch(null, true);
 
         // If we come here, all happened correctly
         return false;
@@ -150,6 +151,8 @@ public class StandardGameFormatIO implements FormatIO {
      */
     private GameNode parseNode(GameNode parent, boolean is_root) throws IOException {
 
+        boolean next_is_root = is_root;
+
         // Create this node
         GameNode node = new GameNode(game, parent, null);
         currentNode = node;
@@ -168,8 +171,7 @@ public class StandardGameFormatIO implements FormatIO {
                     break;
 
                 case ';':
-                    tokenizer.pushBack();
-                    parseNode(node, false);
+                    parseNode(node, next_is_root);
                     done = true;
                     break;
 
@@ -179,6 +181,9 @@ public class StandardGameFormatIO implements FormatIO {
                     break;
 
                 case StreamTokenizer.TT_WORD:
+                    if (is_root) {
+                        next_is_root = false;
+                    }
                     parseProperty(node, is_root);
                     break;
 
@@ -249,7 +254,7 @@ public class StandardGameFormatIO implements FormatIO {
                     case "GM":
                         node.setProperty(name, val);
                         if (!is_root) throw sgfError("GM property in non-root node!");
-                        if (Integer.parseInt(val) != GM_CODE || Integer.parseInt(val) != 1)
+                        if (Integer.parseInt(val) != GM_CODE && Integer.parseInt(val) != 1)
                             throw sgfError("Not a RageGO or Go game!");
                         break;
                     case "SZ":
