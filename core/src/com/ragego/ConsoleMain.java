@@ -27,7 +27,6 @@ public class ConsoleMain implements TurnListener {
             play();
         } catch (Exception e) {
             e.printStackTrace(System.err);
-            //System.err.println("Il est mort, Jim.");
         }
     }
 
@@ -115,15 +114,14 @@ public class ConsoleMain implements TurnListener {
 
     private Intersection readIntersection(GameBoard board) {
         if(coupsIterator.hasNext()){
-            return Intersection.get(coupsIterator.next(),board);
+            final String next = coupsIterator.next();
+            System.out.println("Prochain coup : "+ next +", appuyez sur entrée pour valider.");
+            new Scanner(System.in).nextLine();
+            return Intersection.get(next,board);
         }
         try {
             System.out.print("Tu veux jouer sur (écris sous forme colonne-ligne) : ");
             String values = new Scanner(System.in).nextLine();
-            if(coupsIterator.hasNext()){
-                values = coupsIterator.next();
-                System.out.println("On joue : "+values);
-            }
             return Intersection.get(values, board);
         } catch (Exception e) {
             System.out.println("Ecris bien sous la forme \"A5\" où A est la colonne et 5 est la ligne !");
