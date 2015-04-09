@@ -18,6 +18,7 @@ public class ConsoleMain implements TurnListener {
         board = new GameBoard(humanOne, humanSecond);
     }
 
+    @SuppressWarnings("InfiniteRecursion") // This is wanted
     public void play() {
         try {
             printBoard(board);
@@ -113,6 +114,9 @@ public class ConsoleMain implements TurnListener {
     };
 
     private Intersection readIntersection(GameBoard board) {
+        if(coupsIterator.hasNext()){
+            return Intersection.get(coupsIterator.next(),board);
+        }
         try {
             System.out.print("Tu veux jouer sur (écris sous forme colonne-ligne) : ");
             String values = new Scanner(System.in).nextLine();
@@ -120,9 +124,7 @@ public class ConsoleMain implements TurnListener {
                 values = coupsIterator.next();
                 System.out.println("On joue : "+values);
             }
-            if (!values.matches("[A-Z][0-9]+"))
-                throw new Exception("Not good format");
-            return Intersection.get(((int) (values.split("[0-9]", 2)[0].charAt(0))) - 65, Integer.parseInt(values.split("[A-Z]", 2)[1]) - 1, board);
+            return Intersection.get(values, board);
         } catch (Exception e) {
             System.out.println("Ecris bien sous la forme \"A5\" où A est la colonne et 5 est la ligne !");
             return readIntersection(board);

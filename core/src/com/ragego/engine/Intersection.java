@@ -144,10 +144,19 @@ public class Intersection {
      */
     public static Intersection get(String coordinate, GameBoard board){
         coordinate = coordinate.toLowerCase();
-        if(!coordinate.matches("[a-t]{2}")){
+        if(coordinate.matches("[a-t][0-9]{1,2}")){
+            return Intersection.get(
+                    ((int) (coordinate.split("[0-9]", 2)[0].charAt(0))) - 'a',
+                    Integer.parseInt(coordinate.substring(1,coordinate.length())) - 1,
+                    board);
+        } else if(coordinate.matches("[a-t]{2}")){
+            int column = ((int)coordinate.charAt(0))-'a', line = ((int)coordinate.charAt(1))-'a';
+            return get(column,line,board);
+        } else { // It's not a SGF standard format
             throw new IllegalArgumentException("Can not create an intersection with coordinate "+coordinate);
         }
-        int column = ((int)coordinate.charAt(0))-'a', line = ((int)coordinate.charAt(1))-'a';
-        return get(column,line,board);
+
     }
+
+
 }
