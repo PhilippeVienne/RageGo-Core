@@ -1,12 +1,14 @@
 package com.ragego.utils;
 
-import com.ragego.engine.GameNode;
 import com.ragego.engine.GameBoard;
+import com.ragego.engine.GameNode;
+import com.ragego.engine.Intersection;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Vector;
+import java.awt.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
 
 /**
  * This class read an SGF file.
@@ -17,8 +19,17 @@ import java.util.Vector;
 @SuppressWarnings("UnusedDeclaration") // Because it's an API so all functions are not used.
 public class StandardGameFormatIO implements FormatIO {
 
+    private static final int GM_CODE = 111;
+    GameNode rootNode;
+    GameNode currentNode;
     private File file;
     private GameBoard game;
+    private FileReader reader;
+    /**
+     * Tokenizer to simple read sgf file.
+     * This is useful to not rewrite a tokenizer :-D.
+     */
+    private StreamTokenizer tokenizer;
 
     /**
      * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
@@ -78,12 +89,6 @@ public class StandardGameFormatIO implements FormatIO {
         return new GameNode[0];
     }
 
-    /**
-     * Tokenizer to simple read sgf file.
-     * This is useful to not rewrite a tokenizer :-D.
-     */
-    private StreamTokenizer tokenizer;
-
     @Override
     public boolean read() throws IOException {
         return read(file,game);
@@ -100,9 +105,12 @@ public class StandardGameFormatIO implements FormatIO {
             throw new IllegalArgumentException("You can not read to a different game instance than the FormatIO instance");
         }
         this.game = game; // As this, it's fixed.
+        this.rootNode = null; // Delete previous data.
+        this.currentNode = null;
 
         // Open and setup the tokenizer
-        tokenizer = new StreamTokenizer(new FileReader(file));
+        reader = new FileReader(file);
+        tokenizer = new StreamTokenizer(reader);
         tokenizer.slashSlashComments(false);
         tokenizer.slashStarComments(false);
 
@@ -118,21 +126,10 @@ public class StandardGameFormatIO implements FormatIO {
         }
 
         // Now we can start to read, we call recursive
-        Node root = readNode(null, true);
-
-        // Fill the game with node data
-        fillGameWithNode(root);
+        parseNode(null, true);
 
         // If we come here, all happened correctly
         return false;
-    }
-
-    /**
-     * Fill the game with root node data (and child)
-     * @param root Main node in the game
-     */
-    private void fillGameWithNode(Node root) {
-
     }
 
     /**
@@ -151,110 +148,216 @@ public class StandardGameFormatIO implements FormatIO {
      * @param is_root Define if we are on root node (only one time in a parse)
      * @return The completed node with game data. On root, return the main game node.
      */
-    private Node readNode(Node parent, boolean is_root) {
-        if(is_root && parent == null){ // Create the root node
-            parent = new Node();
+    private GameNode parseNode(GameNode parent, boolean is_root) throws IOException {
+
+        // Create this node
+        GameNode node = new GameNode(game, parent, null);
+        currentNode = node;
+        if (is_root) { // Create the root node
+            node.setAction(GameNode.Action.START_GAME);
+            rootNode = node;
+        }
+
+        boolean done = false;
+        while (!done) {
+            int ttype = tokenizer.nextToken();
+            switch (ttype) {
+                case '(':
+                    tokenizer.pushBack();
+                    parseBranch(node, false);
+                    break;
+
+                case ';':
+                    tokenizer.pushBack();
+                    parseNode(node, false);
+                    done = true;
+                    break;
+
+                case ')':
+                    tokenizer.pushBack();
+                    done = true;
+                    break;
+
+                case StreamTokenizer.TT_WORD:
+                    parseProperty(node, is_root);
+                    break;
+
+                case StreamTokenizer.TT_EOF:
+                    throw sgfError("Unexpected EOF in node!");
+
+                default:
+                    throw sgfError("Error in SGF file.");
+            }
         }
 
         return parent;
     }
 
-    /**
-     * Represent a node in SGF Format.
-     */
-    private static class Node {
+    private void parseProperty(GameNode node, boolean is_root) throws IOException {
+        int x, y;
+        String name = tokenizer.sval;
 
-        private static final String W = "W";
-        private static final String B = "B";
-        private static final String AB = "AB";
-        private static final String AW = "AW";
-        private Node parent;
-        private Vector<Node> children = new Vector<>();
-        private HashMap<String,String> data = new HashMap<>();
+        boolean done = false;
+        while (!done) {
 
-        public Node(){}
+            int ttype = tokenizer.nextToken();
+            if (ttype != '[')
+                done = true;
+            tokenizer.pushBack();
+            if (!done) {
+                String val;
+                if (name.equals("C"))
+                    val = parseComment();
+                else
+                    val = parseValue();
+                //System.out.println(name + "[" + val + "]");
 
-        public Node(String data){
-            parseData(data);
-        }
-
-        public Node getParent() {
-            return parent;
-        }
-
-        public void setParent(Node parent) {
-            this.parent = parent;
-            if(!parent.getChildren().contains(this))
-                parent.addChild(this);
-        }
-
-        public Vector<Node> getChildren() {
-            return children;
-        }
-
-        public void addChild(Node child) {
-            this.children.add(child);
-        }
-
-        public String get(String property){
-            return data.containsKey(property)?data.get(property):null;
-        }
-
-        public String set(String property, String data){
-            return this.data.put(property,data);
-        }
-
-        public boolean isWhiteMove(){
-            return data.containsKey(W);
-        }
-
-        public boolean isBlackMove(){
-            return data.containsKey(B);
-        }
-
-        public int[] getMoveCoordinates(){
-            if(!isBlackMove()&&!isWhiteMove()) return null;
-            String move = isWhiteMove()?get(W):get(B);
-            if(move.length()!=2&&move.matches("[A-Sa-s]{2}"))
-                throw new IllegalStateException("A move contains 2 coordinates within [a-s] or [A-S]");
-            move = move.toLowerCase(Locale.US);
-            return new int[]{(int)(move.toCharArray()[0])-96,(int)(move.toCharArray()[1])-96};
-        }
-
-        public void parseData(String data){
-            boolean isReadingKey = true;
-            boolean isReadingData = false;
-            boolean isReadingOpenSign = false;
-            boolean isReadingCloseSign = false;
-            StringBuilder bufferKey=new StringBuilder();
-            StringBuilder bufferData = new StringBuilder();
-            for(char c:data.toCharArray()){
-                if(c=='['&&isReadingKey){
-                    isReadingKey = false;
-                    isReadingOpenSign = true;
-                }else if(c==']'&&isReadingData){
-                    isReadingData = false;
-                    isReadingCloseSign = true;
-                    this.data.put(bufferKey.toString(),bufferData.toString());
-                    bufferData = new StringBuilder();
-                    bufferKey = new StringBuilder();
-                }
-                if(Character.isLetterOrDigit(c)){
-                    if(isReadingOpenSign){
-                        isReadingOpenSign = false;
-                        isReadingData = true;
-                    } else if(isReadingCloseSign){
-                        isReadingCloseSign = false;
-                        isReadingKey = true;
+                switch (name) {
+                    case "W": {
+                        node.setAction(GameNode.Action.PUT_STONE);
+                        node.setIntersection(Intersection.get(val, game));
+                        node.setPlayer(game.getWhitePlayer());
+                        break;
                     }
-                }
-                if(isReadingKey){
-                    bufferKey.append(c);
-                } else if(isReadingData){
-                    bufferData.append(c);
+                    case "B": {
+                        node.setAction(GameNode.Action.PUT_STONE);
+                        node.setIntersection(Intersection.get(val, game));
+                        node.setPlayer(game.getBlackPlayer());
+                        break;
+                    }
+                    case "AB":
+                        if (!is_root) throw sgfError("AB property in non-root node!");
+                        node.addSetup(game.getBlackPlayer(), Intersection.get(val, game));
+                        break;
+                    case "AW":
+                        if (!is_root) throw sgfError("AW property in non-root node!");
+                        node.addSetup(game.getWhitePlayer(), Intersection.get(val, game));
+                        break;
+                    case "AE":
+                        if (!is_root) throw sgfError("AE property in non-root node!");
+                        node.addSetup(null, Intersection.get(val, game));
+                        break;
+                    case "LB":
+                        node.addLabel(val);
+                        break;
+                    case "FF":
+                        node.setProperty(name, val);
+                        x = Integer.parseInt(val);
+                        if (x < 1 || x > 4)
+                            throw sgfError("Invalid SGF Version! (" + x + ")");
+                        break;
+                    case "GM":
+                        node.setProperty(name, val);
+                        if (!is_root) throw sgfError("GM property in non-root node!");
+                        if (Integer.parseInt(val) != GM_CODE || Integer.parseInt(val) != 1)
+                            throw sgfError("Not a RageGO or Go game!");
+                        break;
+                    case "SZ":
+                        node.setProperty(name, val);
+                        if (!is_root) throw sgfError("GM property in non-root node!");
+                        Dimension dim = new Dimension();
+                        String sp[] = val.split(":");
+                        if (sp.length == 1) {
+                            x = Integer.parseInt(sp[0]);
+                            //noinspection SuspiciousNameCombination
+                            dim.setSize(x, x);
+                        } else if (sp.length == 2) {
+                            x = Integer.parseInt(sp[0]);
+                            y = Integer.parseInt(sp[1]);
+                            dim.setSize(x, y);
+                        } else {
+                            throw sgfError("Malformed boardsize!");
+                        }
+
+                        // TODO : ??
+
+                        break;
+                    default:
+                        node.setProperty(name, val);
+                        break;
                 }
             }
         }
+    }
 
+    private String parseValue() throws IOException {
+        int ttype = tokenizer.nextToken();
+        if (ttype != '[')
+            throw sgfError("Property missing opening '['.");
+
+        StringBuilder sb = new StringBuilder(256);
+        boolean quoted = false;
+        while (true) {
+            int c = reader.read();
+            if (c < 0)
+                throw sgfError("Property runs to EOF.");
+
+            if (!quoted) {
+                if (c == ']') break;
+                if (c == '\\')
+                    quoted = true;
+                else {
+                    if (c != '\r' && c != '\n')
+                        sb.append((char) c);
+                }
+            } else {
+                quoted = false;
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private String parseComment() throws IOException {
+        int ttype = tokenizer.nextToken();
+        if (ttype != '[')
+            throw sgfError("Comment missing opening '['.");
+
+        StringBuilder sb = new StringBuilder(4096);
+        boolean quoted = false;
+        while (true) {
+            int c = reader.read();
+            if (c < 0)
+                throw sgfError("Comment runs to EOF.");
+
+            if (!quoted) {
+                if (c == ']') break;
+
+                if (c == '\\')
+                    quoted = true;
+                else {
+                    sb.append((char) c);
+                }
+            } else {
+                quoted = false;
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Parse a branch in the game node.
+     * A branch start with '(' and close with ')'. The first node in branch is a child of node given.
+     *
+     * @param node    The parent node for this branch
+     * @param is_root True if it's the root branch
+     * @return The first child of branch
+     * @throws IOException
+     */
+    private GameNode parseBranch(GameNode node, boolean is_root) throws IOException {
+        int ttype = tokenizer.nextToken();
+        if (ttype != '(')
+            throw sgfError("Missing '(' at head of game tree.");
+
+        GameNode child = parseNode(node, is_root);
+
+        ttype = tokenizer.nextToken();
+        if (ttype != ')')
+            throw sgfError("Game tree not closed!");
+
+        return child;
     }
 }

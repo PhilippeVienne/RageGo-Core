@@ -16,69 +16,52 @@ import java.util.HashMap;
 public class GameNode {
 
     /**
-     * Describe if this node is loked.
-     * A locked node is unable to refresh the hash from GameBoard. It prevent manipulation of history.
-     */
-    private boolean locked=false;
-
-    /**
-     * Describe actions possible in the game between two nodes.
-     * Currently, the actions are :
-     * <ul>
-     *     <li><b>START_GAME</b>: First node is a START_GAME, it defines a start for the node's tree.</li>
-     *     <li><b>PASS</b>: The player decide to not play his turn. Intersection data is null. KO rule not checkable.</li>
-     *     <li><b>PUT_STONE</b>: A player put a stone on the board. The data is after compute dead stones</li>
-     *     <li><b>IA_SPECIAL_ACTION</b>: (Not SGF standard) something strange happened and board is not the same</li>
-     * </ul>
-     */
-    public enum Action {
-        START_GAME,
-        PASS,
-        PUT_STONE,
-        IA_SPECIAL_ACTION
-    }
-
-    /**
      * Board attached to this node.
      * Board where this action has been played.
      */
     private final GameBoard board;
-
+    /**
+     * Raw data from board state on this node
+     */
+    private final int[][] rawData;
+    /**
+     * Describe if this node is loked.
+     * A locked node is unable to refresh the hash from GameBoard. It prevent manipulation of history.
+     */
+    private boolean locked = false;
+    /**
+     * Label for this node.
+     */
+    private String label;
     /**
      * The action on this node.
      */
-    private final Action action;
-
+    private Action action;
     /**
      * Intersection where the action is.
      * If the action is not on a specific intersection, this value is null.
      */
-    private final Intersection intersection;
-
+    private Intersection intersection;
     /**
      * Player acting for this node.
      */
-    private final Player player;
-
+    private Player player;
     /**
      * Represent the {@link GameBoard} as a MD5 hash.
      * We consider that MD5 algorithm is too complex to make (19*19)^3 solutions different.
      */
     private String boardHash;
-
     /**
      * The parent node.
      * This node contains the previous state. If there is not one (null value), consider we are at game start point.
      */
     private GameNode parent = null;
-
     /**
      * Children state.
      * From one state, you can make many actions, if we represent that, we have children. Normaly, a node has only
      * one child when you are playing.
      */
     private ArrayList<GameNode> children = new ArrayList<>();
-
     /**
      * Property for this node.
      * You can set properties to a Game node. This is usefull for the main game node to set information data. This
@@ -94,15 +77,11 @@ public class GameNode {
      * @param intersection Where the action is performed (could be null if action is not PUT_STONE)
      * @param player The player acting on this action (could be null)
      */
-    public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Intersection intersection, Player player){
-        if(board == null)
+    public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Intersection intersection, Player player) {
+        if (board == null)
             throw new IllegalArgumentException("Board can not be null");
-        if(action == null)
-            throw new IllegalArgumentException("Node should have an action");
-        if(action == Action.PUT_STONE && intersection == null)
-            throw new IllegalArgumentException("Should have an intersection on PUT_STONE action");
-
         boardHash = board.getBoardHash();
+        this.rawData = board.getRepresentation();
         this.action = action;
         this.intersection = intersection;
         this.player = player;
@@ -116,7 +95,7 @@ public class GameNode {
      * @param action The action performed by this node (could not be null)
      * @param player The player acting on this action (could be null)
      */
-    public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Player player){
+    public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Player player) {
         this(board, parent, action, null, player);
     }
 
@@ -126,7 +105,7 @@ public class GameNode {
      * @param parent The parent node for this node (could be null)
      * @param action The action performed by this node (could not be null)
      */
-    public GameNode(GameBoard board, GameNode parent, GameNode.Action action){
+    public GameNode(GameBoard board, GameNode parent, GameNode.Action action) {
         this(board, parent, action, null, null);
     }
 
@@ -135,12 +114,36 @@ public class GameNode {
      * @param board the board where we are playing
      * @param action The action performed by this node
      */
-    public GameNode(GameBoard board, Action action){
+    public GameNode(GameBoard board, Action action) {
         this(board, null, action, null, null);
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void addLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * Retrieve state of board on this node.
+     * @return Double coordinate array.
+     */
+    public int[][] getRawData() {
+        return rawData;
+    }
+
+    public void addSetup(Player player, Intersection intersection) {
+
     }
 
     public Intersection getIntersection() {
         return intersection;
+    }
+
+    public void setIntersection(Intersection intersection) {
+        this.intersection = intersection;
     }
 
     public GameBoard getBoard() {
@@ -166,8 +169,16 @@ public class GameNode {
         return action;
     }
 
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     public Player getPlayer() {
         return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public String getHashString() {
@@ -181,6 +192,7 @@ public class GameNode {
 
     /**
      * Remove a child from this node
+     *
      * @param node The node to remove
      */
     public void removeChild(GameNode node) {
@@ -192,7 +204,7 @@ public class GameNode {
      * If there is not one (null value), consider we are at game start point.
      * @return The parent node.
      */
-    public GameNode getParent(){
+    public GameNode getParent() {
         return parent;
     }
 
@@ -202,9 +214,9 @@ public class GameNode {
      * Normally you should call this function only one time.
      * @param gameNode The GameNode to set as parent (should not be null)
      */
-    public void setParent(GameNode gameNode){
-        if(gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
-        if(!gameNode.hasChild(this)){
+    public void setParent(GameNode gameNode) {
+        if (gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
+        if (!gameNode.hasChild(this)) {
             gameNode.addChild(this);
         }
         parent = gameNode;
@@ -218,10 +230,10 @@ public class GameNode {
      */
     public void addChild(GameNode gameNode) {
         if(gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
-        if(gameNode.hasParent() && gameNode.getParent() != this)
+        if (gameNode.hasParent() && gameNode.getParent() != this)
             throw new IllegalStateException("This node is already a child of another. Are you making a rape?");
         children.add(gameNode);
-        if(!gameNode.isParent(this))
+        if (!gameNode.isParent(this))
             gameNode.setParent(this);
     }
 
@@ -247,7 +259,7 @@ public class GameNode {
      * Retrieve all children.
      * @return An array of children of this node.
      */
-    public GameNode[] getChildren(){
+    public GameNode[] getChildren() {
         return children.toArray(new GameNode[children.size()]);
     }
 
@@ -256,18 +268,18 @@ public class GameNode {
      * Note if the current action is Pass, it execute this on the next parent who has not passed.
      * @return true if we are violating KO rule.
      */
-    public boolean isMakingKO(){
-        if(!hasParent()) return false;
+    public boolean isMakingKO() {
+        if (!hasParent()) return false;
         GameNode parent = getParent();
-        if(action == Action.PASS){
-            while(parent.hasParent() && parent.action == Action.PASS){
+        if (action == Action.PASS) {
+            while (parent.hasParent() && parent.action == Action.PASS) {
                 parent = parent.getParent();
             }
         }
-        while (parent!=null){
-            if(!parent.hasParent()&&parent.action == Action.PASS) // If it's end on PASS node, it's OK
+        while (parent != null) {
+            if (!parent.hasParent() && parent.action == Action.PASS) // If it's end on PASS node, it's OK
                 return false;
-            if(boardHash.equals(parent.boardHash))
+            if (boardHash.equals(parent.boardHash))
                 return true;
             parent = parent.getParent();
         }
@@ -278,7 +290,7 @@ public class GameNode {
      * Get value of a property of this node.
      * @return The value or null if there is not one.
      */
-    public String getProperty(String key){
+    public String getProperty(String key) {
         return properties.get(key);
     }
 
@@ -288,7 +300,7 @@ public class GameNode {
      * @param value The stored value.
      * @return Previous value if there is one.
      */
-    public String setProperty(String key, String value){
+    public String setProperty(String key, String value) {
         return properties.put(key, value);
     }
 
@@ -309,5 +321,22 @@ public class GameNode {
     @Override
     public boolean equals(Object obj) {
         return (this == obj) || ((obj instanceof GameNode) && (boardHash != null) && (((GameNode) obj).boardHash != null) && boardHash.equals(((GameNode) obj).boardHash));
+    }
+
+    /**
+     * Describe actions possible in the game between two nodes.
+     * Currently, the actions are :
+     * <ul>
+     *     <li><b>START_GAME</b>: First node is a START_GAME, it defines a start for the node's tree.</li>
+     *     <li><b>PASS</b>: The player decide to not play his turn. Intersection data is null. KO rule not checkable.</li>
+     *     <li><b>PUT_STONE</b>: A player put a stone on the board. The data is after compute dead stones</li>
+     *     <li><b>IA_SPECIAL_ACTION</b>: (Not SGF standard) something strange happened and board is not the same</li>
+     * </ul>
+     */
+    public enum Action {
+        START_GAME,
+        PASS,
+        PUT_STONE,
+        IA_SPECIAL_ACTION
     }
 }
