@@ -515,7 +515,7 @@ public class GameBoard {
         checkIAMode();
         if(getElement(intersection)!=null) ia_deleteStone(getElement(intersection));
         Stone stone = new Stone(intersection,player);
-        setElement(intersection,stone);
+        setElement(intersection, stone);
         return stone;
     }
 
@@ -526,7 +526,7 @@ public class GameBoard {
      */
     public void ia_deleteStone(Stone stone){
         checkIAMode();
-        deadStone(stone.getPosition(),stone);
+        deadStone(stone.getPosition(), stone);
     }
 
     /**
@@ -542,13 +542,17 @@ public class GameBoard {
         if(getElement(intersection)!=null)return stone;
         Stone newStone = new Stone(intersection,stone.getPlayer());
         deadStone(stone.getPosition(), stone);
-        setElement(intersection,newStone);
+        setElement(intersection, newStone);
         return newStone;
     }
 
     private void checkIAMode() {
         if(!ia_functions_enabled)
             throw new IllegalStateException("You can not call IA functions here !");
+    }
+
+    public GameNode getLastNode() {
+        return lastNode;
     }
 
     /**

@@ -151,11 +151,17 @@ public class StandardGameFormatIO implements FormatIO {
      */
     private GameNode parseNode(GameNode parent, boolean is_root) throws IOException {
 
+        int ttype = tokenizer.nextToken();
+        if (ttype != ';')
+            throw sgfError("Error at head of node!");
+
         boolean next_is_root = is_root;
 
         // Create this node
-        GameNode node = new GameNode(game, parent, null);
+        GameNode node = new GameNode(game, parent, GameNode.Action.NOTHING);
         currentNode = node;
+        if (parent != null)
+            parent.addChild(node);
         if (is_root) { // Create the root node
             node.setAction(GameNode.Action.START_GAME);
             rootNode = node;
@@ -163,7 +169,7 @@ public class StandardGameFormatIO implements FormatIO {
 
         boolean done = false;
         while (!done) {
-            int ttype = tokenizer.nextToken();
+            ttype = tokenizer.nextToken();
             switch (ttype) {
                 case '(':
                     tokenizer.pushBack();
@@ -171,7 +177,8 @@ public class StandardGameFormatIO implements FormatIO {
                     break;
 
                 case ';':
-                    parseNode(node, next_is_root);
+                    tokenizer.pushBack();
+                    parseNode(next_is_root ? null : node, next_is_root);
                     done = true;
                     break;
 
@@ -231,15 +238,12 @@ public class StandardGameFormatIO implements FormatIO {
                         break;
                     }
                     case "AB":
-                        if (!is_root) throw sgfError("AB property in non-root node!");
                         node.addSetup(game.getBlackPlayer(), Intersection.get(val, game));
                         break;
                     case "AW":
-                        if (!is_root) throw sgfError("AW property in non-root node!");
                         node.addSetup(game.getWhitePlayer(), Intersection.get(val, game));
                         break;
                     case "AE":
-                        if (!is_root) throw sgfError("AE property in non-root node!");
                         node.addSetup(null, Intersection.get(val, game));
                         break;
                     case "LB":
