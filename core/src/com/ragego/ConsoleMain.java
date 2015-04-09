@@ -11,12 +11,10 @@ import java.util.Scanner;
 public class ConsoleMain implements TurnListener {
 
     private GameBoard board;
-    private HumanPlayer humanOne;
-    private HumanPlayer humanSecond;
 
     public ConsoleMain() {
-        humanOne = new HumanPlayer("Player 1", this);
-        humanSecond = new HumanPlayer("Player 2", this);
+        HumanPlayer humanOne = new HumanPlayer("Player 1", this);
+        HumanPlayer humanSecond = new HumanPlayer("Player 2", this);
         board = new GameBoard(humanOne, humanSecond);
     }
 
@@ -124,7 +122,7 @@ public class ConsoleMain implements TurnListener {
             }
             if (!values.matches("[A-Z][0-9]+"))
                 throw new Exception("Not good format");
-            return new Intersection(((int) (values.split("[0-9]", 2)[0].charAt(0))) - 65, Integer.parseInt(values.split("[A-Z]", 2)[1]) - 1, board);
+            return Intersection.get(((int) (values.split("[0-9]", 2)[0].charAt(0))) - 65, Integer.parseInt(values.split("[A-Z]", 2)[1]) - 1, board);
         } catch (Exception e) {
             System.out.println("Ecris bien sous la forme \"A5\" où A est la colonne et 5 est la ligne !");
             return readIntersection(board);
