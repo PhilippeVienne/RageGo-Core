@@ -7,9 +7,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test if SGF files are correctly read
@@ -57,7 +55,7 @@ public class StandardGameFormatIOTest extends RageGoTest {
             try {
                 formatIO.read();
             } catch (IOException e) {
-                assertThat(e.getMessage(), containsString("[SGF Error]"));
+                assert e.getMessage().contains("[SGF Error]");
             }
         }
     }
