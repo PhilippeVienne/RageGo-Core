@@ -1,12 +1,12 @@
 language: java
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 env:
     - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=22.0.1   ANDROID_SDK_TOOLS=24.1.2
 before_install:
     # Install base Android SDK
     - sudo apt-get update -qq
-    # - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
+    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
     - wget http://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
     - tar xzf android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
     - export ANDROID_HOME=$PWD/android-sdk-linux
