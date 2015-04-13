@@ -1,8 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
   - oraclejdk7
-  - oraclejdk6
 env:
     - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=22.0.1   ANDROID_SDK_TOOLS=24.1.2
 before_install:
