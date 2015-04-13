@@ -2,17 +2,12 @@ language: java
 jdk:
   - oraclejdk8
 env:
-    - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=22.0.1
+    - COMPONENTS=build-tools-22.0.1,android-22
 before_install:
     # Install base Android SDK
-    - sudo apt-get update -qq
-    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
-    - wget http://dl.google.com/android/android-sdk_r${ANDROID_PT}-linux.tgz
-    - tar xzf android-sdk_r${ANDROID_PT}-linux.tgz
-    - export ANDROID_HOME=$PWD/android-sdk-linux
-    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-    # Install required Android components.
-    - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --filter platform-tools,android-22,extra-android-support,$ANDROID_SDKS --no-ui --force
+    - sudo apt-get install -qq libstdc++6:i386 lib32z1
+    - curl -L https://raw.github.com/embarkmobile/android-sdk-installer/version-1/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
+    - source ~/.android-sdk-installer/env
 notifications:
   webhooks:
     urls:
