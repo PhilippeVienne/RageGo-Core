@@ -12,7 +12,6 @@ before_install:
     - export ANDROID_HOME=$PWD/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
     # Install required Android components.
-    - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk  --no-ui --force
     - android list sdk --extended -a
     - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --filter platform-tools,android-22,extra-android-support,$ANDROID_SDKS --no-ui --force
 notifications:
