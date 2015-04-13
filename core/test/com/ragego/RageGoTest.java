@@ -26,7 +26,8 @@ public class RageGoTest {
         File tempFile = null;
         try {
             tempFile = File.createTempFile(filename, extension);
-            try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+            try {
                 outputStream.write(data.getBytes());
             } catch (IOException e) {
                 e.printStackTrace();

@@ -9,11 +9,76 @@ import java.util.HashMap;
  */
 public class Intersection {
 
-    private static HashMap<Integer,Intersection> intersections = new HashMap<>(GameBoard.DEFAULT_BOARD_SIZE*GameBoard.DEFAULT_BOARD_SIZE);
+    private static HashMap<Integer, Intersection> intersections = new HashMap<Integer, Intersection>(GameBoard.DEFAULT_BOARD_SIZE * GameBoard.DEFAULT_BOARD_SIZE);
 
     private int column;
     private int line;
     private GameBoard board;
+
+    /**
+     * Create a representation of an Intersection with an attached board.
+     * @param column Column associated : numbers from left to right
+     * @param line Line associated : numbers from top to bottom
+     * @param board Attached board
+     */
+    protected Intersection(int column, int line, GameBoard board) {
+        this.column = column;
+        this.line = line;
+        this.board = board;
+        intersections.put(hashCode(), this);
+    }
+
+    /**
+     * Compute an unique identifier for an intersection.
+     * This function suppose that line and column are inferior to 100.
+     *
+     * @param column Column associated to this intersection
+     * @param line   Line associated to this intersection
+     * @param board  Board where the intersection is
+     * @return An unique (probably not granted) identifier
+     */
+    private static int computeUniqueKey(int column, int line, GameBoard board) {
+        return (board != null ? board.hashCode() * 10000 : 0) + line * 100 + column;
+    }
+
+    /**
+     * Retrive an intersection.
+     * If the intersection has already been created, return it. Otherwise, create a new Intersection.
+     *
+     * @param column Column associated : numbers from left to right
+     * @param line   Line associated : numbers from top to bottom
+     * @param board  Attached board
+     * @return The representation of the intersection
+     */
+    public static Intersection get(int column, int line, GameBoard board) {
+        if (intersections.containsKey(computeUniqueKey(column, line, board)))
+            return intersections.get(computeUniqueKey(column, line, board));
+        else
+            return new Intersection(column, line, board);
+    }
+
+    /**
+     * Retrieve an intersection from a SGF format.
+     *
+     * @param coordinate Two letters string which represent the coordinate.
+     * @param board      Attached board
+     * @return Representation of the intersection
+     */
+    public static Intersection get(String coordinate, GameBoard board) {
+        coordinate = coordinate.toLowerCase();
+        if (coordinate.matches("[a-t][0-9]{1,2}")) {
+            return Intersection.get(
+                    ((int) (coordinate.split("[0-9]", 2)[0].charAt(0))) - 'a',
+                    Integer.parseInt(coordinate.substring(1, coordinate.length())) - 1,
+                    board);
+        } else if (coordinate.matches("[a-t]{2}")) {
+            int column = ((int) coordinate.charAt(0)) - 'a', line = ((int) coordinate.charAt(1)) - 'a';
+            return get(column, line, board);
+        } else { // It's not a SGF standard format
+            throw new IllegalArgumentException("Can not create an intersection with coordinate " + coordinate);
+        }
+
+    }
 
     /**
      * The column associated with this intersection.
@@ -39,19 +104,6 @@ public class Intersection {
      */
     public GameBoard getBoard() {
         return board;
-    }
-
-    /**
-     * Create a representation of an Intersection with an attached board.
-     * @param column Column associated : numbers from left to right
-     * @param line Line associated : numbers from top to bottom
-     * @param board Attached board
-     */
-    protected Intersection(int column, int line, GameBoard board) {
-        this.column = column;
-        this.line = line;
-        this.board = board;
-        intersections.put(hashCode(),this);
     }
 
     /**
@@ -94,7 +146,7 @@ public class Intersection {
      * @return Array of intersection. The size depends of number of neighbours
      */
     public ArrayList<Intersection> getNeighboursIntersections() {
-        ArrayList<Intersection> neighbours = new ArrayList<>(4);
+        ArrayList<Intersection> neighbours = new ArrayList<Intersection>(4);
         for(Intersection i:new Intersection[]{
                 get(column+1,line,board),
                 get(column-1,line,board),
@@ -107,55 +159,6 @@ public class Intersection {
     @Override
     public int hashCode() {
         return computeUniqueKey(column,line,board);
-    }
-
-    /**
-     * Compute an unique identifier for an intersection.
-     * This function suppose that line and column are inferior to 100.
-     * @param column Column associated to this intersection
-     * @param line Line associated to this intersection
-     * @param board Board where the intersection is
-     * @return An unique (probably not granted) identifier
-     */
-    private static int computeUniqueKey(int column, int line, GameBoard board){
-        return (board!=null?board.hashCode()*10000:0)+line*100+column;
-    }
-
-    /**
-     * Retrive an intersection.
-     * If the intersection has already been created, return it. Otherwise, create a new Intersection.
-     * @param column Column associated : numbers from left to right
-     * @param line Line associated : numbers from top to bottom
-     * @param board Attached board
-     * @return The representation of the intersection
-     */
-    public static Intersection get(int column, int line, GameBoard board) {
-        if(intersections.containsKey(computeUniqueKey(column, line, board)))
-            return intersections.get(computeUniqueKey(column, line, board));
-        else
-            return new Intersection(column, line, board);
-    }
-
-    /**
-     * Retrieve an intersection from a SGF format.
-     * @param coordinate Two letters string which represent the coordinate.
-     * @param board Attached board
-     * @return Representation of the intersection
-     */
-    public static Intersection get(String coordinate, GameBoard board){
-        coordinate = coordinate.toLowerCase();
-        if(coordinate.matches("[a-t][0-9]{1,2}")){
-            return Intersection.get(
-                    ((int) (coordinate.split("[0-9]", 2)[0].charAt(0))) - 'a',
-                    Integer.parseInt(coordinate.substring(1,coordinate.length())) - 1,
-                    board);
-        } else if(coordinate.matches("[a-t]{2}")){
-            int column = ((int)coordinate.charAt(0))-'a', line = ((int)coordinate.charAt(1))-'a';
-            return get(column,line,board);
-        } else { // It's not a SGF standard format
-            throw new IllegalArgumentException("Can not create an intersection with coordinate "+coordinate);
-        }
-
     }
 
 
