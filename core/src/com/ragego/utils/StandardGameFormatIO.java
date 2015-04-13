@@ -224,66 +224,61 @@ public class StandardGameFormatIO implements FormatIO {
                     val = parseValue();
                 //System.out.println(name + "[" + val + "]");
 
-                switch (name) {
-                    case "W": {
-                        node.setAction(GameNode.Action.PUT_STONE);
-                        node.setIntersection(Intersection.get(val, game));
-                        node.setPlayer(game.getWhitePlayer());
-                        break;
-                    }
-                    case "B": {
-                        node.setAction(GameNode.Action.PUT_STONE);
-                        node.setIntersection(Intersection.get(val, game));
-                        node.setPlayer(game.getBlackPlayer());
-                        break;
-                    }
-                    case "AB":
-                        node.addSetup(game.getBlackPlayer(), Intersection.get(val, game));
-                        break;
-                    case "AW":
-                        node.addSetup(game.getWhitePlayer(), Intersection.get(val, game));
-                        break;
-                    case "AE":
-                        node.addSetup(null, Intersection.get(val, game));
-                        break;
-                    case "LB":
-                        node.addLabel(val);
-                        break;
-                    case "FF":
-                        node.setProperty(name, val);
-                        x = Integer.parseInt(val);
-                        if (x < 1 || x > 4)
-                            throw sgfError("Invalid SGF Version! (" + x + ")");
-                        break;
-                    case "GM":
-                        node.setProperty(name, val);
-                        if (!is_root) throw sgfError("GM property in non-root node!");
-                        if (Integer.parseInt(val) != GM_CODE && Integer.parseInt(val) != 1)
-                            throw sgfError("Not a RageGO or Go game!");
-                        break;
-                    case "SZ":
-                        node.setProperty(name, val);
-                        if (!is_root) throw sgfError("GM property in non-root node!");
-                        Dimension dim = new Dimension();
-                        String sp[] = val.split(":");
-                        if (sp.length == 1) {
-                            x = Integer.parseInt(sp[0]);
-                            //noinspection SuspiciousNameCombination
-                            dim.setSize(x, x);
-                        } else if (sp.length == 2) {
-                            x = Integer.parseInt(sp[0]);
-                            y = Integer.parseInt(sp[1]);
-                            dim.setSize(x, y);
-                        } else {
-                            throw sgfError("Malformed boardsize!");
-                        }
+                if (name.equals("W")) {
+                    node.setAction(GameNode.Action.PUT_STONE);
+                    node.setIntersection(Intersection.get(val, game));
+                    node.setPlayer(game.getWhitePlayer());
+                } else if (name.equals("B")) {
+                    node.setAction(GameNode.Action.PUT_STONE);
+                    node.setIntersection(Intersection.get(val, game));
+                    node.setPlayer(game.getBlackPlayer());
+                } else if (name.equals("AB")) {
+                    node.addSetup(game.getBlackPlayer(), Intersection.get(val, game));
 
-                        // TODO : ??
+                } else if (name.equals("AW")) {
+                    node.addSetup(game.getWhitePlayer(), Intersection.get(val, game));
 
-                        break;
-                    default:
-                        node.setProperty(name, val);
-                        break;
+                } else if (name.equals("AE")) {
+                    node.addSetup(null, Intersection.get(val, game));
+
+                } else if (name.equals("LB")) {
+                    node.addLabel(val);
+
+                } else if (name.equals("FF")) {
+                    node.setProperty(name, val);
+                    x = Integer.parseInt(val);
+                    if (x < 1 || x > 4)
+                        throw sgfError("Invalid SGF Version! (" + x + ")");
+
+                } else if (name.equals("GM")) {
+                    node.setProperty(name, val);
+                    if (!is_root) throw sgfError("GM property in non-root node!");
+                    if (Integer.parseInt(val) != GM_CODE && Integer.parseInt(val) != 1)
+                        throw sgfError("Not a RageGO or Go game!");
+
+                } else if (name.equals("SZ")) {
+                    node.setProperty(name, val);
+                    if (!is_root) throw sgfError("GM property in non-root node!");
+                    Dimension dim = new Dimension();
+                    String sp[] = val.split(":");
+                    if (sp.length == 1) {
+                        x = Integer.parseInt(sp[0]);
+                        //noinspection SuspiciousNameCombination
+                        dim.setSize(x, x);
+                    } else if (sp.length == 2) {
+                        x = Integer.parseInt(sp[0]);
+                        y = Integer.parseInt(sp[1]);
+                        dim.setSize(x, y);
+                    } else {
+                        throw sgfError("Malformed boardsize!");
+                    }
+
+                    // TODO : ??
+
+
+                } else {
+                    node.setProperty(name, val);
+
                 }
             }
         }

@@ -61,13 +61,13 @@ public class GameNode {
      * From one state, you can make many actions, if we represent that, we have children. Normaly, a node has only
      * one child when you are playing.
      */
-    private ArrayList<GameNode> children = new ArrayList<>();
+    private ArrayList<GameNode> children = new ArrayList<GameNode>();
     /**
      * Property for this node.
      * You can set properties to a Game node. This is usefull for the main game node to set information data. This
      * data use code from SGF format.
      */
-    private HashMap<String, String> properties = new HashMap<>();
+    private HashMap<String, String> properties = new HashMap<String, String>();
 
     /**
      * Create a node from a given Game board.

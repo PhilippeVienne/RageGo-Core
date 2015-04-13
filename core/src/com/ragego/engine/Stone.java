@@ -8,12 +8,11 @@ import java.util.HashMap;
  */
 public class Stone {
 
-    private static HashMap<Intersection,Stone> stones = new HashMap<>();
-
-    private GameBoard board;
-    private boolean capturated=false;
+    private static HashMap<Intersection, Stone> stones = new HashMap<Intersection, Stone>();
     private final Player player;
     private final Intersection position;
+    private GameBoard board;
+    private boolean capturated = false;
     private Shape shape;
 
     public Stone(){
@@ -31,11 +30,22 @@ public class Stone {
             this.board = intersection.getBoard();
     }
 
+    public static Stone get(Intersection intersection) {
+        return null;
+    }
+
     /**
      * @return true if stone is on board
      */
     public boolean isOnBoard(){
         return board!=null&&position!=null&&shape!=null&&position.getBoard().equals(board);
+    }
+
+    /**
+     * @return The linked board for this shape
+     */
+    public GameBoard getBoard() {
+        return board;
     }
 
     /**
@@ -48,19 +58,8 @@ public class Stone {
         this.board = board;
     }
 
-    /**
-     * @return The linked board for this shape
-     */
-    public GameBoard getBoard() {
-        return board;
-    }
-
     public Intersection getPosition() {
         return position;
-    }
-
-    public void setShape(Shape shape) {
-        this.shape = shape;
     }
 
     public Player getPlayer() {
@@ -69,6 +68,10 @@ public class Stone {
 
     public Shape getShape() {
         return shape;
+    }
+
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
 
     /**
@@ -86,9 +89,5 @@ public class Stone {
 
     public void setCaptivated() {
         capturated = !capturated;
-    }
-
-    public static Stone get(Intersection intersection) {
-        return null;
     }
 }

@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 
 /**
  * Represent a board of Go.
@@ -82,7 +81,7 @@ public class GameBoard {
         this.firstPlayer = firstPlayer;
         this.secondPlayer = secondPlayer;
         this.boardSize = boardSize;
-        this.board = new HashMap<>(this.boardSize*this.boardSize);
+        this.board = new HashMap<Intersection, Stone>(this.boardSize * this.boardSize);
         lastNode=new GameNode(this, GameNode.Action.START_GAME);
     }
 
@@ -97,11 +96,12 @@ public class GameBoard {
             currentPlayer = currentPlayer == getFirstPlayer() ? getSecondPlayer() : getFirstPlayer();
         }
         { // Spread events that a turn is starting
-                doNotEditBoard(()->{
-                    getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
-                    getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
-                    return null;
-                });
+            final String signature = getBoardHash();
+            getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+            getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+            if (!signature.equals(getBoardHash())) {
+                throw new IllegalStateException("A player has modified the board, and this should not be");
+            }
         }
         is_deleting_dead_stones = false;
         // Play the turn
@@ -113,23 +113,12 @@ public class GameBoard {
         lastNode.recomputeHash();
         lastNode.lock();
         { // Spread events that a turn is ended
-            doNotEditBoard(() -> {
-                getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
-                getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
-                return null;
-            });
-        }
-    }
-
-    private void doNotEditBoard(Callable<Void> callable) {
-        final String signature = getBoardHash();
-        try {
-            callable.call();
-        } catch (Exception e) {
-            throw new RuntimeException("Error during event handling",e);
-        }
-        if (!signature.equals(getBoardHash())) {
-            throw new IllegalStateException("A player has modified the board, and this should not be");
+            final String signature = getBoardHash();
+            getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+            getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+            if (!signature.equals(getBoardHash())) {
+                throw new IllegalStateException("A player has modified the board, and this should not be");
+            }
         }
     }
 
@@ -140,7 +129,7 @@ public class GameBoard {
      */
     public boolean canPlay(GameNode node) throws GoRuleViolation{
         // Save old board to restore after use
-        HashMap<Intersection,Stone> oldBoard = new HashMap<>(board);
+        HashMap<Intersection, Stone> oldBoard = new HashMap<Intersection, Stone>(board);
 
         // Result storage
         GoRuleViolation.Type type = null;
@@ -167,11 +156,11 @@ public class GameBoard {
             for(Stone stone:deadStone)
                 if(stone == testStone){
                     message = "You can not kill yourself";
-                    type = GoRuleViolation.Type.SUCIDE;
+                    type = GoRuleViolation.Type.SUICIDE;
                     isViolatingRule = true;
                 }
         }
-        board = new HashMap<>(oldBoard); // Reset the computing
+        board = new HashMap<Intersection, Stone>(oldBoard); // Reset the computing
         if(!isViolatingRule){ // Rule 8 : A play may not recreate a previous position from the game.
             setElement(intersection, testStone);
             computeDeadStone(getOpponent(player));
@@ -277,21 +266,25 @@ public class GameBoard {
      * @param player The player who we want to remove stones
      */
     public Stone[] computeDeadStone(Player player){
-        HashMap<Intersection,Stone> deadStones = new HashMap<>();
+        ArrayList<Stone> deadStones = new ArrayList<Stone>();
 
         // Look for dead stones.
         // On each shape, check if it's alive.
-        board.forEach((intersection,stone)->{
+        for (Intersection intersection : board.keySet()) {
+            final Stone stone = board.get(intersection);
             if(stone!=null&&stone.getPlayer() == player&&stone.getShape()!=null&&!stone.getShape().isAlive())
-                stone.getShape().getStones().forEach((deadStone)-> deadStones.put(deadStone.getPosition(),deadStone));
-        });
+                deadStones.addAll(stone.getShape().getStones());
+        }
 
-        // If we are in test mode we only delete stones from the board but we wont they know they are deleted
-        if (is_deleting_dead_stones) deadStones.forEach(this::deadStone);
-        else deadStones.forEach(board::remove);
+        for (Stone stone : deadStones) {
+            if (is_deleting_dead_stones)
+                deadStone(stone.getPosition(), stone);
+            else
+                board.remove(stone.getPosition());
+        }
 
         // Return set of dead stones
-        return deadStones.values().toArray(new Stone[deadStones.size()]);
+        return deadStones.toArray(new Stone[deadStones.size()]);
     }
 
     /**
@@ -330,7 +323,7 @@ public class GameBoard {
      * @return The shape to associate with or null if there is not one.
      */
     private Shape searchForShapesAround(Intersection intersection, Player player) {
-        ArrayList<Shape> shapes = new ArrayList<>(4);
+        ArrayList<Shape> shapes = new ArrayList<Shape>(4);
         for (Intersection neighbours : intersection.getNeighboursIntersections()) {
             if(getElement(neighbours) != null && getElement(neighbours).getPlayer() == player) {
                 Shape shape = getElement(neighbours).getShape();
@@ -349,7 +342,10 @@ public class GameBoard {
             case 3:
             case 4:
                 Shape newShape = shapeIterator.next();
-                shapeIterator.forEachRemaining(newShape::unionWith);
+                for (Shape shape : shapes) {
+                    if (shape != null)
+                        newShape.unionWith(shape);
+                }
                 return  newShape;
         }
         return null; // We never never should go here
@@ -380,8 +376,10 @@ public class GameBoard {
      */
     public int[][] getRepresentation(){
         int[][] data = new int[boardSize][boardSize];
-        board.forEach((intersection, goElement) -> data[intersection.getLine()][intersection.getColumn()] =
-        getPlayerSign(goElement.getPlayer()));
+        for (Intersection intersection : board.keySet()) {
+            final Stone stone = board.get(intersection);
+            data[intersection.getLine()][intersection.getColumn()] = getPlayerSign(stone.getPlayer());
+        }
         return data;
     }
 
