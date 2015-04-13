@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Shape {
 
-    private ArrayList<Stone> stones = new ArrayList<>();
+    private ArrayList<Stone> stones = new ArrayList<Stone>();
     private GameBoard board;
     private Player player;
 
@@ -113,9 +113,10 @@ public class Shape {
      * @param shape the shape to fusion
      */
     public void unionWith(Shape shape) {
-        shape.stones.forEach(this::addStonePrivate);
-        shape.stones.forEach(shape.stones::remove);
-        shape.stones = new ArrayList<>();
+        for (Stone stone : shape.stones) {
+            addStonePrivate(stone);
+        }
+        shape.stones = new ArrayList<Stone>();
     }
 
     /**
@@ -132,9 +133,12 @@ public class Shape {
      * @return Number of liberty of shape
      */
     public int countLiberty(){
-        final int[] liberty = {0};
-        stones.forEach((stone) -> liberty[0] += stone.countLiberty());
-        return liberty[0];
+        int liberty = 0;
+        for (Stone stone : stones) {
+            if (stone != null)
+                liberty += stone.countLiberty();
+        }
+        return liberty;
     }
 
     /**

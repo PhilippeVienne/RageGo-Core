@@ -16,7 +16,7 @@ public class GoRuleViolation extends Exception {
     }
 
     enum Type{
-        KO, SUCIDE,
+        KO, SUICIDE,
     }
 
 }
