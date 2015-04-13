@@ -20,6 +20,7 @@ public class GameNode {
      * Board where this action has been played.
      */
     private final GameBoard board;
+
     /**
      * Raw data from board state on this node
      */
@@ -230,8 +231,8 @@ public class GameNode {
      */
     public void addChild(GameNode gameNode) {
         if(gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
-        if (gameNode.hasParent() && gameNode.getParent() != this)
-            throw new IllegalStateException("This node is already a child of another. Are you making a rape?");
+        //if (gameNode.hasParent() && gameNode.getParent() != this)
+        //    throw new IllegalStateException("This node is already a child of another. Are you making a rape?");
         children.add(gameNode);
         if (!gameNode.isParent(this))
             gameNode.setParent(this);
@@ -271,15 +272,15 @@ public class GameNode {
     public boolean isMakingKO() {
         if (!hasParent()) return false;
         GameNode parent = getParent();
-        if (action == Action.PASS) {
-            while (parent.hasParent() && parent.action == Action.PASS) {
+        if (action != Action.PUT_STONE) {
+            while (parent.hasParent() && parent.action != Action.PUT_STONE) {
                 parent = parent.getParent();
             }
         }
         while (parent != null) {
-            if (!parent.hasParent() && parent.action == Action.PASS) // If it's end on PASS node, it's OK
+            if (!parent.hasParent() && parent.action != Action.PUT_STONE) // If it's end on PASS node, it's OK
                 return false;
-            if (boardHash.equals(parent.boardHash))
+            if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE)
                 return true;
             parent = parent.getParent();
         }

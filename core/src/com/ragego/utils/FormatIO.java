@@ -1,7 +1,7 @@
 package com.ragego.utils;
 
-import com.ragego.engine.GameNode;
 import com.ragego.engine.GameBoard;
+import com.ragego.engine.GameNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,14 +57,14 @@ public interface FormatIO {
      * Execute {@link #read(java.io.File,com.ragego.engine.GameBoard)} with data stored in this class.
      * @return See {@link #read(java.io.File,com.ragego.engine.GameBoard)}
      */
-    public boolean read() throws IOException;
+    public GameBoard read() throws IOException;
 
     /**
      * Execute {@link #read(java.io.File,com.ragego.engine.GameBoard)} with file stored in this class and param.
      * @param game The game to save
      * @return See {@link #read(java.io.File,com.ragego.engine.GameBoard)}
      */
-    public boolean read(GameBoard game) throws IOException;
+    public GameBoard read(GameBoard game) throws IOException;
 
     /**
      * Load a file in a Game.
@@ -75,6 +75,6 @@ public interface FormatIO {
      * @param game An empty GameBoard (previous data could be erased)
      * @return true on success, false on all other state. In case of {@link java.io.IOException}, throw the error.
      */
-    public boolean read(File file, GameBoard game) throws IOException;
+    public GameBoard read(File file, GameBoard game) throws IOException;
 
 }

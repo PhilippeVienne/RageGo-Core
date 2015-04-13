@@ -128,6 +128,11 @@ public class GameBoard {
      * @return true if it's correct following the Go rules to play on this row.
      */
     public boolean canPlay(GameNode node) throws GoRuleViolation{
+
+        if (node.getAction() != GameNode.Action.PUT_STONE) { // Only evaluate rules on put stone action
+            return true;
+        }
+
         // Save old board to restore after use
         HashMap<Intersection, Stone> oldBoard = new HashMap<Intersection, Stone>(board);
 
@@ -196,6 +201,8 @@ public class GameBoard {
         switch (node.getAction()){
 
             case START_GAME:
+                board = new HashMap<Intersection, Stone>(boardSize * boardSize);
+                loadBoardFromArray(node.getRawData());
                 break;
             case PASS:
                 break;
@@ -203,6 +210,11 @@ public class GameBoard {
                 setElement(node.getIntersection(),node.getStone());
                 break;
             case IA_SPECIAL_ACTION:
+                if (node.getRawData() != null) {
+                    board = new HashMap<Intersection, Stone>(boardSize * boardSize);
+                    loadBoardFromArray(node.getRawData());
+                    break;
+                }
                 try {
                     IAPlayer iaPlayer = (IAPlayer) currentPlayer;
                     ia_functions_enabled = true;
@@ -212,6 +224,33 @@ public class GameBoard {
                     throw new RuntimeException("Player is not an IAPlayer");
                 }
                 break;
+        }
+    }
+
+    /**
+     * Load a game from an array.
+     * Create stone for each not null cell in table
+     *
+     * @param data Raw data of this board.
+     *             <p>0 is "No stone here", 1 is "Stone owned by Black (or first player)" and
+     *             2 is "Stone owned by White (or second player)". First index is line, second is column.
+     */
+    private void loadBoardFromArray(int[][] data) {
+        for (int line = 0; line < data.length; line++) {
+            for (int column = 0; column < data[line].length; column++) {
+                if (data[line][column] != 1 && data[line][column] != 2) continue;
+                setElement(
+                        Intersection.get(column, line, this),
+                        new Stone(
+                                Intersection.get(column, line, this),
+                                (
+                                        data[line][column] == 1 ?
+                                                getBlackPlayer() :
+                                                getWhitePlayer()
+                                )
+                        )
+                );
+            }
         }
     }
 

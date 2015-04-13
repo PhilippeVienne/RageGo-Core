@@ -1,6 +1,7 @@
 package com.ragego.utils;
 
 import com.ragego.engine.GameBoard;
+import com.ragego.engine.GameComputer;
 import com.ragego.engine.GameNode;
 import com.ragego.engine.Intersection;
 
@@ -90,17 +91,17 @@ public class StandardGameFormatIO implements FormatIO {
     }
 
     @Override
-    public boolean read() throws IOException {
+    public GameBoard read() throws IOException {
         return read(file,game);
     }
 
     @Override
-    public boolean read(GameBoard game) throws IOException {
+    public GameBoard read(GameBoard game) throws IOException {
         return read(file, game);
     }
 
     @Override
-    public boolean read(File file, GameBoard game) throws IOException {
+    public GameBoard read(File file, GameBoard game) throws IOException {
         if(this.game != game){
             throw new IllegalArgumentException("You can not read to a different game instance than the FormatIO instance");
         }
@@ -129,8 +130,13 @@ public class StandardGameFormatIO implements FormatIO {
         // Now we can start to read, we call recursive
         parseBranch(null, true);
 
+        // Apply Game to board
+        GameComputer computer = new GameComputer(currentNode, game);
+        computer.compute(false);
+        this.game = computer.getBoard();
+
         // If we come here, all happened correctly
-        return false;
+        return this.game;
     }
 
     /**
@@ -222,7 +228,6 @@ public class StandardGameFormatIO implements FormatIO {
                     val = parseComment();
                 else
                     val = parseValue();
-                //System.out.println(name + "[" + val + "]");
 
                 if (name.equals("W")) {
                     node.setAction(GameNode.Action.PUT_STONE);
@@ -249,13 +254,11 @@ public class StandardGameFormatIO implements FormatIO {
                     x = Integer.parseInt(val);
                     if (x < 1 || x > 4)
                         throw sgfError("Invalid SGF Version! (" + x + ")");
-
                 } else if (name.equals("GM")) {
                     node.setProperty(name, val);
                     if (!is_root) throw sgfError("GM property in non-root node!");
                     if (Integer.parseInt(val) != GM_CODE && Integer.parseInt(val) != 1)
                         throw sgfError("Not a RageGO or Go game!");
-
                 } else if (name.equals("SZ")) {
                     node.setProperty(name, val);
                     if (!is_root) throw sgfError("GM property in non-root node!");

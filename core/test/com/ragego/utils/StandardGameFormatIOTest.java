@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -91,7 +92,55 @@ public class StandardGameFormatIOTest extends RageGoTest {
 
     @Test
     public void readBigGame() {
+        StringBuilder buffer = new StringBuilder();
+        InputStream inputStream = StandardGameFormatIO.class.getResourceAsStream("test-game.sgf");
+        try {
+            while (inputStream.available() != 0)
+                buffer.append((char) inputStream.read());
+        } catch (IOException e) {
+            throw new RuntimeException("Can not load test file", e);
+        }
+        formatIO = new StandardGameFormatIO(writeTempFile("game", "sgf", buffer.toString()), game);
+        try {
+            game = formatIO.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        printBoard(game);
+    }
 
+    private void printBoard(GameBoard board) {
+        final int[][] data = board.getRepresentation();
+        StringBuilder builder = new StringBuilder("    ");
+        for (int i = 1; i <= data.length; i++) {
+            builder.append(' ').append((char) (64 + i)).append(' ');
+        }
+        builder.append('\n');
+        for (int i = 0; i < data.length; i++) {
+            int[] line = data[i];
+            if (i < 9) {
+                builder.append(' ');
+            } else {
+                builder.append(" ");
+            }
+            builder.append(i + 1);
+            if (i < 9) {
+                builder.append(' ');
+            }
+            builder.append(' ');
+            for (int i1 : line) {
+                builder.append(' ');
+                builder.append(i1);
+                builder.append(' ');
+            }
+            builder.append('\n');
+        }
+        builder.append("    ");
+        for (int i = 1; i <= data.length; i++) {
+            builder.append(' ').append((char) (64 + i)).append(' ');
+        }
+        System.out.println("Le jeu :");
+        System.out.println(builder.toString());
     }
 
 }
