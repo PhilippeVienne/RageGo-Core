@@ -12,7 +12,7 @@ public class GoRuleViolation extends Exception {
         super();
         this.message = message;
         this.type = type;
-        switch (type){
+        switch (type) {
 
             case KO:
 
@@ -25,7 +25,7 @@ public class GoRuleViolation extends Exception {
         return "[GO RULE Type=" + type + "] " + message;
     }
 
-    enum Type{
+    enum Type {
         KO, SUICIDE,
     }
 

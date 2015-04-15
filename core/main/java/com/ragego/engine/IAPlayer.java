@@ -1,7 +1,5 @@
 package com.ragego.engine;
 
-import java.util.HashMap;
-
 /**
  * Special functions for IAPlayers.
  * In RageGo, IA are not standard players, they can cheat. But they cheat differently so there is an interface to

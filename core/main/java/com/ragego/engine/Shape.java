@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Shape is the configuration of stones in their flexibility and efficiency
  * at staying connected, forming eyes, and maintaining liberties.
  * <p>
- *     Stones are
+ * Stones are
  * said to have good shape if they are efficient and flexible, or bad shape
  * if they are inefficient. Classic examples of good shape are the ponnuki
  * (four stones in a diamond created by capturing an enemy stone) and the
@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * Joseki is, in large part, the study of forming good shapes with the stones.
  * </p>
  * <a href="http://en.wikipedia.org/wiki/Shape_%28Go%29">See Wikipedia</a>
+ *
  * @author Philippe Vienne
  */
 public class Shape {
@@ -32,24 +33,26 @@ public class Shape {
 
     /**
      * Add multiple stones to the shape.
-     * Used for creation 
+     * Used for creation
+     *
      * @param stones Stones to add
      */
     private void addStones(Stone[] stones) {
-        for(Stone s:stones)
+        for (Stone s : stones)
             addStone(s);
     }
 
     /**
      * Add a stone to this shape.
+     *
      * @param stone The stone to add to this shape
      * @return This shape
      */
-    public Shape addStone(Stone stone){
+    public Shape addStone(Stone stone) {
         canStoneBeAdded(stone);
-        if(stone.getShape() != this)
+        if (stone.getShape() != this)
             stone.setShape(this);
-        if(!stones.contains(stone))
+        if (!stones.contains(stone))
             stones.add(stone);
         return this;
     }
@@ -57,7 +60,8 @@ public class Shape {
     /**
      * Check if a stone can be a part of this shape.
      * A stone can be added, if it belongs to one of liberty of current stones.
-     * Otherwise, the shape should be empty. 
+     * Otherwise, the shape should be empty.
+     *
      * @param stone The stone to test
      * @throws IllegalArgumentException The stone cannot be added to this shape
      */
@@ -69,12 +73,13 @@ public class Shape {
 
     /**
      * Check if a stone is on liberty on one stone of this shape.
+     *
      * @param stone The stone to test
      * @return true if it's on on liberty
      */
     private boolean isOnShapeLiberty(Stone stone) {
         final Intersection stonePosition = stone.getPosition();
-        for(Stone s:stones) {
+        for (Stone s : stones) {
             if (s.getPosition().isAsideOf(stonePosition)) {
                 return true;
             }
@@ -92,16 +97,18 @@ public class Shape {
     /**
      * Edit the linked board for this shape.
      * Modify to itself and his child the linked board.
+     *
      * @param board The new board to link this shape
      */
     public void setBoard(GameBoard board) {
-        for(Stone stone:stones)
+        for (Stone stone : stones)
             stone.setBoard(board);
         this.board = board;
     }
-    
+
     /**
-     * Update the player of this shape. 
+     * Update the player of this shape.
+     *
      * @param player The owner of this shape
      */
     private void setPlayer(Player player) {
@@ -110,6 +117,7 @@ public class Shape {
 
     /**
      * Fusion multiple shapes.
+     *
      * @param shape the shape to fusion
      */
     public void unionWith(Shape shape) {
@@ -121,6 +129,7 @@ public class Shape {
 
     /**
      * Force add of stone to the shape
+     *
      * @param stone the stone to add
      */
     private void addStonePrivate(Stone stone) {
@@ -130,9 +139,10 @@ public class Shape {
 
     /**
      * Count liberty of a shape.
+     *
      * @return Number of liberty of shape
      */
-    public int countLiberty(){
+    public int countLiberty() {
         int liberty = 0;
         for (Stone stone : stones) {
             if (stone != null)
@@ -144,6 +154,7 @@ public class Shape {
     /**
      * Detect if this shape is dead.
      * A shape is alive only if its liberty is not null and contains more than one stone.
+     *
      * @return true if you should consider this shape alive
      */
     public boolean isAlive() {

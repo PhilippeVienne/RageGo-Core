@@ -14,6 +14,7 @@ import java.io.StreamTokenizer;
 /**
  * This class read an SGF file.
  * SGF is a standard format to store Game data and is mostly used for Go games.
+ *
  * @see com.ragego.utils.FormatIO For more details about behavior of this class
  * @see <a href="http://senseis.xmp.net/?SmartGameFormat">SGF for Go details</a>
  */
@@ -36,20 +37,20 @@ public class StandardGameFormatIO implements FormatIO {
      * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
      */
     public StandardGameFormatIO() {
-        this(null,null);
+        this(null, null);
     }
 
     /**
-     * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
      * @param game See {@link #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)}
+     * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
      */
     public StandardGameFormatIO(GameBoard game) {
         this(null, game);
     }
 
     /**
-     * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
      * @param file See {@link #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)}
+     * @see #StandardGameFormatIO(java.io.File, com.ragego.engine.GameBoard)
      */
     public StandardGameFormatIO(File file) {
         this(file, null);
@@ -57,6 +58,7 @@ public class StandardGameFormatIO implements FormatIO {
 
     /**
      * Construct a SGF Reader/Writer.
+     *
      * @param file The file which will be read and/or write.
      * @param game The game to update date in.
      */
@@ -92,7 +94,7 @@ public class StandardGameFormatIO implements FormatIO {
 
     @Override
     public GameBoard read() throws IOException {
-        return read(file,game);
+        return read(file, game);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class StandardGameFormatIO implements FormatIO {
 
     @Override
     public GameBoard read(File file, GameBoard game) throws IOException {
-        if(this.game != game){
+        if (this.game != game) {
             throw new IllegalArgumentException("You can not read to a different game instance than the FormatIO instance");
         }
         this.game = game; // As this, it's fixed.
@@ -141,6 +143,7 @@ public class StandardGameFormatIO implements FormatIO {
 
     /**
      * Create an IOError from SGF
+     *
      * @param s The description of SGF error.
      * @return The IOException (nothing extraordinary)
      */
@@ -151,7 +154,8 @@ public class StandardGameFormatIO implements FormatIO {
     /**
      * Read a node from the tokenizer.
      * TODO:Explain this function
-     * @param parent The parent node
+     *
+     * @param parent  The parent node
      * @param is_root Define if we are on root node (only one time in a parse)
      * @return The completed node with game data. On root, return the main game node.
      */

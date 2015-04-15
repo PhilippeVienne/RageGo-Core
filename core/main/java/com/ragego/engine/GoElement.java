@@ -9,6 +9,7 @@ public interface GoElement {
 
     /**
      * Intersections used by this element
+     *
      * @return List of used intersections
      */
     public ArrayList<Intersection> getPositions();

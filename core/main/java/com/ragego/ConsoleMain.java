@@ -11,11 +11,32 @@ import java.util.Scanner;
 public class ConsoleMain implements TurnListener {
 
     private GameBoard board;
+    private Iterator<String> coupsIterator = new Iterator<String>() {
+
+        private String[] coups = {"G18", "G17", "A16", "G19", "B16", "F18", "C16", "H18"};
+        private int position = 0;
+
+        @Override
+        public boolean hasNext() {
+            return position < coups.length;
+        }
+
+        @Override
+        public String next() {
+            int index = position;
+            position++;
+            return coups[index];
+        }
+    };
 
     public ConsoleMain() {
         HumanPlayer humanOne = new HumanPlayer("Player 1", this);
         HumanPlayer humanSecond = new HumanPlayer("Player 2", this);
         board = new GameBoard(humanOne, humanSecond);
+    }
+
+    public static void main(String... args) {
+        new ConsoleMain().play();
     }
 
     @SuppressWarnings("InfiniteRecursion") // This is wanted
@@ -64,24 +85,20 @@ public class ConsoleMain implements TurnListener {
         System.out.println(builder.toString());
     }
 
-    public static void main(String... args) {
-        new ConsoleMain().play();
-    }
-
     @Override
     public void newTurn(GameBoard board, Player player) {
         System.out.println(player.getDisplayName() + ", à ton tour");
         Intersection intersection;
         GameNode node = null;
-        while(node==null) {
+        while (node == null) {
             intersection = readIntersection(board);
             if (!board.isValidIntersection(intersection)) {
                 System.out.println("Euh le Goban fait " + board.getBoardSize() + " de taille, donne des coordonées à l'intérieur.");
                 node = null;
             } else {
                 try {
-                    node = new GameNode(board,null, GameNode.Action.PUT_STONE,intersection,player);
-                    if(!board.canPlay(node)) {
+                    node = new GameNode(board, null, GameNode.Action.PUT_STONE, intersection, player);
+                    if (!board.canPlay(node)) {
                         System.out.println("Tu ne peux pas jouer sur cette case");
                         node = null;
                     }
@@ -94,30 +111,12 @@ public class ConsoleMain implements TurnListener {
         board.play(node);
     }
 
-    private Iterator<String> coupsIterator = new Iterator<String>() {
-
-        private String[] coups = {"G18","G17","A16","G19","B16","F18","C16","H18"};
-        private int position = 0;
-
-        @Override
-        public boolean hasNext() {
-            return position < coups.length;
-        }
-
-        @Override
-        public String next() {
-            int index = position;
-            position++;
-            return coups[index];
-        }
-    };
-
     private Intersection readIntersection(GameBoard board) {
-        if(coupsIterator.hasNext()){
+        if (coupsIterator.hasNext()) {
             final String next = coupsIterator.next();
-            System.out.println("Prochain coup : "+ next +", appuyez sur entrée pour valider.");
+            System.out.println("Prochain coup : " + next + ", appuyez sur entrée pour valider.");
             new Scanner(System.in).nextLine();
-            return Intersection.get(next,board);
+            return Intersection.get(next, board);
         }
         try {
             System.out.print("Tu veux jouer sur (écris sous forme colonne-ligne) : ");

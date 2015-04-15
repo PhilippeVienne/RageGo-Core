@@ -97,6 +97,8 @@ public class StandardGameFormatIOTest extends RageGoTest {
         try {
             while (inputStream.available() != 0)
                 buffer.append((char) inputStream.read());
+        } catch (NullPointerException ex) {
+            throw new RuntimeException("File test is not found", ex);
         } catch (IOException e) {
             throw new RuntimeException("Can not load test file", e);
         }

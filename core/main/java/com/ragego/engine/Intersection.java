@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 /**
  * A coordinate on the GameBoard.
+ *
  * @author Philippe Vienne
  */
 public class Intersection {
@@ -17,9 +18,10 @@ public class Intersection {
 
     /**
      * Create a representation of an Intersection with an attached board.
+     *
      * @param column Column associated : numbers from left to right
-     * @param line Line associated : numbers from top to bottom
-     * @param board Attached board
+     * @param line   Line associated : numbers from top to bottom
+     * @param board  Attached board
      */
     protected Intersection(int column, int line, GameBoard board) {
         this.column = column;
@@ -83,6 +85,7 @@ public class Intersection {
     /**
      * The column associated with this intersection.
      * Columns are numbers from left to right
+     *
      * @return The associated column
      */
     public int getColumn() {
@@ -92,6 +95,7 @@ public class Intersection {
     /**
      * The line associated with this intersection.
      * Lines are numbers from top to bottom
+     *
      * @return The associated line
      */
     public int getLine() {
@@ -100,6 +104,7 @@ public class Intersection {
 
     /**
      * The board where this intersection is.
+     *
      * @return The associated board
      */
     public GameBoard getBoard() {
@@ -110,6 +115,7 @@ public class Intersection {
      * Compare Intersections.
      * Object and this intersection are identical means that object is an
      * Intersection and that column, line and board are identical.
+     *
      * @param o Intersection to compare
      * @return true if they are identical.
      */
@@ -125,20 +131,21 @@ public class Intersection {
 
     /**
      * Test if a position is neighbour to this one.
-     *     A neighbour is a position on :
+     * A neighbour is a position on :
      * <ul>
-     *     <li>column less 1</li>
-     *     <li>column plus 1</li>
-     *     <li>line plus 1</li>
-     *     <li>line less 1</li>
+     * <li>column less 1</li>
+     * <li>column plus 1</li>
+     * <li>line plus 1</li>
+     * <li>line less 1</li>
      * </ul>
      * <p>This function has the same result for a.isAsideOf(b) and
      * b.isAsideOf(a)</p>
+     *
      * @param position The position to test
      * @return true if they are neighbours
      */
     public boolean isAsideOf(Intersection position) {
-        if(position == null)
+        if (position == null)
             throw new IllegalArgumentException("Position is null");
         return ((line - 1) == position.line && column == position.column) ||
                 ((line + 1) == position.line && column == position.column) ||
@@ -148,22 +155,24 @@ public class Intersection {
 
     /**
      * Get neighbours of this intersection.
+     *
      * @return Array of intersection. The size depends of number of neighbours
      */
     public ArrayList<Intersection> getNeighboursIntersections() {
         ArrayList<Intersection> neighbours = new ArrayList<Intersection>(4);
-        for(Intersection i:new Intersection[]{
-                get(column+1,line,board),
-                get(column-1,line,board),
-                get(column,line+1,board),
-                get(column,line-1,board),
-        }) if(board.isValidIntersection(i)) neighbours.add(i);
+        for (Intersection i : new Intersection[]{
+                get(column + 1, line, board),
+                get(column - 1, line, board),
+                get(column, line + 1, board),
+                get(column, line - 1, board),
+        })
+            if (board.isValidIntersection(i)) neighbours.add(i);
         return neighbours;
     }
 
     @Override
     public int hashCode() {
-        return computeUniqueKey(column,line,board);
+        return computeUniqueKey(column, line, board);
     }
 
 

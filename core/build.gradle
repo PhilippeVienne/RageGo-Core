@@ -5,14 +5,12 @@ sourceCompatibility = 1.6
 
 sourceSets {
     main {
-        java {
-            srcDir "src/"
-        }
+        java.srcDir "main/java/"
+        resources.srcDir "main/resources"
     }
     test {
-        java {
-            srcDirs = ["test/"]
-        }
+        java.srcDir "test/java/"
+        resources.srcDir "test/resources/"
     }
 }
 
@@ -21,12 +19,11 @@ dependencies {
 }
 
 test {
-
     // explicitly include or exclude tests
     include 'com/ragego/**'
 
     // show standard out and standard error of the test JVM(s) on the console
-    testLogging.showStandardStreams = true
+    testLogging.showStandardStreams = false
 
     // set heap size for the test JVM(s)
     minHeapSize = "128m"
@@ -36,13 +33,13 @@ test {
     beforeTest { descriptor ->
         logger.lifecycle("Running test: " + descriptor)
     }
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-    }
 }
 
 eclipse.project {
     name = appName + "-core"
+}
+
+task copyTestResources(type: Copy) {
+    from "${projectDir}/test/resources"
+    into "${buildDir}/classes/test"
 }

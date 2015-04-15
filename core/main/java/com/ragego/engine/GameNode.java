@@ -72,11 +72,12 @@ public class GameNode {
 
     /**
      * Create a node from a given Game board.
-     * @param board the board where we are playing
-     * @param parent The parent node for this node (could be null)
-     * @param action The action performed by this node (could not be null)
+     *
+     * @param board        the board where we are playing
+     * @param parent       The parent node for this node (could be null)
+     * @param action       The action performed by this node (could not be null)
      * @param intersection Where the action is performed (could be null if action is not PUT_STONE)
-     * @param player The player acting on this action (could be null)
+     * @param player       The player acting on this action (could be null)
      */
     public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Intersection intersection, Player player) {
         if (board == null)
@@ -91,7 +92,8 @@ public class GameNode {
 
     /**
      * Create a node from a given Game board.
-     * @param board the board where we are playing
+     *
+     * @param board  the board where we are playing
      * @param parent The parent node for this node (could be null)
      * @param action The action performed by this node (could not be null)
      * @param player The player acting on this action (could be null)
@@ -102,7 +104,8 @@ public class GameNode {
 
     /**
      * Create a node from a given Game board.
-     * @param board the board where we are playing
+     *
+     * @param board  the board where we are playing
      * @param parent The parent node for this node (could be null)
      * @param action The action performed by this node (could not be null)
      */
@@ -112,7 +115,8 @@ public class GameNode {
 
     /**
      * Create a node from a given Game board.
-     * @param board the board where we are playing
+     *
+     * @param board  the board where we are playing
      * @param action The action performed by this node
      */
     public GameNode(GameBoard board, Action action) {
@@ -129,6 +133,7 @@ public class GameNode {
 
     /**
      * Retrieve state of board on this node.
+     *
      * @return Double coordinate array.
      */
     public int[][] getRawData() {
@@ -160,7 +165,7 @@ public class GameNode {
      * Ask to refresh the hash from the GameBoard.
      */
     public void recomputeHash() {
-        if(!locked)
+        if (!locked)
             boardHash = board.getBoardHash();
     }
 
@@ -168,7 +173,7 @@ public class GameNode {
      * Lock the hash of the node.
      */
     public void lock() {
-        locked=true;
+        locked = true;
     }
 
     public Action getAction() {
@@ -192,7 +197,7 @@ public class GameNode {
     }
 
     public Stone getStone() {
-        if(intersection == null) return null;
+        if (intersection == null) return null;
         return new Stone(intersection, player);
     }
 
@@ -208,6 +213,7 @@ public class GameNode {
     /**
      * Retrieve the parent node.
      * If there is not one (null value), consider we are at game start point.
+     *
      * @return The parent node.
      */
     public GameNode getParent() {
@@ -218,6 +224,7 @@ public class GameNode {
      * Set a new parent to this node.
      * Before setting gameNode as parent, check if this instance is a child of it. If not, add this instance as child.
      * Normally you should call this function only one time.
+     *
      * @param gameNode The GameNode to set as parent (should not be null)
      */
     public void setParent(GameNode gameNode) {
@@ -232,10 +239,11 @@ public class GameNode {
      * Add a new child to this node.
      * When you have an action to add to this state, simply add a child.
      * After registering gameNode as child, check if this instance is his parent.
+     *
      * @param gameNode Node to add to this one.
      */
     public void addChild(GameNode gameNode) {
-        if(gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
+        if (gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
         //if (gameNode.hasParent() && gameNode.getParent() != this)
         //    throw new IllegalStateException("This node is already a child of another. Are you making a rape?");
         children.add(gameNode);
@@ -245,6 +253,7 @@ public class GameNode {
 
     /**
      * Check if a node is parent of this instance.
+     *
      * @param gameNode The supposed parent
      * @return true if it's the parent
      */
@@ -254,6 +263,7 @@ public class GameNode {
 
     /**
      * Check if this Node has a child
+     *
      * @param gameNode The supposed child
      * @return true if it's a child of this instance.
      */
@@ -263,6 +273,7 @@ public class GameNode {
 
     /**
      * Retrieve all children.
+     *
      * @return An array of children of this node.
      */
     public GameNode[] getChildren() {
@@ -272,6 +283,7 @@ public class GameNode {
     /**
      * Check if we are not violating the KO rule.
      * Note if the current action is Pass, it execute this on the next parent who has not passed.
+     *
      * @return true if we are violating KO rule.
      */
     public boolean isMakingKO() {
@@ -296,6 +308,7 @@ public class GameNode {
 
     /**
      * Get value of a property of this node.
+     *
      * @return The value or null if there is not one.
      */
     public String getProperty(String key) {
@@ -304,7 +317,8 @@ public class GameNode {
 
     /**
      * Set value as property of this node.
-     * @param key The key used for this property.
+     *
+     * @param key   The key used for this property.
      * @param value The stored value.
      * @return Previous value if there is one.
      */
@@ -314,15 +328,17 @@ public class GameNode {
 
     /**
      * Check if this instance has parent.
+     *
      * @return true if it's an orphan.
      */
     public boolean hasParent() {
-        return parent!=null;
+        return parent != null;
     }
 
     /**
      * Compare nodes to chech if they are the same.
      * Two nodes are identical if they has the same hash code.
+     *
      * @param obj The object to compare.
      * @return True on identical GameNode.
      */
@@ -343,10 +359,10 @@ public class GameNode {
      * Describe actions possible in the game between two nodes.
      * Currently, the actions are :
      * <ul>
-     *     <li><b>START_GAME</b>: First node is a START_GAME, it defines a start for the node's tree.</li>
-     *     <li><b>PASS</b>: The player decide to not play his turn. Intersection data is null. KO rule not checkable.</li>
-     *     <li><b>PUT_STONE</b>: A player put a stone on the board. The data is after compute dead stones</li>
-     *     <li><b>IA_SPECIAL_ACTION</b>: (Not SGF standard) something strange happened and board is not the same</li>
+     * <li><b>START_GAME</b>: First node is a START_GAME, it defines a start for the node's tree.</li>
+     * <li><b>PASS</b>: The player decide to not play his turn. Intersection data is null. KO rule not checkable.</li>
+     * <li><b>PUT_STONE</b>: A player put a stone on the board. The data is after compute dead stones</li>
+     * <li><b>IA_SPECIAL_ACTION</b>: (Not SGF standard) something strange happened and board is not the same</li>
      * </ul>
      */
     public enum Action {

@@ -15,18 +15,18 @@ public class Stone {
     private boolean capturated = false;
     private Shape shape;
 
-    public Stone(){
-        this(null,null);
+    public Stone() {
+        this(null, null);
     }
 
-    public Stone(Intersection intersection){
-        this(intersection,null);
+    public Stone(Intersection intersection) {
+        this(intersection, null);
     }
 
-    public Stone(Intersection intersection, Player player){
+    public Stone(Intersection intersection, Player player) {
         this.position = intersection;
         this.player = player;
-        if(intersection!=null)
+        if (intersection != null)
             this.board = intersection.getBoard();
     }
 
@@ -37,8 +37,8 @@ public class Stone {
     /**
      * @return true if stone is on board
      */
-    public boolean isOnBoard(){
-        return board!=null&&position!=null&&shape!=null&&position.getBoard().equals(board);
+    public boolean isOnBoard() {
+        return board != null && position != null && shape != null && position.getBoard().equals(board);
     }
 
     /**
@@ -53,7 +53,7 @@ public class Stone {
      * @throws IllegalArgumentException Stone is not on this board
      */
     public void setBoard(GameBoard board) {
-        if(position!=null&&position.getBoard()!=null&&!position.getBoard().equals(board))
+        if (position != null && position.getBoard() != null && !position.getBoard().equals(board))
             throw new IllegalArgumentException("Position is not on the good board");
         this.board = board;
     }
@@ -77,12 +77,13 @@ public class Stone {
     /**
      * Count liberty for a stone.
      * For each neighbour position of this stone, liberty is increased of one if the intersection is empty.
+     *
      * @return The liberty count for this shape
      */
     public int countLiberty() {
         int liberty = 0;
         for (Intersection intersection : position.getNeighboursIntersections()) {
-            if(board.isEmpty(intersection) && board.isValidIntersection(intersection)) liberty++;
+            if (board.isEmpty(intersection) && board.isValidIntersection(intersection)) liberty++;
         }
         return liberty;
     }
