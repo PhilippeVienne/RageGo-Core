@@ -106,41 +106,14 @@ public class StandardGameFormatIOTest extends RageGoTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        printBoard(game);
+        checkWantedBoard("D9C86E953531C0D5E896D075AC0B5C31", game);
     }
 
-    private void printBoard(GameBoard board) {
-        final int[][] data = board.getRepresentation();
-        StringBuilder builder = new StringBuilder("    ");
-        for (int i = 1; i <= data.length; i++) {
-            builder.append(' ').append((char) (64 + i)).append(' ');
+    private void checkWantedBoard(String gameHash, GameBoard board) {
+        if (!(gameHash.equals(board.getBoardHash()))) {
+            System.err.println("Should find '" + gameHash + "' but found '" + board.getBoardHash() + "'");
+            throw new RuntimeException("The board is not in the wanted state");
         }
-        builder.append('\n');
-        for (int i = 0; i < data.length; i++) {
-            int[] line = data[i];
-            if (i < 9) {
-                builder.append(' ');
-            } else {
-                builder.append(" ");
-            }
-            builder.append(i + 1);
-            if (i < 9) {
-                builder.append(' ');
-            }
-            builder.append(' ');
-            for (int i1 : line) {
-                builder.append(' ');
-                builder.append(i1);
-                builder.append(' ');
-            }
-            builder.append('\n');
-        }
-        builder.append("    ");
-        for (int i = 1; i <= data.length; i++) {
-            builder.append(' ').append((char) (64 + i)).append(' ');
-        }
-        System.out.println("Le jeu :");
-        System.out.println(builder.toString());
     }
 
 }

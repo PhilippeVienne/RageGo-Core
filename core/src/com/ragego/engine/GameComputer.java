@@ -42,6 +42,7 @@ public class GameComputer {
      * @param ignoreRuleViolation Ignore a node if violate go rules.
      */
     public void compute(boolean ignoreRuleViolation) {
+        int i = 0;
         while (!nodesToPlay.empty()) {
             final GameNode gameNode = nodesToPlay.pop();
             final Intersection intersection = gameNode.getIntersection();
@@ -49,6 +50,7 @@ public class GameComputer {
                 gameNode.setIntersection(Intersection.get(intersection.getColumn(), intersection.getLine(), board));
             try {
                 board.play(gameNode);
+                i++;
             } catch (IllegalArgumentException error) {
                 if (!ignoreRuleViolation)
                     throw error;

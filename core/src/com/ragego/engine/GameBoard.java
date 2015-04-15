@@ -1,5 +1,9 @@
 package com.ragego.engine;
 
+import com.ragego.utils.DebugUtils;
+
+import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -25,7 +29,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-
+    public static boolean DEBUG_MODE = false;
     /**
      * Register the last validated node in the game.
      */
@@ -136,6 +140,8 @@ public class GameBoard {
         // Save old board to restore after use
         HashMap<Intersection, Stone> oldBoard = new HashMap<Intersection, Stone>(board);
 
+        // Fake board
+
         // Result storage
         GoRuleViolation.Type type = null;
         boolean isViolatingRule = false;
@@ -155,9 +161,10 @@ public class GameBoard {
             if(isNotEmpty(intersection)) return false;
         }
         { // Rule # : You can ot kill you
-            setElement(intersection,testStone);
-            computeDeadStone(getOpponent(player));
-            Stone[] deadStone = computeDeadStone(player);
+            GameBoard testBoard = copyBoard();
+            testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
+            testBoard.computeDeadStone(getOpponent(player));
+            Stone[] deadStone = testBoard.computeDeadStone(player);
             for(Stone stone:deadStone)
                 if(stone == testStone){
                     message = "You can not kill yourself";
@@ -167,11 +174,17 @@ public class GameBoard {
         }
         board = new HashMap<Intersection, Stone>(oldBoard); // Reset the computing
         if(!isViolatingRule){ // Rule 8 : A play may not recreate a previous position from the game.
-            setElement(intersection, testStone);
-            computeDeadStone(getOpponent(player));
-            computeDeadStone(player);
-            node.recomputeHash();
-            if(node.isMakingKO()){
+            GameBoard testBoard = copyBoard();
+            GameNode testNode = node.copy(testBoard);
+            final String boardHash = testBoard.getBoardHash();
+            testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
+            if (testBoard.getElement(intersection.forBoard(testBoard)) == null)
+                System.out.println("Stone not found");
+            testBoard.computeDeadStone(getOpponent(player));
+            //testBoard.computeDeadStone(player);
+            testNode.setParent(testBoard.lastNode);
+            testNode.recomputeHash();
+            if (testNode.isMakingKO()) {
                 type = GoRuleViolation.Type.KO;
                 message = "You made a position that exists";
                 isViolatingRule = true;
@@ -189,6 +202,11 @@ public class GameBoard {
     }
 
     public void play(GameNode node){
+        if (DEBUG_MODE) {
+            System.out.println("Playing node: " + node);
+            DebugUtils.printBoard(this);
+        }
+        node.setBoard(this);
         try {
             if(!canPlay(node)){
                 throw new IllegalArgumentException("The wanted action is violating a Go rule");
@@ -199,7 +217,6 @@ public class GameBoard {
         node.setParent(lastNode);
         lastNode = node;
         switch (node.getAction()){
-
             case START_GAME:
                 board = new HashMap<Intersection, Stone>(boardSize * boardSize);
                 loadBoardFromArray(node.getRawData());
@@ -208,6 +225,8 @@ public class GameBoard {
                 break;
             case PUT_STONE:
                 setElement(node.getIntersection(),node.getStone());
+                computeDeadStone(getOpponent(node.getPlayer()));
+                computeDeadStone(node.getPlayer());
                 break;
             case IA_SPECIAL_ACTION:
                 if (node.getRawData() != null) {
@@ -224,6 +243,11 @@ public class GameBoard {
                     throw new RuntimeException("Player is not an IAPlayer");
                 }
                 break;
+        }
+        lastNode.recomputeHash();
+        lastNode.lock();
+        if (DEBUG_MODE) {
+            System.out.println(getBoardHash());
         }
     }
 
@@ -252,6 +276,7 @@ public class GameBoard {
                 );
             }
         }
+        recomputeShape();
     }
 
     /**
@@ -333,7 +358,7 @@ public class GameBoard {
      */
     private void deadStone(Intersection intersection, Stone stone) {
         stone.setCaptivated();
-        board.remove(intersection,stone);
+        board.remove(intersection, stone);
     }
 
     /**
@@ -366,8 +391,9 @@ public class GameBoard {
         for (Intersection neighbours : intersection.getNeighboursIntersections()) {
             if(getElement(neighbours) != null && getElement(neighbours).getPlayer() == player) {
                 Shape shape = getElement(neighbours).getShape();
-                if(shape == null)
-                    throw new IllegalStateException("A stone have no associated shape.");
+                if (shape == null) {
+                    shape = new Shape(player, this, getElement(neighbours));
+                }
                 shapes.add(shape);
             }
         }
@@ -467,22 +493,21 @@ public class GameBoard {
      * Compute a string which is unique in function of board stones positions.
      */
     public String getBoardHash(){
-        String digest = "error";
+        StringBuilder message = new StringBuilder();
         int[][] data = getRepresentation();
-        byte[] bytes = new byte[data.length*data[0].length];
-        for (int i1 = 0, dataLength = data.length; i1 < dataLength; i1++) {
-            int[] line = data[i1];
-            for (int i2 = 0, columnLength = line.length; i2 < columnLength; i2++) {
-                int i = line[i2];
-                bytes[i1*dataLength+i2] = (byte) i;
+        for (int[] ints : data) {
+            for (int val : ints) {
+                message.append(val);
             }
         }
         try {
-            digest = new String(MessageDigest.getInstance("MD5").digest(bytes));
+            return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(message.toString().getBytes("UTF-8")));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        return digest;
+        return "";
     }
 
     /**
@@ -551,7 +576,7 @@ public class GameBoard {
     public Stone ia_createStone(Intersection intersection, Player player){
         checkIAMode();
         if(getElement(intersection)!=null) ia_deleteStone(getElement(intersection));
-        Stone stone = new Stone(intersection,player);
+        Stone stone = new Stone(intersection, player);
         setElement(intersection, stone);
         return stone;
     }
@@ -561,7 +586,7 @@ public class GameBoard {
      * Delete a stone from the board whithout any side effects.
      * @param stone The stone to delete.
      */
-    public void ia_deleteStone(Stone stone){
+    public void ia_deleteStone(Stone stone) {
         checkIAMode();
         deadStone(stone.getPosition(), stone);
     }
@@ -590,6 +615,92 @@ public class GameBoard {
 
     public GameNode getLastNode() {
         return lastNode;
+    }
+
+    /**
+     * Create a copy of this GameBoard.
+     *
+     * @return A board with copied data.
+     */
+    public GameBoard copyBoard() {
+
+        GameBoard board = new GameBoard(firstPlayer, secondPlayer);
+
+        final int[][] data = getRepresentation();
+        for (int line = 0; line < data.length; line++) {
+            for (int column = 0; column < data[line].length; column++) {
+                if (data[line][column] != 1 && data[line][column] != 2) continue;
+                final Player player = data[line][column] == 1 ? firstPlayer : secondPlayer;
+                final Intersection intersection = Intersection.get(column, line, board);
+                board.board.put(intersection, new Stone(intersection, player));
+            }
+        }
+
+        GameNode node = lastNode, newNode = lastNode.copy(board);
+
+        board.lastNode = newNode;
+
+        while (node.hasParent()) {
+            node = node.getParent();
+            newNode.setParent(node.copy(board));
+            newNode = newNode.getParent();
+        }
+
+        board.recomputeShape();
+
+        return board;
+    }
+
+    /**
+     * Recompute Shape.
+     */
+    private void recomputeShape() {
+
+        for (Stone stone : board.values()) {
+            final Shape shape = stone.getShape();
+            if (shape != null) {
+                shape.removeStone(stone);
+                stone.setShape(null);
+            }
+        }
+
+        for (int line = 0; line < boardSize; line++) {
+            for (int column = 0; column < boardSize; column++) {
+                final Intersection intersection = Intersection.get(column, line, this), upper = Intersection.get(column, line - 1, this), left = Intersection.get(column - 1, line, this);
+                Stone currentStone = getElement(intersection),
+                        upperStone = getElement(upper),
+                        leftStone = getElement(left);
+                Shape upShape = upperStone != null ? upperStone.getShape() : null,
+                        leftShape = leftStone != null ? leftStone.getShape() : null;
+                if (currentStone == null) continue;
+                if (upperStone == null && leftStone == null) {
+                    new Shape(currentStone.getPlayer(), this, currentStone);
+                    continue;
+                }
+                if (upperStone != null) {
+                    if (upperStone.getPlayer() == currentStone.getPlayer() && upShape != null) {
+                        upShape.addStone(currentStone);
+                    } else if (upperStone.getPlayer() == currentStone.getPlayer()) {
+                        upShape = new Shape(upperStone.getPlayer(), this, upperStone, currentStone);
+                    }
+                }
+                if (leftStone != null && leftStone.getPlayer() == currentStone.getPlayer()) {
+                    if (currentStone.getShape() == upShape && upShape != null) {
+                        if (leftShape != null) {
+                            upShape.unionWith(leftShape);
+                        } else {
+                            upShape.addStone(leftStone);
+                        }
+                    } else {
+                        if (leftShape != null) {
+                            leftShape.addStone(currentStone);
+                        } else {
+                            new Shape(leftStone.getPlayer(), this, leftStone, currentStone);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

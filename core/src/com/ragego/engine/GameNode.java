@@ -19,12 +19,12 @@ public class GameNode {
      * Board attached to this node.
      * Board where this action has been played.
      */
-    private final GameBoard board;
+    private GameBoard board;
 
     /**
      * Raw data from board state on this node
      */
-    private final int[][] rawData;
+    private int[][] rawData;
     /**
      * Describe if this node is loked.
      * A locked node is unable to refresh the hash from GameBoard. It prevent manipulation of history.
@@ -149,6 +149,11 @@ public class GameNode {
 
     public GameBoard getBoard() {
         return board;
+    }
+
+    public void setBoard(GameBoard board) {
+        this.board = board;
+        this.rawData = board.getRepresentation();
     }
 
     /**
@@ -278,10 +283,12 @@ public class GameNode {
             }
         }
         while (parent != null) {
-            if (!parent.hasParent() && parent.action != Action.PUT_STONE) // If it's end on PASS node, it's OK
-                return false;
-            if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE)
-                return true;
+            if (!parent.locked) {
+                if (!parent.hasParent() && parent.action != Action.PUT_STONE) // If it's end on PASS node, it's OK
+                    return false;
+                if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE)
+                    return true;
+            }
             parent = parent.getParent();
         }
         return false;
@@ -322,6 +329,14 @@ public class GameNode {
     @Override
     public boolean equals(Object obj) {
         return (this == obj) || ((obj instanceof GameNode) && (boardHash != null) && (((GameNode) obj).boardHash != null) && boardHash.equals(((GameNode) obj).boardHash));
+    }
+
+    public String toString() {
+        return "[GameNode Action=" + action + ", Intersection=" + intersection + ", Player=" + player + "]";
+    }
+
+    public GameNode copy(GameBoard board) {
+        return new GameNode(board, null, action, intersection == null ? null : Intersection.get(intersection.getColumn(), intersection.getLine(), board), player);
     }
 
     /**

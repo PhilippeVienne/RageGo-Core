@@ -118,6 +118,11 @@ public class Intersection {
         return o != null && o instanceof Intersection && hashCode() == o.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "[Intersection column=" + column + ", line=" + line + ", board=" + board + "]";
+    }
+
     /**
      * Test if a position is neighbour to this one.
      *     A neighbour is a position on :
@@ -162,4 +167,7 @@ public class Intersection {
     }
 
 
+    public Intersection forBoard(GameBoard testBoard) {
+        return Intersection.get(column, line, testBoard);
+    }
 }

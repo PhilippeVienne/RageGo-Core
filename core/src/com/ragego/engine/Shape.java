@@ -62,9 +62,9 @@ public class Shape {
      * @throws IllegalArgumentException The stone cannot be added to this shape
      */
     private void canStoneBeAdded(Stone stone) {
-        if(stones.isEmpty()) return;
-        if(stone.getPlayer()!=player||!isOnShapeLiberty(stone))
-            throw new IllegalArgumentException("Can not be added to shape");
+        //if(stones.isEmpty()) return;
+        //if(stone.getPlayer()!=player||!isOnShapeLiberty(stone))
+        //    throw new IllegalArgumentException("Can not be added to shape");
     }
 
     /**
@@ -113,7 +113,7 @@ public class Shape {
      * @param shape the shape to fusion
      */
     public void unionWith(Shape shape) {
-        for (Stone stone : shape.stones) {
+        for (Stone stone : shape.stones.toArray(new Stone[shape.stones.size()])) {
             addStonePrivate(stone);
         }
         shape.stones = new ArrayList<Stone>();
@@ -152,5 +152,9 @@ public class Shape {
 
     public ArrayList<Stone> getStones() {
         return stones;
+    }
+
+    public void removeStone(Stone stone) {
+        stones.remove(stone);
     }
 }
