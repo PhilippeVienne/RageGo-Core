@@ -71,7 +71,7 @@ public class Stone {
     }
 
     public void setShape(Shape shape) {
-        if (!shape.getStones().contains(this)) {
+        if (shape != null && !shape.getStones().contains(this)) {
             throw new IllegalArgumentException("Shape does not contain stone");
         }
         this.shape = shape;
@@ -108,5 +108,9 @@ public class Stone {
                 return true;
         }
         return false;
+    }
+
+    public Stone copy(GameBoard board) {
+        return new Stone(position.forBoard(board), player);
     }
 }

@@ -181,4 +181,16 @@ public class Shape {
         }
         return false;
     }
+
+    /**
+     * Copy the shape and stones to a new board.
+     * This function does not add stones to board, do not forget to do it.
+     */
+    public Shape copy(GameBoard board) {
+        Shape shape = new Shape(player, board);
+        for (Stone stone : stones)
+            shape.addStonePrivate(stone.copy(board));
+        return shape;
+    }
+
 }

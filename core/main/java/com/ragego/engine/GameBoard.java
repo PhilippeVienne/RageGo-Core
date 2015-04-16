@@ -138,10 +138,9 @@ public class GameBoard {
             return true;
         }
 
-        // Save old board to restore after use
-        HashMap<Intersection, Stone> oldBoard = new HashMap<Intersection, Stone>(board);
-
         // Fake board
+        GameBoard testBoard = copyBoard();
+        final HashMap<Intersection, Stone> testBoardMemory = new HashMap<Intersection, Stone>(testBoard.board);
 
         // Result storage
         GoRuleViolation.Type type = null;
@@ -162,7 +161,6 @@ public class GameBoard {
             if (isNotEmpty(intersection)) return false;
         }
         { // Rule # : You can ot kill you
-            GameBoard testBoard = copyBoard();
             testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
             testBoard.computeDeadStone(getOpponent(player));
             Stone[] deadStone = testBoard.computeDeadStone(player);
@@ -173,9 +171,8 @@ public class GameBoard {
                     isViolatingRule = true;
                 }
         }
-        board = new HashMap<Intersection, Stone>(oldBoard); // Reset the computing
         if (!isViolatingRule) { // Rule 8 : A play may not recreate a previous position from the game.
-            GameBoard testBoard = copyBoard();
+            testBoard.board = new HashMap<Intersection, Stone>(testBoardMemory);
             GameNode testNode = node.copy(testBoard);
             final String boardHash = testBoard.getBoardHash();
             testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
@@ -191,7 +188,6 @@ public class GameBoard {
                 isViolatingRule = true;
             }
         }
-        board = oldBoard;
         lastNode.removeChild(node);
         // No inspection due to a false inspection result.
         //noinspection ConstantConditions
@@ -665,14 +661,10 @@ public class GameBoard {
 
         board.boardSize = boardSize;
 
-        final int[][] data = getRepresentation();
-        for (int line = 0; line < data.length; line++) {
-            for (int column = 0; column < data[line].length; column++) {
-                if (data[line][column] != 1 && data[line][column] != 2) continue;
-                final Player player = data[line][column] == 1 ? firstPlayer : secondPlayer;
-                final Intersection intersection = Intersection.get(column, line, board);
-                board.board.put(intersection, new Stone(intersection, player));
-            }
+        final ArrayList<Shape> shapes = getShapes();
+        for (Shape shape : shapes) {
+            for (Stone stone : shape.copy(board).getStones())
+                board.board.put(stone.getPosition(), stone);
         }
 
         GameNode node = lastNode, newNode = lastNode.copy(board);
