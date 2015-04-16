@@ -275,14 +275,13 @@ public class StandardGameFormatIO implements FormatIO {
                     } else if (sp.length == 2) {
                         x = Integer.parseInt(sp[0]);
                         y = Integer.parseInt(sp[1]);
+                        if (x != y)
+                            throw sgfError("Ban should be a square not a rectangle !");
                         dim.setSize(x, y);
                     } else {
                         throw sgfError("Malformed boardsize!");
                     }
-
-                    // TODO : ??
-
-
+                    game.setBoardSize(x);
                 } else {
                     node.setProperty(name, val);
 

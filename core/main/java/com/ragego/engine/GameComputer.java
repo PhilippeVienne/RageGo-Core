@@ -26,7 +26,7 @@ public class GameComputer {
      * @param board   A GameBoard. This is used to load layers on new GameBoard.
      */
     public GameComputer(GameNode endNode, GameBoard board) {
-        this.board = new GameBoard(board.getFirstPlayer(), board.getSecondPlayer());
+        this.board = board.copyBoard();
         nodesToPlay = new Stack<GameNode>();
         GameNode node = endNode;
         while (node != null) {
@@ -49,6 +49,10 @@ public class GameComputer {
             if (intersection != null) // Update board if necessary
                 gameNode.setIntersection(Intersection.get(intersection.getColumn(), intersection.getLine(), board));
             try {
+                if (GameBoard.DEBUG_MODE) {
+                    System.out.println("Coup " + Integer.toString(i));
+                    System.out.println("Will play this: " + gameNode);
+                }
                 board.play(gameNode);
                 i++;
             } catch (IllegalArgumentException error) {

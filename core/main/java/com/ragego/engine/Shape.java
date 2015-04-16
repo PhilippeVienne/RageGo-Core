@@ -50,10 +50,10 @@ public class Shape {
      */
     public Shape addStone(Stone stone) {
         canStoneBeAdded(stone);
-        if (stone.getShape() != this)
-            stone.setShape(this);
         if (!stones.contains(stone))
             stones.add(stone);
+        if (stone.getShape() != this)
+            stone.setShape(this);
         return this;
     }
 
@@ -107,15 +107,6 @@ public class Shape {
     }
 
     /**
-     * Update the player of this shape.
-     *
-     * @param player The owner of this shape
-     */
-    private void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    /**
      * Fusion multiple shapes.
      *
      * @param shape the shape to fusion
@@ -124,7 +115,6 @@ public class Shape {
         for (Stone stone : shape.stones.toArray(new Stone[shape.stones.size()])) {
             addStonePrivate(stone);
         }
-        shape.stones = new ArrayList<Stone>();
     }
 
     /**
@@ -133,8 +123,8 @@ public class Shape {
      * @param stone the stone to add
      */
     private void addStonePrivate(Stone stone) {
-        stone.setShape(this);
         stones.add(stone);
+        stone.setShape(this);
     }
 
     /**
@@ -167,5 +157,28 @@ public class Shape {
 
     public void removeStone(Stone stone) {
         stones.remove(stone);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Update the player of this shape.
+     *
+     * @param player The owner of this shape
+     */
+    private void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public boolean isOnLiberty(Shape comparedShape) {
+        for (Stone stone : stones) {
+            for (Stone stoneOfOtherShape : comparedShape.stones) {
+                if (stone.isOnLiberty(stoneOfOtherShape) && stone.getPlayer() == stoneOfOtherShape.getPlayer())
+                    return true;
+            }
+        }
+        return false;
     }
 }

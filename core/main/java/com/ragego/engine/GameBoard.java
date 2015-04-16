@@ -114,8 +114,6 @@ public class GameBoard {
         currentPlayer.getListener().newTurn(this, currentPlayer);
         // Compute the dead stones
         is_deleting_dead_stones = true;
-        computeDeadStone(previousPlayer);
-        computeDeadStone(currentPlayer);
         lastNode.recomputeHash();
         lastNode.lock();
         { // Spread events that a turn is ended
@@ -205,10 +203,6 @@ public class GameBoard {
     }
 
     public void play(GameNode node) {
-        if (DEBUG_MODE) {
-            System.out.println("Playing node: " + node);
-            DebugUtils.printBoard(this);
-        }
         node.setBoard(this);
         try {
             if (!canPlay(node)) {
@@ -228,6 +222,7 @@ public class GameBoard {
                 break;
             case PUT_STONE:
                 setElement(node.getIntersection(), node.getStone());
+                //fusionShapes();
                 computeDeadStone(getOpponent(node.getPlayer()));
                 computeDeadStone(node.getPlayer());
                 break;
@@ -250,7 +245,9 @@ public class GameBoard {
         lastNode.recomputeHash();
         lastNode.lock();
         if (DEBUG_MODE) {
-            System.out.println(getBoardHash());
+            System.out.println("Played node: " + node);
+            DebugUtils.printBoard(this);
+            System.out.println("Board hash is = " + getBoardHash());
         }
     }
 
@@ -308,6 +305,10 @@ public class GameBoard {
         return boardSize;
     }
 
+    public void setBoardSize(int boardSize) {
+        this.boardSize = boardSize;
+    }
+
     /**
      * Retrieve something on Intersection
      *
@@ -341,17 +342,17 @@ public class GameBoard {
 
         // Look for dead stones.
         // On each shape, check if it's alive.
-        for (Intersection intersection : board.keySet()) {
-            final Stone stone = board.get(intersection);
-            if (stone != null && stone.getPlayer() == player && stone.getShape() != null && !stone.getShape().isAlive())
-                deadStones.addAll(stone.getShape().getStones());
-        }
-
-        for (Stone stone : deadStones) {
-            if (is_deleting_dead_stones)
-                deadStone(stone.getPosition(), stone);
-            else
-                board.remove(stone.getPosition());
+        final ArrayList<Shape> shapes = getShapes();
+        for (Shape shape : shapes) {
+            if (shape != null && shape.getPlayer() == player && !shape.isAlive()) {
+                for (Stone deadStone : shape.getStones()) {
+                    deadStones.add(deadStone);
+                    if (is_deleting_dead_stones)
+                        deadStone(deadStone.getPosition(), deadStone);
+                    else
+                        board.remove(deadStone.getPosition());
+                }
+            }
         }
 
         // Return set of dead stones
@@ -404,7 +405,8 @@ public class GameBoard {
                 if (shape == null) {
                     shape = new Shape(player, this, getElement(neighbours));
                 }
-                shapes.add(shape);
+                if (!shapes.contains(shape))
+                    shapes.add(shape);
             }
         }
         Iterator<Shape> shapeIterator = shapes.iterator();
@@ -525,6 +527,20 @@ public class GameBoard {
     }
 
     /**
+     * Retrieve Shapes from this board.
+     * @return array of shapes
+     */
+    public ArrayList<Shape> getShapes() {
+        ArrayList<Shape> shapes = new ArrayList<Shape>();
+        for (Stone stone : board.values()) {
+            if (!shapes.contains(stone.getShape())) {
+                shapes.add(stone.getShape());
+            }
+        }
+        return shapes;
+    }
+
+    /**
      * Get the black player.
      * In Go rules, the black player start the game so this function is an easy way to access to first player.
      *
@@ -546,6 +562,9 @@ public class GameBoard {
         return getSecondPlayer();
     }
 
+    //////////////////////////////////////////////////////////:
+    ////        Functions for IA
+
     /**
      * Get letter that represent for player.
      * W is for White player and B is for Black player.
@@ -555,9 +574,6 @@ public class GameBoard {
     public char getLetterForPlayer(Player player) {
         return getBlackPlayer() == player ? 'B' : (getWhitePlayer() == player ? 'W' : '?');
     }
-
-    //////////////////////////////////////////////////////////:
-    ////        Functions for IA
 
     /**
      * Get the board.
@@ -639,13 +655,15 @@ public class GameBoard {
     }
 
     /**
-     * Create a copy of this GameBoard.
-     *
+     * Create a complete copy of this GameBoard.
+     * A copy is a heavy action because it will recompute all Shapes.
      * @return A board with copied data.
      */
     public GameBoard copyBoard() {
 
         GameBoard board = new GameBoard(firstPlayer, secondPlayer);
+
+        board.boardSize = boardSize;
 
         final int[][] data = getRepresentation();
         for (int line = 0; line < data.length; line++) {

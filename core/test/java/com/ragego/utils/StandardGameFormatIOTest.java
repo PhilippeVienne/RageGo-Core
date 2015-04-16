@@ -92,8 +92,47 @@ public class StandardGameFormatIOTest extends RageGoTest {
 
     @Test
     public void readBigGame() {
+        try {
+            loadAGameAndCompute("test-game.sgf");
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading", e);
+        }
+        checkWantedBoard("2305DFE94D9AFD449769616F11D2D9BD", game);
+    }
+
+    @Test
+    public void read9SizedSimpleBoard() {
+        try {
+            loadAGameAndCompute("ban9-test-multipleStoneDelete.sgf");
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading", e);
+        }
+        checkWantedBoard("7D5120D1E204AC1DCD74BEBCBFA8B828", game);
+    }
+
+    @Test
+    public void read9SizedBoard() {
+        try {
+            loadAGameAndCompute("ban9-test-full.sgf");
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading", e);
+        }
+        checkWantedBoard("FD23B551AB08278F3C32151C6921C205", game);
+    }
+
+    @Test
+    public void read9SizedBoardDeleteStoneOnBorder() {
+        try {
+            loadAGameAndCompute("ban9-test-deleteStoneBorder.sgf");
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading", e);
+        }
+        checkWantedBoard("6E38B43E0FA2AD943211D5A6F1E951FE", game);
+    }
+
+    private void loadAGameAndCompute(String resource) throws IOException, RuntimeException {
         StringBuilder buffer = new StringBuilder();
-        InputStream inputStream = StandardGameFormatIO.class.getResourceAsStream("test-game.sgf");
+        InputStream inputStream = StandardGameFormatIO.class.getResourceAsStream(resource);
         try {
             while (inputStream.available() != 0)
                 buffer.append((char) inputStream.read());
@@ -103,12 +142,7 @@ public class StandardGameFormatIOTest extends RageGoTest {
             throw new RuntimeException("Can not load test file", e);
         }
         formatIO = new StandardGameFormatIO(writeTempFile("game", "sgf", buffer.toString()), game);
-        try {
-            game = formatIO.read();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        checkWantedBoard("D9C86E953531C0D5E896D075AC0B5C31", game);
+        game = formatIO.read();
     }
 
     private void checkWantedBoard(String gameHash, GameBoard board) {

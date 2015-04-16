@@ -71,6 +71,9 @@ public class Stone {
     }
 
     public void setShape(Shape shape) {
+        if (!shape.getStones().contains(this)) {
+            throw new IllegalArgumentException("Shape does not contain stone");
+        }
         this.shape = shape;
     }
 
@@ -83,12 +86,27 @@ public class Stone {
     public int countLiberty() {
         int liberty = 0;
         for (Intersection intersection : position.getNeighboursIntersections()) {
-            if (board.isEmpty(intersection) && board.isValidIntersection(intersection)) liberty++;
+            if (!board.isValidIntersection(intersection)) continue;
+            if (board.isEmpty(intersection)) {
+                liberty++;
+                continue;
+            }
+            final Stone element = board.getElement(intersection);
+            if (element != null && element.getPlayer().equals(getPlayer()) && element.getShape() != shape)
+                liberty++;
         }
         return liberty;
     }
 
     public void setCaptivated() {
         capturated = !capturated;
+    }
+
+    public boolean isOnLiberty(Stone otherStone) {
+        for (Intersection intersection : position.getNeighboursIntersections()) {
+            if (otherStone.position.equals(intersection))
+                return true;
+        }
+        return false;
     }
 }
