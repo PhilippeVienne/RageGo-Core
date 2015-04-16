@@ -355,6 +355,10 @@ public class GameNode {
         return new GameNode(board, null, action, intersection == null ? null : Intersection.get(intersection.getColumn(), intersection.getLine(), board), player);
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
     /**
      * Describe actions possible in the game between two nodes.
      * Currently, the actions are :

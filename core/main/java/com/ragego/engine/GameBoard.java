@@ -30,29 +30,26 @@ public class GameBoard {
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
     public static boolean DEBUG_MODE = false;
+    private final Player firstPlayer;
+    private final Player secondPlayer;
+    /**
+     * Listeners for this board.
+     * All this listeners are called when some actions occurs. Do not forget to warn them.
+     */
+    private final ArrayList<GameListener> listeners = new ArrayList<GameListener>(10);
     /**
      * Register the last validated node in the game.
      */
     private GameNode lastNode;
-
-    private Player firstPlayer;
-    private Player secondPlayer;
     /**
      * This should be {@link #secondPlayer} or {@link #firstPlayer}
      */
     private Player currentPlayer;
     private int boardSize = DEFAULT_BOARD_SIZE;
-
     /**
      * Store the elements on bord by {@link com.ragego.engine.Intersection}
      */
     private HashMap<Intersection, Stone> board;
-    /**
-     * Declare if we want to delete the dead stones.
-     * This is useful to not delete dead stones in rule test mode.
-     */
-    private boolean is_deleting_dead_stones = true;
-
     /**
      * Declare if IA functions are callable.
      */
@@ -96,30 +93,36 @@ public class GameBoard {
      * Apply the Rule 7 to make a new move.
      */
     public void nextMove() {
-        Player previousPlayer;
         { // Update the player
-            previousPlayer = currentPlayer == null ? getSecondPlayer() : currentPlayer;
-            currentPlayer = currentPlayer == getFirstPlayer() ? getSecondPlayer() : getFirstPlayer();
+            currentPlayer = getOpponent(currentPlayer);
         }
         { // Spread events that a turn is starting
             final String signature = getBoardHash();
-            getFirstPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
-            getSecondPlayer().getListener().startOfTurn(this, currentPlayer, previousPlayer);
+            getFirstPlayer().getListener().startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            getSecondPlayer().getListener().startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            for (GameListener listener : listeners) {
+                listener.startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            }
             if (!signature.equals(getBoardHash())) {
                 throw new IllegalStateException("A player has modified the board, and this should not be");
             }
         }
-        is_deleting_dead_stones = false;
         // Play the turn
         currentPlayer.getListener().newTurn(this, currentPlayer);
-        // Compute the dead stones
-        is_deleting_dead_stones = true;
-        lastNode.recomputeHash();
-        lastNode.lock();
+        for (GameListener listener : listeners) {
+            listener.newTurn(this, currentPlayer);
+        }
+        if (lastNode.isLocked()) {
+            lastNode.recomputeHash();
+            lastNode.lock();
+        }
         { // Spread events that a turn is ended
             final String signature = getBoardHash();
-            getFirstPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
-            getSecondPlayer().getListener().endOfTurn(this, currentPlayer, previousPlayer);
+            getFirstPlayer().getListener().endOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            getSecondPlayer().getListener().endOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            for (GameListener listener : listeners) {
+                listener.endOfTurn(this, currentPlayer, getOpponent(currentPlayer));
+            }
             if (!signature.equals(getBoardHash())) {
                 throw new IllegalStateException("A player has modified the board, and this should not be");
             }
@@ -130,6 +133,7 @@ public class GameBoard {
      * Check that we can play on this intersection.
      *
      * @param node The {@link GameNode} which represent what you want to play.
+     * @throws GoRuleViolation If rules are not respected.
      * @return true if it's correct following the Go rules to play on this row.
      */
     public boolean canPlay(GameNode node) throws GoRuleViolation {
@@ -161,7 +165,7 @@ public class GameBoard {
             if (isNotEmpty(intersection)) return false;
         }
         { // Rule # : You can ot kill you
-            testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
+            testBoard.placeStoneOnBoard(new Stone(intersection.forBoard(testBoard), player));
             testBoard.computeDeadStone(getOpponent(player));
             Stone[] deadStone = testBoard.computeDeadStone(player);
             for (Stone stone : deadStone)
@@ -175,7 +179,7 @@ public class GameBoard {
             testBoard.board = new HashMap<Intersection, Stone>(testBoardMemory);
             GameNode testNode = node.copy(testBoard);
             final String boardHash = testBoard.getBoardHash();
-            testBoard.setElement(intersection.forBoard(testBoard), new Stone(intersection.forBoard(testBoard), player));
+            testBoard.placeStoneOnBoard(new Stone(intersection.forBoard(testBoard), player));
             if (testBoard.getElement(intersection.forBoard(testBoard)) == null)
                 System.out.println("Stone not found");
             testBoard.computeDeadStone(getOpponent(player));
@@ -198,6 +202,20 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * Play a node on this board.
+     * This method act a node on this board.<br/>
+     * Actions performed: <ol>
+     * <li>Assigns this board to the node</li>
+     * <li>Checks if action is not violating Go rules (throws {@link IllegalArgumentException} if not).</li>
+     * <li>Sets {@link GameBoard#lastNode} as parent</li>
+     * <li>Prevents listeners</li>
+     * <li>Act the action</li>
+     * <li>Recompute hash for the node and lock the node</li>
+     * </ol>
+     *
+     * @param node The action to play
+     */
     public void play(GameNode node) {
         node.setBoard(this);
         try {
@@ -209,6 +227,9 @@ public class GameBoard {
         }
         node.setParent(lastNode);
         lastNode = node;
+        for (GameListener listener : listeners) {
+            listener.playNode(node);
+        }
         switch (node.getAction()) {
             case START_GAME:
                 board = new HashMap<Intersection, Stone>(boardSize * boardSize);
@@ -217,8 +238,7 @@ public class GameBoard {
             case PASS:
                 break;
             case PUT_STONE:
-                setElement(node.getIntersection(), node.getStone());
-                //fusionShapes();
+                placeStoneOnBoard(node.getStone());
                 computeDeadStone(getOpponent(node.getPlayer()));
                 computeDeadStone(node.getPlayer());
                 break;
@@ -259,8 +279,7 @@ public class GameBoard {
         for (int line = 0; line < data.length; line++) {
             for (int column = 0; column < data[line].length; column++) {
                 if (data[line][column] != 1 && data[line][column] != 2) continue;
-                setElement(
-                        Intersection.get(column, line, this),
+                placeStoneOnBoard(
                         new Stone(
                                 Intersection.get(column, line, this),
                                 (
@@ -320,11 +339,13 @@ public class GameBoard {
      * Check that intersection is on the current board.
      *
      * @param intersection The intersection to check
-     * @throws com.ragego.engine.GameBoard.BadBoardException If it's not the good board
      */
-    private void checkBoardForIntersection(Intersection intersection) throws BadBoardException {
-        if (intersection.getBoard() != this)
-            throw new BadBoardException();
+    private void checkBoardForIntersection(Intersection intersection) {
+        if (intersection.getBoard() != this) {
+            System.err.println("Intersection is on board " + intersection.getBoard());
+            System.err.println("and you are on board " + this);
+            throw new IllegalStateException("Assertion false, you are not on goot board");
+        }
     }
 
     /**
@@ -343,10 +364,7 @@ public class GameBoard {
             if (shape != null && shape.getPlayer() == player && !shape.isAlive()) {
                 for (Stone deadStone : shape.getStones()) {
                     deadStones.add(deadStone);
-                    if (is_deleting_dead_stones)
-                        deadStone(deadStone.getPosition(), deadStone);
-                    else
-                        board.remove(deadStone.getPosition());
+                    removeStoneFromBoard(deadStone);
                 }
             }
         }
@@ -358,30 +376,35 @@ public class GameBoard {
     /**
      * Do necessary calls to register a stone as dead.
      *
-     * @param intersection Intersection where the stone was
      * @param stone        The stone to kill
      */
-    private void deadStone(Intersection intersection, Stone stone) {
+    private void removeStoneFromBoard(Stone stone) {
         stone.setCaptivated();
-        board.remove(intersection, stone);
+        board.remove(stone.getPosition(), stone);
+        for (GameListener listener : listeners) {
+            listener.stoneRemoved(stone);
+        }
     }
 
     /**
-     * Put an element to an intersection.
-     * This function don't check that the element checks go rules.
+     * Put an stone to an intersection.
+     * This function don't check that the stone checks go rules.
      *
-     * @param intersection One of intersection of this board
-     * @param element      The element to put
+     * @param stone      The stone to put
      */
-    private void setElement(Intersection intersection, Stone element) {
+    private void placeStoneOnBoard(Stone stone) {
+        final Intersection intersection = stone.getPosition();
         checkBoardForIntersection(intersection);
-        Shape shape = searchForShapesAround(intersection, element.getPlayer());
+        Shape shape = searchForShapesAround(intersection, stone.getPlayer());
         if (shape == null)
-            shape = new Shape(element.getPlayer(), this, element);
+            shape = new Shape(stone.getPlayer(), this, stone);
         else
-            shape.addStone(element);
-        element.setShape(shape);
-        board.put(intersection, element);
+            shape.addStone(stone);
+        stone.setShape(shape);
+        board.put(intersection, stone);
+        for (GameListener listener : listeners) {
+            listener.newStoneAdded(stone);
+        }
     }
 
     /**
@@ -391,7 +414,7 @@ public class GameBoard {
      *
      * @param intersection The intersection where we lookup
      * @param player       The player which should be the owner of shape
-     * @return The shape to associate with or null if there is not one.
+     * @return The shape to associate with or null if there is no one.
      */
     private Shape searchForShapesAround(Intersection intersection, Player player) {
         ArrayList<Shape> shapes = new ArrayList<Shape>(4);
@@ -477,7 +500,7 @@ public class GameBoard {
      * @return true if no stones are on this intersection
      */
     public boolean isEmpty(Intersection intersection) {
-        return !board.containsKey(intersection);
+        return !isNotEmpty(intersection);
     }
 
     /**
@@ -487,7 +510,7 @@ public class GameBoard {
      * @return false if no stones are on this intersection
      */
     public boolean isNotEmpty(Intersection intersection) {
-        return !isEmpty(intersection);
+        return board.containsKey(intersection);
     }
 
     /**
@@ -558,93 +581,6 @@ public class GameBoard {
         return getSecondPlayer();
     }
 
-    //////////////////////////////////////////////////////////:
-    ////        Functions for IA
-
-    /**
-     * Get letter that represent for player.
-     * W is for White player and B is for Black player.
-     *
-     * @return The letter capitalized
-     */
-    public char getLetterForPlayer(Player player) {
-        return getBlackPlayer() == player ? 'B' : (getWhitePlayer() == player ? 'W' : '?');
-    }
-
-    /**
-     * Get the board.
-     */
-    public HashMap<Intersection, Stone> ia_getBoard() {
-        checkIAMode();
-        return board;
-    }
-
-    /**
-     * Create a stone and compute dead stones.
-     * Put a stone on intersection and compute dead stones.
-     * If there is already a stone, it deletes it and creates a new one.
-     *
-     * @param intersection Where to place the stone.
-     * @param player       The player who owns the stone.
-     * @return The new stone
-     */
-    public Stone ia_createStoneAndComputeDead(Intersection intersection, Player player) {
-        Stone stone = ia_createStone(intersection, player);
-        computeDeadStone(getOpponent(player));
-        computeDeadStone(player);
-        return stone;
-    }
-
-    /**
-     * Create a stone.
-     * Put a stone on intersection and wait end of turn before compute dead stones.
-     * If there is already a stone, it deletes it and creates a new one.
-     *
-     * @param intersection Where to place the stone.
-     * @param player       The player who owns the stone.
-     * @return The new stone
-     */
-    public Stone ia_createStone(Intersection intersection, Player player) {
-        checkIAMode();
-        if (getElement(intersection) != null) ia_deleteStone(getElement(intersection));
-        Stone stone = new Stone(intersection, player);
-        setElement(intersection, stone);
-        return stone;
-    }
-
-    /**
-     * Delete a stone.
-     * Delete a stone from the board whithout any side effects.
-     *
-     * @param stone The stone to delete.
-     */
-    public void ia_deleteStone(Stone stone) {
-        checkIAMode();
-        deadStone(stone.getPosition(), stone);
-    }
-
-    /**
-     * Move a stone.
-     * This move a stone to a new location. If there is already a stone, it does nothing.
-     *
-     * @param stone        The stone to move
-     * @param intersection The new intersection
-     * @return The new Stone moved to the position or the old if it was not possible
-     */
-    public Stone ia_moveStone(Stone stone, Intersection intersection) {
-        checkIAMode();
-        checkBoardForIntersection(intersection);
-        if (getElement(intersection) != null) return stone;
-        Stone newStone = new Stone(intersection, stone.getPlayer());
-        deadStone(stone.getPosition(), stone);
-        setElement(intersection, newStone);
-        return newStone;
-    }
-
-    private void checkIAMode() {
-        if (!ia_functions_enabled)
-            throw new IllegalStateException("You can not call IA functions here !");
-    }
 
     public GameNode getLastNode() {
         return lastNode;
@@ -652,7 +588,15 @@ public class GameBoard {
 
     /**
      * Create a complete copy of this GameBoard.
-     * A copy is a heavy action because it will recompute all Shapes.
+     * A copy is a heavy action because it will copy all shapes and stones (do it with cautious).<br>
+     * Data which is copied :
+     * <ul>
+     * <li>Shapes: see {@link Shape#copy(GameBoard)}</li>
+     * <li>Stones: see {@link Stone#copy(GameBoard)}</li>
+     * <li>Nodes: see {@link GameNode#copy(GameBoard)}</li>
+     * </ul>
+     * Listeners are not copied to not call on fake events (but you can copy them).
+     *
      * @return A board with copied data.
      */
     public GameBoard copyBoard() {
@@ -681,7 +625,9 @@ public class GameBoard {
     }
 
     /**
-     * Recompute Shape.
+     * Recompute Shapes.
+     * <p>This remove shapes from all stones of board and recompute shapes for all stones on board.</p>
+     * <p>This is a really heavy action and you should never call it on board containing many stones aside.</p>
      */
     private void recomputeShape() {
 
@@ -733,12 +679,110 @@ public class GameBoard {
     }
 
     /**
-     * Exception occurs when you are manipulating a wrong board.
+     * Add a listener to this board.
+     *
+     * @param listener the listener to add to this {@link GameBoard}
+     * @see GameListener
      */
-    public static class BadBoardException extends IllegalArgumentException {
-
-        public BadBoardException() {
-            super("Not on good board");
-        }
+    public void addGameListener(GameListener listener) {
+        listeners.add(listener);
     }
+
+    /**
+     * Remove a listener from this board.
+     *
+     * @param listener the listener to remove.
+     */
+    public void removeGameListner(GameListener listener) {
+        listeners.remove(listener);
+    }
+
+    //////////////////////////////////////////////////////////:
+    ////        Functions for IA
+
+    /**
+     * Get letter that represent for player.
+     * W is for White player and B is for Black player.
+     *
+     * @return The letter capitalized
+     */
+    public char getLetterForPlayer(Player player) {
+        return getBlackPlayer() == player ? 'B' : (getWhitePlayer() == player ? 'W' : '?');
+    }
+
+    /**
+     * Get the board.
+     */
+    public HashMap<Intersection, Stone> ia_getBoard() {
+        checkIAMode();
+        return board;
+    }
+
+    /**
+     * Create a stone and compute dead stones.
+     * Put a stone on intersection and compute dead stones.
+     * If there is already a stone, it deletes it and creates a new one.
+     *
+     * @param intersection Where to place the stone.
+     * @param player       The player who owns the stone.
+     * @return The new stone
+     */
+    public Stone ia_createStoneAndComputeDead(Intersection intersection, Player player) {
+        Stone stone = ia_createStone(intersection, player);
+        computeDeadStone(getOpponent(player));
+        computeDeadStone(player);
+        return stone;
+    }
+
+    /**
+     * Create a stone.
+     * Put a stone on intersection and wait end of turn before compute dead stones.
+     * If there is already a stone, it deletes it and creates a new one.
+     *
+     * @param intersection Where to place the stone.
+     * @param player       The player who owns the stone.
+     * @return The new stone
+     */
+    public Stone ia_createStone(Intersection intersection, Player player) {
+        checkIAMode();
+        if (getElement(intersection) != null) ia_deleteStone(getElement(intersection));
+        Stone stone = new Stone(intersection, player);
+        placeStoneOnBoard(stone);
+        return stone;
+    }
+
+    /**
+     * Delete a stone.
+     * Delete a stone from the board whithout any side effects.
+     *
+     * @param stone The stone to delete.
+     */
+    public void ia_deleteStone(Stone stone) {
+        checkIAMode();
+        removeStoneFromBoard(stone);
+    }
+
+    /**
+     * Move a stone.
+     * This move a stone to a new location. If there is already a stone, it does nothing.
+     *
+     * @param stone        The stone to move
+     * @param intersection The new intersection
+     * @return The new Stone moved to the position or the old if it was not possible
+     */
+    public Stone ia_moveStone(Stone stone, Intersection intersection) {
+        checkIAMode();
+        checkBoardForIntersection(intersection);
+        if (getElement(intersection) != null) return stone;
+        Stone newStone = new Stone(intersection, stone.getPlayer());
+        removeStoneFromBoard(stone);
+        placeStoneOnBoard(newStone);
+        return newStone;
+    }
+
+    private void checkIAMode() {
+        if (!ia_functions_enabled)
+            throw new IllegalStateException("You can not call IA functions here !");
+    }
+
 }
