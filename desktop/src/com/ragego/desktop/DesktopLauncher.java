@@ -1,6 +1,8 @@
 package com.ragego.desktop;
 
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.ragego.gui.RageGoGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -8,10 +10,10 @@ public class DesktopLauncher {
 
 		config.height = 600;
 		config.width = 1000;
-		config.resizable = false; //Temporarily blocked for first tests
+		config.resizable = true;
 
 		config.title = "RageGo";
 
-		//new LwjglApplication(new RageGoGame(), config);
+		new LwjglApplication(new RageGoGame(), config);
 	}
 }

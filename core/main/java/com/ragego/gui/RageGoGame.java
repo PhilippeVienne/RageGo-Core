@@ -1,13 +1,13 @@
 package com.ragego.gui;
 
 import com.badlogic.gdx.Game;
-import com.ragego.gui.screens.GoGameScreen;
+import com.ragego.gui.screens.MenuScreen;
 
 public class RageGoGame extends Game {
 
     @Override
     public void create() {
-        setScreen(new GoGameScreen());
+        setScreen(new MenuScreen());
     }
 
     @Override
