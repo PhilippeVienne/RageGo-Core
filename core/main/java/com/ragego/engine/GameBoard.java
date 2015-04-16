@@ -677,8 +677,6 @@ public class GameBoard {
             newNode = newNode.getParent();
         }
 
-        board.recomputeShape();
-
         return board;
     }
 

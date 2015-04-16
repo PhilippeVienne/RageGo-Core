@@ -121,6 +121,16 @@ public class StandardGameFormatIOTest extends RageGoTest {
     }
 
     @Test
+    public void read19SizedBoardTestShapes() {
+        try {
+            loadAGameAndCompute("ban19-test-shapes.sgf");
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading", e);
+        }
+        checkWantedBoard("62E4A81454883FBE9C981B15BEA7CA36", game);
+    }
+
+    @Test
     public void read9SizedBoardDeleteStoneOnBorder() {
         try {
             loadAGameAndCompute("ban9-test-deleteStoneBorder.sgf");
