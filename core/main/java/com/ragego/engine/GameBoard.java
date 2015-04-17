@@ -95,6 +95,7 @@ public class GameBoard {
     public void nextMove() {
         { // Update the player
             currentPlayer = getOpponent(currentPlayer);
+            if (currentPlayer == null) currentPlayer = getFirstPlayer();
         }
         { // Spread events that a turn is starting
             final String signature = getBoardHash();
@@ -168,12 +169,16 @@ public class GameBoard {
             testBoard.placeStoneOnBoard(new Stone(intersection.forBoard(testBoard), player));
             testBoard.computeDeadStone(getOpponent(player));
             Stone[] deadStone = testBoard.computeDeadStone(player);
-            for (Stone stone : deadStone)
-                if (stone == testStone) {
-                    message = "You can not kill yourself";
-                    type = GoRuleViolation.Type.SUICIDE;
-                    isViolatingRule = true;
+            if (deadStone.length > 0) {
+                final Intersection stoneIntersectionOnTestBoard = testStone.getPosition().forBoard(testBoard);
+                for (Stone stone : deadStone) {
+                    if (stoneIntersectionOnTestBoard == stone.getPosition()) {
+                        message = "You can not kill yourself";
+                        type = GoRuleViolation.Type.SUICIDE;
+                        isViolatingRule = true;
+                    }
                 }
+            }
         }
         if (!isViolatingRule) { // Rule 8 : A play may not recreate a previous position from the game.
             testBoard.board = new HashMap<Intersection, Stone>(testBoardMemory);
@@ -183,7 +188,7 @@ public class GameBoard {
             if (testBoard.getElement(intersection.forBoard(testBoard)) == null)
                 System.out.println("Stone not found");
             testBoard.computeDeadStone(getOpponent(player));
-            //testBoard.computeDeadStone(player);
+            testBoard.computeDeadStone(player);
             testNode.setParent(testBoard.lastNode);
             testNode.recomputeHash();
             if (testNode.isMakingKO()) {

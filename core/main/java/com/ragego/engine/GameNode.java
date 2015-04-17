@@ -295,7 +295,7 @@ public class GameNode {
             }
         }
         while (parent != null) {
-            if (!parent.locked) {
+            if (parent.locked) {
                 if (!parent.hasParent() && parent.action != Action.PUT_STONE) // If it's end on PASS node, it's OK
                     return false;
                 if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE)
@@ -352,7 +352,10 @@ public class GameNode {
     }
 
     public GameNode copy(GameBoard board) {
-        return new GameNode(board, null, action, intersection == null ? null : Intersection.get(intersection.getColumn(), intersection.getLine(), board), player);
+        final GameNode gameNode = new GameNode(board, null, action, intersection == null ? null : Intersection.get(intersection.getColumn(), intersection.getLine(), board), player);
+        gameNode.locked = locked;
+        gameNode.boardHash = boardHash;
+        return gameNode;
     }
 
     public boolean isLocked() {

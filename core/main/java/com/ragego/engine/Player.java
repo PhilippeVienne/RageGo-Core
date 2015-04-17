@@ -40,4 +40,11 @@ public abstract class Player {
     public TurnListener getListener() {
         return listener;
     }
+
+    /**
+     * Update the listener for the given player.
+     */
+    public void setListener(TurnListener listener) {
+        this.listener = listener;
+    }
 }
