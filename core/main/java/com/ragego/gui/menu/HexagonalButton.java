@@ -32,6 +32,7 @@ public class HexagonalButton extends Button {
     public HexagonalButton(HexagonalMenu menu, String resourceToLoad, HexagonalMenu.Position position) {
         this.menu = menu;
         loadResource(resourceToLoad);
+        setSize(getPrefWidth(), getPrefHeight());
         setPosition(position);
         menu.addButton(this);
     }
@@ -65,7 +66,7 @@ public class HexagonalButton extends Button {
     public void setPosition(HexagonalMenu.Position position) {
         this.position = position;
         final Vector2 coordinates = menu.getCoordinateFor(position);
-        coordinates.add(getWidth() * 0.5f, getHeight() * 0.5f);
+        coordinates.add(-1.0f * getWidth() * 0.5f, -1.0f * getHeight() * 0.5f);
         setPosition(coordinates.x, coordinates.y);
     }
 

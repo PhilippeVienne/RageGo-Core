@@ -3,7 +3,6 @@ package com.ragego.gui.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,9 +27,8 @@ public class MenuScreen extends ScreenAdapter{
     public void show () {
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
+        stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
-
-        Vector2 screenCenter = new Vector2(viewport.getScreenWidth()*0.5f, viewport.getScreenHeight()*0.5f);
 
         menu = new HexagonalMenu(viewport, stage);
 
@@ -53,7 +51,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Online Button
-        HexagonalButton onlineButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_online.png", HexagonalMenu.Position.LEFT_TOP);
+        HexagonalButton onlineButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_online.png", HexagonalMenu.Position.RIGHT_TOP);
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -62,7 +60,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Credits Button
-        HexagonalButton creditsButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_credits.png", HexagonalMenu.Position.LEFT_BOTTOM);
+        HexagonalButton creditsButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_credits.png", HexagonalMenu.Position.RIGHT_BOTTOM);
         creditsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -80,7 +78,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Multiplayer Button
-        HexagonalButton multiPlayerButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_multiplayer.png", HexagonalMenu.Position.RIGHT_TOP);
+        HexagonalButton multiPlayerButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_multiplayer.png", HexagonalMenu.Position.LEFT_TOP);
         multiPlayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -89,7 +87,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Parameters Button
-        HexagonalButton parametersButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_parameters.png", HexagonalMenu.Position.RIGHT_BOTTOM);
+        HexagonalButton parametersButton = new HexagonalButton(menu, "android/assets/ui/main_menu/button_parameters.png", HexagonalMenu.Position.LEFT_BOTTOM);
         parametersButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

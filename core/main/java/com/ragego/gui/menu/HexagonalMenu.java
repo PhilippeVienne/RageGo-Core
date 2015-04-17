@@ -50,17 +50,17 @@ public class HexagonalMenu {
             case TOP:
                 coordinates.add(menuBackground.getWidth() * 0.5f, menuBackground.getHeight() * 0.825f);
                 break;
-            case LEFT_TOP:
+            case RIGHT_TOP:
                 coordinates.add(menuBackground.getWidth() * 0.825f, menuBackground.getHeight() * 0.665f);
                 break;
-            case RIGHT_TOP:
-                coordinates.add(menuBackground.getWidth() * 0.175f, menuBackground.getHeight() * 0.5f);
-                break;
-            case LEFT_BOTTOM:
-                coordinates.add(menuBackground.getWidth() * 0.825f, menuBackground.getHeight() * 0.34f);
+            case LEFT_TOP:
+                coordinates.add(menuBackground.getWidth() * 0.175f, menuBackground.getHeight() * 0.665f);
                 break;
             case RIGHT_BOTTOM:
-                coordinates.add(menuBackground.getWidth() * 0.5f, menuBackground.getHeight() * 0.34f);
+                coordinates.add(menuBackground.getWidth() * 0.825f, menuBackground.getHeight() * 0.34f);
+                break;
+            case LEFT_BOTTOM:
+                coordinates.add(menuBackground.getWidth() * 0.175f, menuBackground.getHeight() * 0.34f);
                 break;
             case BOTTOM:
                 coordinates.add(menuBackground.getWidth() * 0.5f, menuBackground.getHeight() * 0.175f);
@@ -84,10 +84,10 @@ public class HexagonalMenu {
      */
     public enum Position {
         TOP,
-        LEFT_TOP,
         RIGHT_TOP,
-        LEFT_BOTTOM,
+        LEFT_TOP,
         RIGHT_BOTTOM,
+        LEFT_BOTTOM,
         BOTTOM,
         CENTER
     }
