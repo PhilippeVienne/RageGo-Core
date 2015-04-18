@@ -27,7 +27,7 @@ public class MenuScreen extends ScreenAdapter{
     public void show () {
         viewport = new ScreenViewport();
         stage = new Stage(viewport);
-        stage.setDebugAll(true);
+        //stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
 
         menu = new HexagonalMenu(viewport, stage);
