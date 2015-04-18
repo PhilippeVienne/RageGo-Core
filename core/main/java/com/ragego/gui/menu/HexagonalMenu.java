@@ -18,11 +18,9 @@ public class HexagonalMenu {
     private final Texture backgroundTexture;
     private final Image menuBackground;
     private HashMap<Position, HexagonalButton> buttons = new HashMap<Position, HexagonalButton>(7);
-    private Viewport viewport;
     private Stage stage;
 
     public HexagonalMenu(Viewport viewport, Stage stage) {
-        this.viewport = viewport;
         this.stage = stage;
         Vector2 screenCenter = new Vector2(viewport.getScreenWidth() * 0.5f, viewport.getScreenHeight() * 0.5f);
         backgroundTexture = new Texture(Gdx.files.internal(MENU_BACKGROUND_TEXTURE));

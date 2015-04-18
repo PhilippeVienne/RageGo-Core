@@ -35,8 +35,16 @@ public class GameBoard {
     /**
      * Listeners for this board.
      * All this listeners are called when some actions occurs. Do not forget to warn them.
+     * This data should not be copied between games.
      */
     private final ArrayList<GameListener> listeners = new ArrayList<GameListener>(10);
+
+    /**
+     * Score counter for the current game.
+     * This data should not be copied between games.
+     */
+    private final ScoreCounter scoreCounter;
+
     /**
      * Register the last validated node in the game.
      */
@@ -54,14 +62,6 @@ public class GameBoard {
      * Declare if IA functions are callable.
      */
     private boolean ia_functions_enabled = false;
-
-    /**
-     * Create an real empty board.
-     * This constructor is suitable only for test purpose.
-     */
-    public GameBoard() {
-        this(null, null, DEFAULT_BOARD_SIZE);
-    }
 
     /**
      * Create a board with the default size.
@@ -86,6 +86,7 @@ public class GameBoard {
         this.boardSize = boardSize;
         this.board = new HashMap<Intersection, Stone>(this.boardSize * this.boardSize);
         lastNode = new GameNode(this, GameNode.Action.START_GAME);
+        this.scoreCounter = new ScoreCounter(this);
     }
 
     /**
@@ -492,7 +493,7 @@ public class GameBoard {
      * @param player The player for who we look for opponent
      * @return The opponent player (null if there is not)
      */
-    private Player getOpponent(Player player) {
+    public Player getOpponent(Player player) {
         if (player == getFirstPlayer()) return getSecondPlayer();
         if (player == getSecondPlayer()) return getFirstPlayer();
         return null;
@@ -684,6 +685,14 @@ public class GameBoard {
     }
 
     /**
+     * Get ScoreCounter attached to this board
+     * @return The ScoreCounter
+     */
+    public ScoreCounter getScoreCounter() {
+        return scoreCounter;
+    }
+
+    /**
      * Add a listener to this board.
      *
      * @param listener the listener to add to this {@link GameBoard}
@@ -698,6 +707,7 @@ public class GameBoard {
      *
      * @param listener the listener to remove.
      */
+    @SuppressWarnings("unused")
     public void removeGameListner(GameListener listener) {
         listeners.remove(listener);
     }
@@ -789,5 +799,4 @@ public class GameBoard {
         if (!ia_functions_enabled)
             throw new IllegalStateException("You can not call IA functions here !");
     }
-
 }
