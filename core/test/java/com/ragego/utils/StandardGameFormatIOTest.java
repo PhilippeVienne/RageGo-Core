@@ -34,9 +34,13 @@ public class StandardGameFormatIOTest extends RageGoTest {
     }
 
     @Test
-    public void readEmptyGame() throws IOException {
+    public void readEmptyGame() {
         formatIO = new StandardGameFormatIO(writeTempFile("empty", "sgf", "(;FF[4]GM[1]SZ[19])"), game);
-        formatIO.read();
+        try {
+            formatIO.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         final GameNode lastNode = game.getLastNode();
         assertEquals(lastNode.getAction(), GameNode.Action.START_GAME);
     }
@@ -140,18 +144,13 @@ public class StandardGameFormatIOTest extends RageGoTest {
         checkWantedBoard("6E38B43E0FA2AD943211D5A6F1E951FE", game);
     }
 
-    private void loadAGameAndCompute(String resource) throws IOException, RuntimeException {
-        StringBuilder buffer = new StringBuilder();
-        InputStream inputStream = StandardGameFormatIO.class.getResourceAsStream(resource);
-        try {
-            while (inputStream.available() != 0)
-                buffer.append((char) inputStream.read());
-        } catch (NullPointerException ex) {
-            throw new RuntimeException("File test is not found", ex);
-        } catch (IOException e) {
-            throw new RuntimeException("Can not load test file", e);
-        }
-        formatIO = new StandardGameFormatIO(writeTempFile("game", "sgf", buffer.toString()), game);
+    /**
+     * Load a game and complete compute it.
+     * @param resource The game to load.
+     * @throws IOException Test file probably not found.
+     */
+    private void loadAGameAndCompute(String resource) throws IOException{
+        formatIO = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class,resource), game);
         game = formatIO.read();
     }
 
