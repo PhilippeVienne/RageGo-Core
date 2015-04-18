@@ -23,8 +23,7 @@ public class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
 
     private TiledMap map;
-    private float mapUnit;
-    private float yOffset;
+    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf;
     private IsometricTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
@@ -48,6 +47,10 @@ public class GoGameScreen extends ScreenAdapter {
         grid_layer = (TiledMapTileLayer)map.getLayers().get("grid");
 
         //Map size in world units (+1 tile's height to compensate the 3d effect)
+        tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
+        tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
+        System.out.println("tileWidthHalf = " + tileWidthHalf + " & " + "tileHeightHalf = " + tileHeightHalf);
+
         mapWidth = (float)map.getProperties().get("width", Integer.class)* map.getProperties().get("tilewidth", Integer.class);
         mapHeight = (float)map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class);
 
@@ -106,7 +109,6 @@ public class GoGameScreen extends ScreenAdapter {
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -125,14 +127,13 @@ public class GoGameScreen extends ScreenAdapter {
         public boolean touchDown(float x, float y, int pointer, int button) {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
+            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, mapUnit, yOffset);
 
             System.out.println("Screen coordinates : "
                     + "X: " + x + " Y: " + y);
 
             System.out.println("World coordinates : "
                     + "X: " + worldCoords.x + " Y: " + worldCoords.y);
-
-            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, mapUnit, yOffset);
 
             System.out.println("Isometric coordinates : "
                     + "X: " + isoCoords.x + " Y: " + isoCoords.y);

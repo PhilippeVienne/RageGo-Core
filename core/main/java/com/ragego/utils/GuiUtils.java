@@ -14,10 +14,10 @@ public class GuiUtils {
     /**
      * Projects world coordinates into isometric coordinates through the solution of a triangle.
      *
-     * @param worldCoords The position in world coordinates.
-     * @param mapUnit The shared norm of the unit vectors associated with the axes.
-     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin.
-     * @return The coordinate corresponding to the position in the isometric coordinate system.
+     * @param worldCoords The position in world coordinates
+     * @param mapUnit The shared norm of the unit vectors associated with the axes
+     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin
+     * @return The coordinate corresponding to the position of the cell in the isometric coordinate system
      */
     public static Vector2 worldToIso (Vector3 worldCoords, float mapUnit, float yOffset){
         //Adjust the position of the map's origin
@@ -45,6 +45,21 @@ public class GuiUtils {
         //Norms the projections and casts
         isoCoords.x = (int)(isoCoords.x/mapUnit);
         isoCoords.y = (int)(isoCoords.y/mapUnit);
+        return isoCoords;
+    }
+
+    @Deprecated
+    public static Vector2 worldToIsoAlternate (Vector3 worldCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
+        //Adjust the position of the map's origin
+        float y = worldCoords.y - yOffset;
+        float x = worldCoords.x;
+
+        System.out.println("World coordinates adjusted : "
+                + "X: " + x + " Y: " + y);
+
+        Vector2 isoCoords = new Vector2();
+        isoCoords.x = (int)(0.5 * ((worldCoords.x / tileWidthHalf) - (worldCoords.y / tileHeightHalf) - 1));
+        isoCoords.y = (int)(0.5 * ((worldCoords.y/tileHeightHalf) + (worldCoords.x / tileWidthHalf) - 1));
 
         return isoCoords;
     }
@@ -52,10 +67,14 @@ public class GuiUtils {
     /**
      * Projects world coordinates into isometric coordinates through the solution of a triangle.
      *
-     * @param isoCoords The position in world coordinates.
-     * @return The coordinate corresponding to the position in the world coordinate system.
+     * @param isoCoords The position in the isometric coordinate system
+     * @param tileWidthHalf Half the width of the tiles, in world coordinates
+     * @param tileHeightHalf Half the height of the tiles, in world coordinates
+     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin.
+     * @return The coordinate corresponding to the position of the cell's center in the world coordinate system
      */
-    public Vector2 isoToWorld (Vector2 isoCoords){
-        return null;
+    public Vector2 isoToWorld (Vector2 isoCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
+        return new Vector2(tileWidthHalf * (isoCoords.x + isoCoords.y + 1),
+                tileHeightHalf * (isoCoords.y - isoCoords.x));
     }
 }
