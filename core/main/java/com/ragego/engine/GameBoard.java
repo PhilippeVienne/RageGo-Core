@@ -365,10 +365,10 @@ public class GameBoard {
 
         // Look for dead stones.
         // On each shape, check if it's alive.
-        final ArrayList<Shape> shapes = getShapes();
-        for (Shape shape : shapes) {
-            if (shape != null && shape.getPlayer() == player && !shape.isAlive()) {
-                for (Stone deadStone : shape.getStones()) {
+        final ArrayList<StoneGroup> stoneGroups = getShapes();
+        for (StoneGroup stoneGroup : stoneGroups) {
+            if (stoneGroup != null && stoneGroup.getPlayer() == player && !stoneGroup.isAlive()) {
+                for (Stone deadStone : stoneGroup.getStones()) {
                     deadStones.add(deadStone);
                     removeStoneFromBoard(deadStone);
                 }
@@ -401,12 +401,12 @@ public class GameBoard {
     private void placeStoneOnBoard(Stone stone) {
         final Intersection intersection = stone.getPosition();
         checkBoardForIntersection(intersection);
-        Shape shape = searchForShapesAround(intersection, stone.getPlayer());
-        if (shape == null)
-            shape = new Shape(stone.getPlayer(), this, stone);
+        StoneGroup stoneGroup = searchForShapesAround(intersection, stone.getPlayer());
+        if (stoneGroup == null)
+            stoneGroup = new StoneGroup(stone.getPlayer(), this, stone);
         else
-            shape.addStone(stone);
-        stone.setShape(shape);
+            stoneGroup.addStone(stone);
+        stone.setStoneGroup(stoneGroup);
         board.put(intersection, stone);
         for (GameListener listener : listeners) {
             listener.newStoneAdded(stone);
@@ -415,27 +415,27 @@ public class GameBoard {
 
     /**
      * Lookup for a shape which can be connected to an intersection.
-     * If there is multiple shapes which can be connected, return a fusion of
+     * If there is multiple stoneGroups which can be connected, return a fusion of
      * them.
      *
      * @param intersection The intersection where we lookup
      * @param player       The player which should be the owner of shape
      * @return The shape to associate with or null if there is no one.
      */
-    private Shape searchForShapesAround(Intersection intersection, Player player) {
-        ArrayList<Shape> shapes = new ArrayList<Shape>(4);
+    private StoneGroup searchForShapesAround(Intersection intersection, Player player) {
+        ArrayList<StoneGroup> stoneGroups = new ArrayList<StoneGroup>(4);
         for (Intersection neighbours : intersection.getNeighboursIntersections()) {
             if (getElement(neighbours) != null && getElement(neighbours).getPlayer() == player) {
-                Shape shape = getElement(neighbours).getShape();
-                if (shape == null) {
-                    shape = new Shape(player, this, getElement(neighbours));
+                StoneGroup stoneGroup = getElement(neighbours).getStoneGroup();
+                if (stoneGroup == null) {
+                    stoneGroup = new StoneGroup(player, this, getElement(neighbours));
                 }
-                if (!shapes.contains(shape))
-                    shapes.add(shape);
+                if (!stoneGroups.contains(stoneGroup))
+                    stoneGroups.add(stoneGroup);
             }
         }
-        Iterator<Shape> shapeIterator = shapes.iterator();
-        switch (shapes.size()) {
+        Iterator<StoneGroup> shapeIterator = stoneGroups.iterator();
+        switch (stoneGroups.size()) {
             case 0:
                 return null;
             case 1:
@@ -443,12 +443,12 @@ public class GameBoard {
             case 2:
             case 3:
             case 4:
-                Shape newShape = shapeIterator.next();
-                for (Shape shape : shapes) {
-                    if (shape != null)
-                        newShape.unionWith(shape);
+                StoneGroup newStoneGroup = shapeIterator.next();
+                for (StoneGroup stoneGroup : stoneGroups) {
+                    if (stoneGroup != null)
+                        newStoneGroup.unionWith(stoneGroup);
                 }
-                return newShape;
+                return newStoneGroup;
         }
         return null; // We never never should go here
     }
@@ -553,16 +553,16 @@ public class GameBoard {
 
     /**
      * Retrieve Shapes from this board.
-     * @return array of shapes
+     * @return array of stoneGroups
      */
-    public ArrayList<Shape> getShapes() {
-        ArrayList<Shape> shapes = new ArrayList<Shape>();
+    public ArrayList<StoneGroup> getShapes() {
+        ArrayList<StoneGroup> stoneGroups = new ArrayList<StoneGroup>();
         for (Stone stone : board.values()) {
-            if (!shapes.contains(stone.getShape())) {
-                shapes.add(stone.getShape());
+            if (!stoneGroups.contains(stone.getStoneGroup())) {
+                stoneGroups.add(stone.getStoneGroup());
             }
         }
-        return shapes;
+        return stoneGroups;
     }
 
     /**
@@ -594,10 +594,10 @@ public class GameBoard {
 
     /**
      * Create a complete copy of this GameBoard.
-     * A copy is a heavy action because it will copy all shapes and stones (do it with cautious).<br>
+     * A copy is a heavy action because it will copy all stoneGroups and stones (do it with cautious).<br>
      * Data which is copied :
      * <ul>
-     * <li>Shapes: see {@link Shape#copy(GameBoard)}</li>
+     * <li>Shapes: see {@link StoneGroup#copy(GameBoard)}</li>
      * <li>Stones: see {@link Stone#copy(GameBoard)}</li>
      * <li>Nodes: see {@link GameNode#copy(GameBoard)}</li>
      * </ul>
@@ -611,9 +611,9 @@ public class GameBoard {
 
         board.boardSize = boardSize;
 
-        final ArrayList<Shape> shapes = getShapes();
-        for (Shape shape : shapes) {
-            for (Stone stone : shape.copy(board).getStones())
+        final ArrayList<StoneGroup> stoneGroups = getShapes();
+        for (StoneGroup stoneGroup : stoneGroups) {
+            for (Stone stone : stoneGroup.copy(board).getStones())
                 board.board.put(stone.getPosition(), stone);
         }
 
@@ -632,16 +632,16 @@ public class GameBoard {
 
     /**
      * Recompute Shapes.
-     * <p>This remove shapes from all stones of board and recompute shapes for all stones on board.</p>
+     * <p>This remove stoneGroups from all stones of board and recompute stoneGroups for all stones on board.</p>
      * <p>This is a really heavy action and you should never call it on board containing many stones aside.</p>
      */
     private void recomputeShape() {
 
         for (Stone stone : board.values()) {
-            final Shape shape = stone.getShape();
-            if (shape != null) {
-                shape.removeStone(stone);
-                stone.setShape(null);
+            final StoneGroup stoneGroup = stone.getStoneGroup();
+            if (stoneGroup != null) {
+                stoneGroup.removeStone(stone);
+                stone.setStoneGroup(null);
             }
         }
 
@@ -651,32 +651,32 @@ public class GameBoard {
                 Stone currentStone = getElement(intersection),
                         upperStone = getElement(upper),
                         leftStone = getElement(left);
-                Shape upShape = upperStone != null ? upperStone.getShape() : null,
-                        leftShape = leftStone != null ? leftStone.getShape() : null;
+                StoneGroup upStoneGroup = upperStone != null ? upperStone.getStoneGroup() : null,
+                        leftStoneGroup = leftStone != null ? leftStone.getStoneGroup() : null;
                 if (currentStone == null) continue;
                 if (upperStone == null && leftStone == null) {
-                    new Shape(currentStone.getPlayer(), this, currentStone);
+                    new StoneGroup(currentStone.getPlayer(), this, currentStone);
                     continue;
                 }
                 if (upperStone != null) {
-                    if (upperStone.getPlayer() == currentStone.getPlayer() && upShape != null) {
-                        upShape.addStone(currentStone);
+                    if (upperStone.getPlayer() == currentStone.getPlayer() && upStoneGroup != null) {
+                        upStoneGroup.addStone(currentStone);
                     } else if (upperStone.getPlayer() == currentStone.getPlayer()) {
-                        upShape = new Shape(upperStone.getPlayer(), this, upperStone, currentStone);
+                        upStoneGroup = new StoneGroup(upperStone.getPlayer(), this, upperStone, currentStone);
                     }
                 }
                 if (leftStone != null && leftStone.getPlayer() == currentStone.getPlayer()) {
-                    if (currentStone.getShape() == upShape && upShape != null) {
-                        if (leftShape != null) {
-                            upShape.unionWith(leftShape);
+                    if (currentStone.getStoneGroup() == upStoneGroup && upStoneGroup != null) {
+                        if (leftStoneGroup != null) {
+                            upStoneGroup.unionWith(leftStoneGroup);
                         } else {
-                            upShape.addStone(leftStone);
+                            upStoneGroup.addStone(leftStone);
                         }
                     } else {
-                        if (leftShape != null) {
-                            leftShape.addStone(currentStone);
+                        if (leftStoneGroup != null) {
+                            leftStoneGroup.addStone(currentStone);
                         } else {
-                            new Shape(leftStone.getPlayer(), this, leftStone, currentStone);
+                            new StoneGroup(leftStone.getPlayer(), this, leftStone, currentStone);
                         }
                     }
                 }

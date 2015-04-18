@@ -65,6 +65,34 @@ public class ScoreCounter implements GameListener {
         }
     }
 
+    public int[] computeGameScore() {
+        final int[] score = new int[2];
+        int lastPlayer = 0;
+        int bufferScore;
+        final int[][] board = this.board.getRepresentation();
+        for (int[] line : board) {
+            lastPlayer = 0;
+            for (int row : line) {
+                switch (row) {
+                    case 1:
+                        if (lastPlayer != 1) {
+                            if (lastPlayer == 0) {
+
+                            }
+                        }
+                        break;
+                    case 2:
+
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+        }
+        return score;
+    }
+
     @Override
     public void newStoneAdded(Stone stone) {
         // No consequences on score

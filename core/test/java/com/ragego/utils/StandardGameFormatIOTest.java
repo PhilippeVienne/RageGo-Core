@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -127,7 +126,7 @@ public class StandardGameFormatIOTest extends RageGoTest {
     @Test
     public void read19SizedBoardTestShapes() {
         try {
-            loadAGameAndCompute("ban19-test-shapes.sgf");
+            loadAGameAndCompute("ban19-test-stoneGroups.sgf");
         } catch (IOException e) {
             throw new RuntimeException("Error while reading", e);
         }

@@ -41,7 +41,7 @@ public class GoGameScreen extends ScreenAdapter {
         /*
             Map setup
          */
-        map = new TmxMapLoader().load("android/assets/maps/Goban.tmx");
+        map = new TmxMapLoader().load("assets/maps/Goban.tmx");
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
         grid_layer = (TiledMapTileLayer)map.getLayers().get("grid");

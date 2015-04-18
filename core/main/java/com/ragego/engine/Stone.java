@@ -13,7 +13,7 @@ public class Stone {
     private final Intersection position;
     private GameBoard board;
     private boolean capturated = false;
-    private Shape shape;
+    private StoneGroup stoneGroup;
 
     public Stone() {
         this(null, null);
@@ -38,11 +38,11 @@ public class Stone {
      * @return true if stone is on board
      */
     public boolean isOnBoard() {
-        return board != null && position != null && shape != null && position.getBoard().equals(board);
+        return board != null && position != null && stoneGroup != null && position.getBoard().equals(board);
     }
 
     /**
-     * @return The linked board for this shape
+     * @return The linked board for this stoneGroup
      */
     public GameBoard getBoard() {
         return board;
@@ -66,22 +66,22 @@ public class Stone {
         return player;
     }
 
-    public Shape getShape() {
-        return shape;
+    public StoneGroup getStoneGroup() {
+        return stoneGroup;
     }
 
-    public void setShape(Shape shape) {
-        if (shape != null && !shape.getStones().contains(this)) {
-            throw new IllegalArgumentException("Shape does not contain stone");
+    public void setStoneGroup(StoneGroup stoneGroup) {
+        if (stoneGroup != null && !stoneGroup.getStones().contains(this)) {
+            throw new IllegalArgumentException("StoneGroup does not contain stone");
         }
-        this.shape = shape;
+        this.stoneGroup = stoneGroup;
     }
 
     /**
      * Count liberty for a stone.
      * For each neighbour position of this stone, liberty is increased of one if the intersection is empty.
      *
-     * @return The liberty count for this shape
+     * @return The liberty count for this stoneGroup
      */
     public int countLiberty() {
         int liberty = 0;
@@ -92,7 +92,7 @@ public class Stone {
                 continue;
             }
             final Stone element = board.getElement(intersection);
-            if (element != null && element.getPlayer().equals(getPlayer()) && element.getShape() != shape)
+            if (element != null && element.getPlayer().equals(getPlayer()) && element.getStoneGroup() != stoneGroup)
                 liberty++;
         }
         return liberty;

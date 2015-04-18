@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class HexagonalMenu {
 
-    private static final String MENU_BACKGROUND_TEXTURE = "android/assets/ui/main_menu/menu_back.png";
+    private static final String MENU_BACKGROUND_TEXTURE = "ui/main_menu/menu_back.png";
     private final Texture backgroundTexture;
     private final Image menuBackground;
     private HashMap<Position, HexagonalButton> buttons = new HashMap<Position, HexagonalButton>(7);

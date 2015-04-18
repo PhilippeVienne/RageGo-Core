@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 public class GuiUtils {
     // Constants (useful for screen/map coordinates conversion)
     private static final double PI_OVER_SIX = Math.PI/6;
-    private static final double PI_OVER_THREE = 2*PI_OVER_SIX;
+    private static final double PI_OVER_THREE = Math.PI / 3;
 
     /**
      * Projects world coordinates into isometric coordinates through the solution of a triangle.

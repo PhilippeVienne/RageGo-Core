@@ -18,9 +18,9 @@ public abstract class Player {
     protected ArrayList<Stone> capturatedStones;
 
     /**
-     * Store shapes attached to this player
+     * Store stoneGroups attached to this player
      */
-    protected ArrayList<Shape> shapes;
+    protected ArrayList<StoneGroup> stoneGroups;
 
     /**
      * Listener for turns.
