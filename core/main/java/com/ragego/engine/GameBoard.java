@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 /**
  * Represent a board of Go.
- * <p/>
+ * <p>
  * On this board, intersections are represented with numerical coordinates :
  * <ul>
  * <li>The first coordinate is the column from left to right.</li>
@@ -209,7 +209,7 @@ public class GameBoard {
 
     /**
      * Play a node on this board.
-     * This method act a node on this board.<br/>
+     * This method act a node on this board.<br>
      * Actions performed: <ol>
      * <li>Assigns this board to the node</li>
      * <li>Checks if action is not violating Go rules (throws {@link IllegalArgumentException} if not).</li>
