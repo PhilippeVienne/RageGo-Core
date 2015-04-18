@@ -56,7 +56,7 @@ public class Shape {
 
     /**
      * Compute the Shape from a starting shape.
-     *
+     * @param stoneGroup The stone group to start compute
      */
 
 }
