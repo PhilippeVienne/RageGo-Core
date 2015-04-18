@@ -3,6 +3,8 @@ package com.ragego.gui.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -41,7 +43,12 @@ public class GoGameScreen extends ScreenAdapter {
         /*
             Map setup
          */
-        map = new TmxMapLoader().load("assets/maps/Goban.tmx");
+        map = new TmxMapLoader(new FileHandleResolver() {
+            @Override
+            public FileHandle resolve(String fileName) {
+                return Gdx.files.classpath(fileName);
+            }
+        }).load("com/ragego/gui/maps/Goban.tmx");
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
         grid_layer = (TiledMapTileLayer)map.getLayers().get("grid");

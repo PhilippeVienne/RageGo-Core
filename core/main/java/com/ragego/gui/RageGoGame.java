@@ -3,7 +3,7 @@ package com.ragego.gui;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.ragego.gui.screens.MenuScreen;
+import com.ragego.gui.screens.GoGameScreen;
 
 /**
  * Describes how we start the game.
@@ -13,7 +13,7 @@ public class RageGoGame extends Game {
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        setScreen(new MenuScreen());
+        setScreen(new GoGameScreen());
     }
 
     @Override
