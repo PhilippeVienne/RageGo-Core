@@ -193,4 +193,16 @@ public class StoneGroup {
         return stoneGroup;
     }
 
+    /**
+     * Determine is this group has one or more stones on a Border.
+     *
+     * @return true if it's on the border
+     */
+    public boolean isOnBorder(Border border) {
+        for (Stone stone : stones)
+            if (stone.isOnBorder(border))
+                return true;
+        return false;
+    }
+
 }

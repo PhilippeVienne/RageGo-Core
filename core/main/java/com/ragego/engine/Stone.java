@@ -113,4 +113,24 @@ public class Stone {
     public Stone copy(GameBoard board) {
         return new Stone(position.forBoard(board), player);
     }
+
+    /**
+     * Check if this stone is a border of board.
+     *
+     * @param border The border we want to lookout
+     * @return True if this stone is on border.
+     */
+    public boolean isOnBorder(Border border) {
+        switch (border) {
+            case RIGHT:
+                return position.getColumn() == board.getBoardSize() - 1;
+            case LEFT:
+                return position.getColumn() == 0;
+            case TOP:
+                return position.getLine() == 0;
+            case BOTTOM:
+            default:
+                return position.getLine() == board.getBoardSize() - 1;
+        }
+    }
 }
