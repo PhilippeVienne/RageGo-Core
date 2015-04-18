@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ragego.utils.GuiUtils;
 
+import java.awt.*;
+
 /**
  * Manages the display of a generic Go Game Screen.
  */
@@ -25,7 +27,8 @@ public class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
 
     private TiledMap map;
-    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf;
+    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapWidth, mapHeight;
+    private Point gobanOriginCoords;
     private IsometricTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
@@ -34,9 +37,7 @@ public class GoGameScreen extends ScreenAdapter {
     GestureDetector gesture;
     InputMultiplexer myInputMultiplexer;
 
-    private float mapWidth, mapHeight;
-
-    TiledMapTileLayer grid_layer;
+    TiledMapTileLayer gridLayer;
 
     @Override
     public void show() {
@@ -51,28 +52,26 @@ public class GoGameScreen extends ScreenAdapter {
         }).load("com/ragego/gui/maps/Goban.tmx");
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
-        grid_layer = (TiledMapTileLayer)map.getLayers().get("grid");
+        gridLayer = (TiledMapTileLayer)map.getLayers().get("grid");
 
         //Map size in world units (+1 tile's height to compensate the 3d effect)
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
         tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
-        System.out.println("tileWidthHalf = " + tileWidthHalf + " & " + "tileHeightHalf = " + tileHeightHalf);
 
-        mapWidth = (float)map.getProperties().get("width", Integer.class)* map.getProperties().get("tilewidth", Integer.class);
-        mapHeight = (float)map.getProperties().get("height", Integer.class) * map.getProperties().get("tileheight", Integer.class);
+        mapWidth = (float)map.getProperties().get("width", Integer.class) * tileWidthHalf * 2;
+        mapHeight = (float)map.getProperties().get("height", Integer.class) * tileHeightHalf * 2;
 
         //Map unit (useful for screen/map coordinates conversion)
-        mapUnit = (float)(Math.sqrt(Math.pow(map.getProperties().get("tilewidth", Integer.class) * 0.5d, 2)
-                + Math.pow(map.getProperties().get("tileheight", Integer.class) * 0.5d, 2)));
+        mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
 
         //Active Tile Layer Offset on y-axis (TODO make it map.tmx dependent)
-        yOffset = map.getProperties().get("tileheight", Integer.class) * 0.5f;
+        yOffset = tileHeightHalf;
 
         //Centers camera on map
         camera.translate(mapWidth * 0.5f, 0);
 
         //Maximizes the map size on screen
-        viewport = new ExtendViewport(mapWidth, mapHeight + map.getProperties().get("tileheight", Integer.class), camera);
+        viewport = new ExtendViewport(mapWidth, mapHeight + tileHeightHalf * 2, camera);
 
         /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
         Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
@@ -85,6 +84,11 @@ public class GoGameScreen extends ScreenAdapter {
         }
         System.out.println(gridElements.size());
         */
+
+
+        /*
+            Goban setup
+         */
 
         /*
             Interaction components setup
@@ -128,6 +132,7 @@ public class GoGameScreen extends ScreenAdapter {
         map.dispose();
         renderer.dispose();
     }
+
     public class MyGestureListener implements GestureDetector.GestureListener {
 
         @Override

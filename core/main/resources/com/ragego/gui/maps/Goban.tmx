@@ -4,55 +4,55 @@
   <tileoffset x="0" y="74"/>
   <tile id="0">
    <properties>
-    <property name="name" value="inter_middle"/>
+    <property name="name" value="interMiddle"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_middle.png"/>
   </tile>
   <tile id="1">
    <properties>
-    <property name="name" value="inter_bottom_left"/>
+    <property name="name" value="interBottomLeft"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_bottom_left.png"/>
   </tile>
   <tile id="2">
    <properties>
-    <property name="name" value="inter_bottom_right"/>
+    <property name="name" value="interBottomRight"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_bottom_right.png"/>
   </tile>
   <tile id="3">
    <properties>
-    <property name="name" value="inter_top_left"/>
+    <property name="name" value="interTopLeft"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_top_left.png"/>
   </tile>
   <tile id="4">
    <properties>
-    <property name="name" value="inter_top_right"/>
+    <property name="name" value="interTopRight"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_top_right.png"/>
   </tile>
   <tile id="5">
    <properties>
-    <property name="name" value="inter_bottom"/>
+    <property name="name" value="interBottom"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_bottom.png"/>
   </tile>
   <tile id="6">
    <properties>
-    <property name="name" value="inter_left"/>
+    <property name="name" value="interLeft"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_left.png"/>
   </tile>
   <tile id="7">
    <properties>
-    <property name="name" value="inter_right"/>
+    <property name="name" value="interRight"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_right.png"/>
   </tile>
   <tile id="8">
    <properties>
-    <property name="name" value="inter_top"/>
+    <property name="name" value="interTop"/>
    </properties>
    <image width="128" height="148" source="tiles/inter_top.png"/>
   </tile>
@@ -69,6 +69,9 @@
   </data>
  </layer>
  <layer name="grid" width="20" height="20">
+  <properties>
+   <property name="gobanSize" value="19"/>
+  </properties>
   <data encoding="base64">
    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAACAAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABAAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAADAAAAAAAAAAQAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAMAAAAAAAAABwAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAABgAAAA==
   </data>

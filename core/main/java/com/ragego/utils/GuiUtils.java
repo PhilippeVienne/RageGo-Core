@@ -35,16 +35,17 @@ public class GuiUtils {
         System.out.println("Triangulation values : "
                 + "vectorNorm: " + vectorNorm + " beta: " + beta + " alpha: " + alpha);
 
-        // Projects the world coordinates on the isometric coordinate systems's axes
+        // Projects, norms and casts the world coordinates on the isometric coordinate systems's axes
         Vector2 isoCoords = new Vector2((float)(vectorNorm*Math.sin(alpha)/Math.sin(alpha+beta)),
                 (float)(vectorNorm*Math.sin(beta)/Math.sin(alpha+beta)));
 
         System.out.println("Iso coordinates projected: "
                 + "X: " + isoCoords.x + " Y: " + isoCoords.y);
 
-        //Norms the projections and casts
         isoCoords.x = (int)(isoCoords.x/mapUnit);
         isoCoords.y = (int)(isoCoords.y/mapUnit);
+
+
         return isoCoords;
     }
 
