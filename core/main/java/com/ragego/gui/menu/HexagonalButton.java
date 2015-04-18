@@ -43,7 +43,7 @@ public class HexagonalButton extends Button {
      * @param resourceToLoad URI to give to {@link com.badlogic.gdx.Gdx#files}
      */
     private void loadResource(String resourceToLoad) {
-        upTexture = new Texture(Gdx.files.internal(resourceToLoad));
+        upTexture = new Texture(Gdx.files.classpath(resourceToLoad));
         Button.ButtonStyle style = new Button.ButtonStyle();
         style.up = new TextureRegionDrawable(new TextureRegion(upTexture));
         setStyle(style);

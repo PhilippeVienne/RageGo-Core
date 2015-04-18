@@ -33,7 +33,7 @@ public class MenuScreen extends ScreenAdapter{
         menu = new HexagonalMenu(viewport, stage);
 
         // Play Button
-        HexagonalButton playButton = new HexagonalButton(menu, "ui/main_menu/button_play.png", HexagonalMenu.Position.CENTER);
+        HexagonalButton playButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_play.png", HexagonalMenu.Position.CENTER);
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -42,7 +42,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Solo Button
-        HexagonalButton soloButton = new HexagonalButton(menu, "ui/main_menu/button_solo.png", HexagonalMenu.Position.TOP);
+        HexagonalButton soloButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_solo.png", HexagonalMenu.Position.TOP);
         soloButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -51,7 +51,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Online Button
-        HexagonalButton onlineButton = new HexagonalButton(menu, "ui/main_menu/button_online.png", HexagonalMenu.Position.RIGHT_TOP);
+        HexagonalButton onlineButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_online.png", HexagonalMenu.Position.RIGHT_TOP);
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -60,7 +60,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Credits Button
-        HexagonalButton creditsButton = new HexagonalButton(menu, "ui/main_menu/button_credits.png", HexagonalMenu.Position.RIGHT_BOTTOM);
+        HexagonalButton creditsButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_credits.png", HexagonalMenu.Position.RIGHT_BOTTOM);
         creditsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -69,7 +69,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Return Button
-        HexagonalButton returnButton = new HexagonalButton(menu, "ui/main_menu/button_return.png", HexagonalMenu.Position.BOTTOM);
+        HexagonalButton returnButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_return.png", HexagonalMenu.Position.BOTTOM);
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -78,7 +78,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Multiplayer Button
-        HexagonalButton multiPlayerButton = new HexagonalButton(menu, "ui/main_menu/button_multiplayer.png", HexagonalMenu.Position.LEFT_TOP);
+        HexagonalButton multiPlayerButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_multiplayer.png", HexagonalMenu.Position.LEFT_TOP);
         multiPlayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -87,7 +87,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Parameters Button
-        HexagonalButton parametersButton = new HexagonalButton(menu, "ui/main_menu/button_parameters.png", HexagonalMenu.Position.LEFT_BOTTOM);
+        HexagonalButton parametersButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_parameters.png", HexagonalMenu.Position.LEFT_BOTTOM);
         parametersButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

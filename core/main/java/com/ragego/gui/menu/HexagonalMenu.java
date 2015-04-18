@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class HexagonalMenu {
 
-    private static final String MENU_BACKGROUND_TEXTURE = "ui/main_menu/menu_back.png";
+    private static final String MENU_BACKGROUND_TEXTURE = "com/ragego/gui/menu/menu_back.png";
     private final Texture backgroundTexture;
     private final Image menuBackground;
     private HashMap<Position, HexagonalButton> buttons = new HashMap<Position, HexagonalButton>(7);
@@ -23,7 +23,7 @@ public class HexagonalMenu {
     public HexagonalMenu(Viewport viewport, Stage stage) {
         this.stage = stage;
         Vector2 screenCenter = new Vector2(viewport.getScreenWidth() * 0.5f, viewport.getScreenHeight() * 0.5f);
-        backgroundTexture = new Texture(Gdx.files.internal(MENU_BACKGROUND_TEXTURE));
+        backgroundTexture = new Texture(Gdx.files.classpath(MENU_BACKGROUND_TEXTURE));
         menuBackground = new Image(backgroundTexture);
         Vector2 menuBackCenter = new Vector2(menuBackground.getWidth() * 0.5f, menuBackground.getHeight() * 0.5f);
         menuBackground.setPosition(screenCenter.x - menuBackCenter.x, screenCenter.y - menuBackCenter.y);
