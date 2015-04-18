@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.HashMap;
 
 /**
- * Manage positions and display for an hexagonal menu.
+ * Manages positions and display for an hexagonal menu.
  */
 public class HexagonalMenu {
 
@@ -38,11 +38,11 @@ public class HexagonalMenu {
     }
 
     /**
-     * Get position for given position.
-     * Give the centred position for a position. You should center your object after.
+     * Gets the coordinates for a given position
+     * Gives the centered position for a position. You should center your object after.
      *
      * @param position The position you want
-     * @return The coordinate corresponding to the position.
+     * @return The coordinate corresponding to the position
      */
     public Vector2 getCoordinateFor(Position position) {
         Vector2 coordinates = new Vector2(menuBackground.getX(), menuBackground.getY());
@@ -80,7 +80,7 @@ public class HexagonalMenu {
     }
 
     /**
-     * Declare positions that you could have for an Hexagonal Object.
+     * Declares the corner positions of an hexagon.
      */
     public enum Position {
         TOP,

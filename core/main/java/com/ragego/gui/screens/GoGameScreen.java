@@ -16,6 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ragego.utils.GuiUtils;
 
+/**
+ * Manages the display of a generic Go Game Screen.
+ */
 public class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
 
@@ -55,8 +58,8 @@ public class GoGameScreen extends ScreenAdapter {
         //Active Tile Layer Offset on y-axis (TODO make it map.tmx dependent)
         yOffset = map.getProperties().get("tileheight", Integer.class) * 0.5f;
 
-                //Centers camera on map
-                camera.translate(mapWidth * 0.5f, 0);
+        //Centers camera on map
+        camera.translate(mapWidth * 0.5f, 0);
 
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapWidth, mapHeight + map.getProperties().get("tileheight", Integer.class), camera);

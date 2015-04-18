@@ -3,6 +3,9 @@ package com.ragego.utils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * Provides useful methods for the gui package.
+ */
 public class GuiUtils {
     // Constants (useful for screen/map coordinates conversion)
     private static final double PI_OVER_SIX = Math.PI/6;
@@ -11,8 +14,10 @@ public class GuiUtils {
     /**
      * Projects world coordinates into isometric coordinates through the solution of a triangle.
      *
-     * @param worldCoords The position in world coordinates
-     * @return The coordinate corresponding to the position in the isometric Coordinate system
+     * @param worldCoords The position in world coordinates.
+     * @param mapUnit The shared norm of the unit vectors associated with the axes.
+     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin.
+     * @return The coordinate corresponding to the position in the isometric coordinate system.
      */
     public static Vector2 worldToIso (Vector3 worldCoords, float mapUnit, float yOffset){
         //Adjust the position of the map's origin
@@ -37,13 +42,19 @@ public class GuiUtils {
         System.out.println("Iso coordinates projected: "
                 + "X: " + isoCoords.x + " Y: " + isoCoords.y);
 
-        //Norms the projections and casts them
+        //Norms the projections and casts
         isoCoords.x = (int)(isoCoords.x/mapUnit);
         isoCoords.y = (int)(isoCoords.y/mapUnit);
 
         return isoCoords;
     }
 
+    /**
+     * Projects world coordinates into isometric coordinates through the solution of a triangle.
+     *
+     * @param isoCoords The position in world coordinates.
+     * @return The coordinate corresponding to the position in the world coordinate system.
+     */
     public Vector2 isoToWorld (Vector2 isoCoords){
         return null;
     }

@@ -12,7 +12,7 @@ import com.ragego.gui.menu.HexagonalButton;
 import com.ragego.gui.menu.HexagonalMenu;
 
 /**
- * TODO: Explain goal of this class
+ * Manages the display of the Main Menu Screen.
  */
 public class MenuScreen extends ScreenAdapter{
     private static final String TAG = "MenuScreen";

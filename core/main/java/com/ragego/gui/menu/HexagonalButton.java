@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
- * Button for the {@link HexagonalMenu}
+ * Button for the {@link HexagonalMenu}.
  */
 public class HexagonalButton extends Button {
 
@@ -18,7 +18,7 @@ public class HexagonalButton extends Button {
     private final HexagonalMenu menu;
 
     /**
-     * Position of this button in the menu
+     * Position of this button in the menu.
      */
     private HexagonalMenu.Position position;
 
@@ -59,7 +59,7 @@ public class HexagonalButton extends Button {
     }
 
     /**
-     * Update the position of button on a given {@link com.ragego.gui.menu.HexagonalMenu.Position}
+     * Update the position of button on a given {@link com.ragego.gui.menu.HexagonalMenu.Position}.
      *
      * @param position The wanted position for this button
      */

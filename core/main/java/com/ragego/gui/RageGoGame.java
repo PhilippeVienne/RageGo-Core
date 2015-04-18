@@ -5,6 +5,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.ragego.gui.screens.GoGameScreen;
 
+/**
+ * Describes how we start the game.
+ */
 public class RageGoGame extends Game {
 
     @Override
