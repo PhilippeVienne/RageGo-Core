@@ -385,7 +385,7 @@ public class GameBoard {
      */
     private void removeStoneFromBoard(Stone stone) {
         stone.setCaptivated();
-        board.remove(stone.getPosition(), stone);
+        board.remove(stone.getPosition());
         for (GameListener listener : listeners) {
             listener.stoneRemoved(stone);
         }
