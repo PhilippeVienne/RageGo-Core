@@ -2,6 +2,8 @@
 
 RageGo : Role-play and Aesthetic Game Engine for Go
 
+JAVADOC : http://philippegeek.github.io/RageGo/javadoc/
+
 # About
 
 RageGo is an application which aims to revive the ancient game of Go by adding an adventurous RPG twist to it.
