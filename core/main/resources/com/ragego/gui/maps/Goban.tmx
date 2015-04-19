@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="isometric" renderorder="right-down" width="20" height="20" tilewidth="128" tileheight="74" nextobjectid="1">
+ <properties>
+  <property name="goOriginX" value="1"/>
+  <property name="goOriginY" value="1"/>
+  <property name="gobanSize" value="19"/>
+ </properties>
  <tileset firstgid="1" name="gridTS" tilewidth="128" tileheight="148">
   <tileoffset x="0" y="74"/>
   <tile id="0">

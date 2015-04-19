@@ -16,10 +16,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.ragego.engine.HumanPlayer;
+import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
-
-import java.awt.*;
 
 /**
  * Manages the display of a generic Go Game Screen.
@@ -30,7 +30,6 @@ public class GoGameScreen extends ScreenAdapter {
     private TiledMap map;
     private Goban goban;
     private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapWidth, mapHeight;
-    private Point gobanOriginCoords;
     private IsometricTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
@@ -92,7 +91,7 @@ public class GoGameScreen extends ScreenAdapter {
             Goban setup
          */
 
-        //goban = new Goban(this, map, new HumanPlayer("Joueur 1", new GraphicTurnListener(this)), new HumanPlayer("Joueur 2", new GraphicTurnListener(this)));
+        goban = new Goban(this, map, new HumanPlayer("Joueur 1", new GraphicTurnListener(this)), new HumanPlayer("Joueur 2", new GraphicTurnListener(this)));
 
         /*
             Interaction components setup
