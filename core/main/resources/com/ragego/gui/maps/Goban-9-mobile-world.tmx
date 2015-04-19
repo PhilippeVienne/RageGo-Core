@@ -81,7 +81,7 @@
     <tileset firstgid="13" name="toolTS" tilewidth="513" tileheight="296">
         <tileoffset x="-190" y="112"/>
         <tile id="0">
-            <image width="513" height="296" source="../objects/tools/selectionCross.png"/>
+            <image width="513" height="296" source="../objects/tools/selection_cross.png"/>
         </tile>
     </tileset>
     <tileset firstgid="14" name="stoneTS" tilewidth="128" tileheight="148">
