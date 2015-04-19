@@ -9,7 +9,6 @@ import com.ragego.engine.GameBoard;
 import com.ragego.engine.HumanPlayer;
 import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.screens.GoGameScreen;
-import com.ragego.utils.DebugUtils;
 import com.ragego.utils.GuiUtils;
 
 public class Goban {
@@ -119,7 +118,6 @@ public class Goban {
         @Override
         public void run() {
             board.nextMove();
-            DebugUtils.printBoard(board);
             if (!engineThread.isInterrupted())
                 run();
         }

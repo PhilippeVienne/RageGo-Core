@@ -25,8 +25,9 @@ public class RageGoGame extends Game {
 
     @Override
     public void create() {
+        Gdx.input.setCatchBackKey(true);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        homeScreen = new MenuScreen(this);
+        homeScreen = new MenuScreen();
         setScreen(homeScreen);
     }
 

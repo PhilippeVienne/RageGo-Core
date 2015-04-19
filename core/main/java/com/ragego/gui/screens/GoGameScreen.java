@@ -1,9 +1,6 @@
 package com.ragego.gui.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
@@ -185,14 +182,14 @@ public class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean keyUp(int keycode) {
+            if (keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
+                RageGoGame.goHome();
+            }
             return false;
         }
 
         @Override
-        public boolean keyTyped(char character) {
-            if (character == 27) { // ESC key
-                RageGoGame.goHome();
-            }
+        public boolean keyTyped(char character) { // Only if you want to listen characters
             return false;
         }
 

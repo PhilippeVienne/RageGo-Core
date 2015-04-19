@@ -17,7 +17,6 @@ import com.ragego.gui.menu.HexagonalMenu;
  */
 public class MenuScreen extends ScreenAdapter{
     private static final String TAG = "MenuScreen";
-    private final RageGoGame rageGoGame;
 
     private Viewport viewport;
 
@@ -27,9 +26,8 @@ public class MenuScreen extends ScreenAdapter{
 
     private ScreenAdapter nextScreen = null;
 
-    public MenuScreen(RageGoGame rageGoGame) {
+    public MenuScreen() {
         super();
-        this.rageGoGame = rageGoGame;
     }
 
     @Override
@@ -107,7 +105,7 @@ public class MenuScreen extends ScreenAdapter{
 
     private void play() {
         if (nextScreen != null) {
-            rageGoGame.load(nextScreen);
+            RageGoGame.getInstance().load(nextScreen);
         }
     }
 
