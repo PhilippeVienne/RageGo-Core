@@ -3,6 +3,7 @@ package com.ragego.gui.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,6 +27,7 @@ import com.ragego.utils.GuiUtils;
 public class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
 
+    private AssetManager manager;
     private TiledMap map;
     private Goban goban;
     private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPixWidth, mapPixHeight;
@@ -45,12 +47,23 @@ public class GoGameScreen extends ScreenAdapter {
         /*
             Map setup
          */
-        map = new TmxMapLoader(new FileHandleResolver() {
+        manager = new AssetManager(new FileHandleResolver() {
             @Override
             public FileHandle resolve(String fileName) {
                 return Gdx.files.classpath(fileName);
             }
-        }).load("com/ragego/gui/maps/Goban.tmx");
+        });
+        manager.setLoader(TiledMap.class, new TmxMapLoader(new FileHandleResolver() {
+            @Override
+            public FileHandle resolve(String fileName) {
+                return Gdx.files.classpath(fileName);
+            }
+        }));
+        manager.load("com/ragego/gui/maps/Goban.tmx", TiledMap.class);
+        manager.finishLoading();
+        Gdx.app.log(TAG, "Assets loaded");
+        map = manager.get("com/ragego/gui/maps/Goban.tmx");
+
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
         gridLayer = (TiledMapTileLayer)map.getLayers().get("grid");
@@ -79,8 +92,12 @@ public class GoGameScreen extends ScreenAdapter {
 
         TiledMapTileLayer stoneLayer = (TiledMapTileLayer) map.getLayers().get("stones");
         TiledMapTile blackStone = map.getTileSets().getTileSet("stoneTS").getTile(0);
-        TiledMapTileLayer.Cell cell = stoneLayer.getCell(10, 10);
-        //cell.setTile(null);
+        System.out.println(stoneLayer.getWidth());
+        System.out.println(stoneLayer.getHeight());
+        stoneLayer.getCell(2, 2).setTile(null);
+        stoneLayer.getCell(3, 3).setTile(null);
+        stoneLayer.getCell(4, 4).setTile(null);
+        stoneLayer.getCell(5, 5).setTile(null);
 
         /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
         Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
