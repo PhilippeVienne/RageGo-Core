@@ -213,7 +213,7 @@ public class StoneGroup {
      */
     public boolean isAsideOf(final StoneGroup group) {
         if (group.getBoard() != board) return false;
-        final ArrayList<Intersection> visitedIntersection = new ArrayList<>(stones.size() * 4);
+        final ArrayList<Intersection> visitedIntersection = new ArrayList<Intersection>(stones.size() * 4);
         for (Stone stone : stones) {
             final Intersection stoneIntersection = stone.getPosition();
             for (int deltaColumn = -1; deltaColumn < 2; deltaColumn += 2)

@@ -1,6 +1,7 @@
 package com.ragego.engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Link {@link StoneGroup}s between to detect big group of stones.
@@ -15,6 +16,8 @@ import java.util.ArrayList;
  */
 public class Shape {
 
+    private final static HashMap<StoneGroup, Shape> shapes = new HashMap<StoneGroup, Shape>(GameBoard.DEFAULT_BOARD_SIZE * GameBoard.DEFAULT_BOARD_SIZE);
+
     private final ArrayList<StoneGroup> linkedGroups = new ArrayList<StoneGroup>();
     private final Player player;
     private final GameBoard gameBoard;
@@ -23,6 +26,9 @@ public class Shape {
         this.gameBoard = board;
         player = firstGroup.getPlayer();
         linkedGroups.add(firstGroup);
+        if (shapes.containsKey(firstGroup))
+            shapes.remove(firstGroup);
+        shapes.put(firstGroup, this);
     }
 
     /**
@@ -57,21 +63,49 @@ public class Shape {
     /**
      * Compute the Shape from a starting shape.
      * @param stoneGroup The stone group to start compute.
-     * @param stoneGroups other stone groups.
      * @return The shape corresponding to this group.
      */
-    public static Shape generateShape(StoneGroup stoneGroup, ArrayList<StoneGroup> stoneGroups) {
+    public static Shape getShape(StoneGroup stoneGroup) {
+        if (hasComputedShape(stoneGroup))
+            return shapes.get(stoneGroup);
         final Shape shape = new Shape(stoneGroup.getBoard(), stoneGroup);
-        for (StoneGroup group : stoneGroups) {
-            if (group == stoneGroup) continue;
-            if (stoneGroup.isAsideOf(group))
-                shape.linkedGroups.add(group);
-        }
+        shape.searchGroups(stoneGroup);
         return shape;
     }
 
     /**
-     * Recursive search for shapes
+     * Find if this group has a computed shape.
+     *
+     * @param stoneGroup The stone group which you want to check.
+     * @return true if we have a computed shape.
      */
+    public static boolean hasComputedShape(StoneGroup stoneGroup) {
+        return shapes.containsKey(stoneGroup);
+    }
+
+    /**
+     * Recursive search for shapes.
+     * Improved method to look for shapes.
+     * @param stoneGroup The stone group which we are looking for groups around.
+     */
+    private void searchGroups(StoneGroup stoneGroup) {
+        for (Stone stone : stoneGroup.getStones()) {
+            final Intersection stoneIntersection = stone.getPosition();
+            for (int deltaColumn = -1; deltaColumn < 2; deltaColumn += 2)
+                for (int deltaLine = -1; deltaLine < 2; deltaLine += 2) {
+                    final Intersection checkedIntersection = Intersection.get(
+                            stoneIntersection.getColumn() + deltaColumn,
+                            stoneIntersection.getLine() + deltaLine,
+                            stoneIntersection.getBoard());
+                    final Stone checkedStone = gameBoard.getElement(checkedIntersection);
+                    if (checkedStone == null) continue;
+                    if (!linkedGroups.contains(checkedStone.getStoneGroup())) {
+                        linkedGroups.add(checkedStone.getStoneGroup());
+                        shapes.put(checkedStone.getStoneGroup(), this);
+                        searchGroups(checkedStone.getStoneGroup());
+                    }
+                }
+        }
+    }
 
 }
