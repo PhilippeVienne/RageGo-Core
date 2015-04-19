@@ -799,4 +799,8 @@ public class GameBoard {
         if (!ia_functions_enabled)
             throw new IllegalStateException("You can not call IA functions here !");
     }
+
+    public Stone getElement(int column, int line) {
+        return getElement(Intersection.get(column, line, this));
+    }
 }

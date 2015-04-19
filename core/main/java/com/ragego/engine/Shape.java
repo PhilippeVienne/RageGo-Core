@@ -54,9 +54,33 @@ public class Shape {
      */
     public int countOnBorder(Border border) {
         int count = 0;
-        for (StoneGroup group : linkedGroups)
-            if (group.isOnBorder(border))
+        for (int i = 0; i < gameBoard.getBoardSize(); i++) {
+            int column = 0, line = 0;
+            switch (border) {
+
+                case RIGHT:
+                    column = gameBoard.getBoardSize() - 1;
+                    line = i;
+                    break;
+                case LEFT:
+                    column = 0;
+                    line = i;
+                    break;
+                case TOP:
+                    column = i;
+                    line = gameBoard.getBoardSize() - 1;
+                    break;
+                case BOTTOM:
+                    column = i;
+                    line = 0;
+                    break;
+            }
+            final Stone stone = gameBoard.getElement(column, line);
+            if (stone == null) continue;
+            if (stone.getPlayer() != player) continue;
+            if (linkedGroups.contains(stone.getStoneGroup()))
                 count++;
+        }
         return count;
     }
 
@@ -99,10 +123,12 @@ public class Shape {
                             stoneIntersection.getBoard());
                     final Stone checkedStone = gameBoard.getElement(checkedIntersection);
                     if (checkedStone == null) continue;
-                    if (!linkedGroups.contains(checkedStone.getStoneGroup())) {
-                        linkedGroups.add(checkedStone.getStoneGroup());
-                        shapes.put(checkedStone.getStoneGroup(), this);
-                        searchGroups(checkedStone.getStoneGroup());
+                    if (checkedStone.getPlayer() != player) continue;
+                    final StoneGroup checkedStoneStoneGroup = checkedStone.getStoneGroup();
+                    if (!linkedGroups.contains(checkedStoneStoneGroup)) {
+                        linkedGroups.add(checkedStoneStoneGroup);
+                        shapes.put(checkedStoneStoneGroup, this);
+                        searchGroups(checkedStoneStoneGroup);
                     }
                 }
         }
