@@ -110,7 +110,8 @@ public class MenuScreen extends ScreenAdapter{
     }
 
     @Override
-    public void resize(int width, int height) {viewport.update(width, height);
+    public void resize(int width, int height) {
+        viewport.update(width, height);
     }
 
     @Override
@@ -126,5 +127,11 @@ public class MenuScreen extends ScreenAdapter{
 
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         stage.draw();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+        this.nextScreen = null;
     }
 }
