@@ -80,7 +80,7 @@ public class MenuScreen extends ScreenAdapter{
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Return Button clicked");
+                Gdx.app.exit();
             }
         });
 
