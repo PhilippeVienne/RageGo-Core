@@ -14,6 +14,6 @@ public class DesktopLauncher {
 
 		config.title = "RageGo";
 
-		new LwjglApplication(new RageGoGame(), config);
+		new LwjglApplication(RageGoGame.getInstance(), config);
 	}
 }

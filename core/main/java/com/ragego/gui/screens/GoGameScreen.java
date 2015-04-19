@@ -2,15 +2,14 @@ package com.ragego.gui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
@@ -18,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.ragego.gui.RageGoGame;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
 
@@ -38,7 +38,7 @@ public class GoGameScreen extends ScreenAdapter {
     private Stage stage;
 
     private final MyGestureListener gesture = new MyGestureListener();
-    private InputMultiplexer myInputMultiplexer;
+    private final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
 
     TiledMapTileLayer gridLayer;
 
@@ -59,10 +59,10 @@ public class GoGameScreen extends ScreenAdapter {
                 return Gdx.files.classpath(fileName);
             }
         }));
-        manager.load("com/ragego/gui/maps/Goban.tmx", TiledMap.class);
+        manager.load("com/ragego/gui/maps/Goban-9-mobile.tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
-        map = manager.get("com/ragego/gui/maps/Goban.tmx");
+        map = manager.get("com/ragego/gui/maps/Goban-9-mobile.tmx");
 
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
@@ -90,24 +90,6 @@ public class GoGameScreen extends ScreenAdapter {
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
 
-        TiledMapTileLayer stoneLayer = (TiledMapTileLayer) map.getLayers().get("stones");
-        TiledMapTile blackStone = map.getTileSets().getTileSet("stoneTS").getTile(0);
-        System.out.println(stoneLayer.getWidth());
-        System.out.println(stoneLayer.getHeight());
-
-        /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
-        Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
-
-        TiledMapTileSet gridElements = map.getTileSets().getTileSet("gridTS");
-        Color gridColor = new Color(Color.BLACK);
-
-        for (int i=0; i<gridElements.size()-1; i++) {
-            gridElements.getTile(i).getTextureRegion().getTexture().getTextureData().
-        }
-        System.out.println(gridElements.size());
-        */
-
-
         /*
             Goban setup
          */
@@ -117,7 +99,7 @@ public class GoGameScreen extends ScreenAdapter {
         /*
             Interaction components setup
          */
-        Gdx.input.setInputProcessor(new GestureDetector(gesture));
+        Gdx.input.setInputProcessor(inputMultiplexer);
 
         goban.startGame();
     }
@@ -137,6 +119,9 @@ public class GoGameScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        camera.update();
+        renderer.setView(camera);
+        renderer.render();
     }
 
     @Override
@@ -182,16 +167,8 @@ public class GoGameScreen extends ScreenAdapter {
         return coordinates;
     }
 
-    public class MyGestureListener implements GestureDetector.GestureListener {
-
-        @Override
-        public boolean touchDown(float x, float y, int pointer, int button) {
-            Vector3 tempCoords = new Vector3(x,y,0);
-            Vector3 worldCoords = camera.unproject(tempCoords);
-
-            lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-            return false;
-        }
+    @SuppressWarnings("unused")
+    public class MyGestureListener implements InputProcessor {
 
         private Vector2 lastTouch = null;
 
@@ -202,39 +179,49 @@ public class GoGameScreen extends ScreenAdapter {
         }
 
         @Override
-        public boolean tap(float x, float y, int count, int button) {
+        public boolean keyDown(int keycode) {
             return false;
         }
 
         @Override
-        public boolean longPress(float x, float y) {
+        public boolean keyUp(int keycode) {
             return false;
         }
 
         @Override
-        public boolean fling(float velocityX, float velocityY, int button) {
+        public boolean keyTyped(char character) {
+            if (character == 27) { // ESC key
+                RageGoGame.goHome();
+            }
             return false;
         }
 
         @Override
-        public boolean pan(float x, float y, float deltaX, float deltaY) {
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+            Vector3 worldCoords = camera.unproject(tempCoords);
+
+            lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
             return false;
         }
 
         @Override
-        public boolean panStop(float x, float y, int pointer, int button) {
-            //Gdx.app.log("Text", "panstop");
-            return false;
-        }
-
-
-        @Override
-        public boolean zoom (float originalDistance, float currentDistance){
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
             return false;
         }
 
         @Override
-        public boolean pinch (Vector2 initialFirstPointer, Vector2 initialSecondPointer, Vector2 firstPointer, Vector2 secondPointer){
+        public boolean touchDragged(int screenX, int screenY, int pointer) {
+            return false;
+        }
+
+        @Override
+        public boolean mouseMoved(int screenX, int screenY) {
+            return false;
+        }
+
+        @Override
+        public boolean scrolled(int amount) {
             return false;
         }
     }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.ragego.gui.RageGoGame;
 import com.ragego.gui.menu.HexagonalButton;
 import com.ragego.gui.menu.HexagonalMenu;
 
@@ -16,12 +17,20 @@ import com.ragego.gui.menu.HexagonalMenu;
  */
 public class MenuScreen extends ScreenAdapter{
     private static final String TAG = "MenuScreen";
+    private final RageGoGame rageGoGame;
 
     private Viewport viewport;
 
     private Stage stage;
 
     private HexagonalMenu menu;
+
+    private ScreenAdapter nextScreen = null;
+
+    public MenuScreen(RageGoGame rageGoGame) {
+        super();
+        this.rageGoGame = rageGoGame;
+    }
 
     @Override
     public void show () {
@@ -37,7 +46,7 @@ public class MenuScreen extends ScreenAdapter{
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Play Button clicked");
+                play();
             }
         });
 
@@ -46,7 +55,7 @@ public class MenuScreen extends ScreenAdapter{
         soloButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Solo Button clicked");
+                nextScreen = new GoGameScreen();
             }
         });
 
@@ -94,6 +103,12 @@ public class MenuScreen extends ScreenAdapter{
                 Gdx.app.log(TAG, "Parameters Button clicked");
             }
         });
+    }
+
+    private void play() {
+        if (nextScreen != null) {
+            rageGoGame.load(nextScreen);
+        }
     }
 
     @Override
