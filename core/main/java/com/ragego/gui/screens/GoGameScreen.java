@@ -137,7 +137,7 @@ public class GoGameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        map.dispose();
+        manager.dispose();
         renderer.dispose();
     }
 
