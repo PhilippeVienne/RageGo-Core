@@ -3,6 +3,13 @@ apply plugin: "java"
 sourceCompatibility = 1.6
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+githubPages {
+    repoUri = 'https://github.com/PhilippeGeek/RageGo'
+    pages {
+        from javadoc
+    }
+}
+
 sourceSets {
     main {
         java.srcDir "main/java/"

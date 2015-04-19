@@ -3,6 +3,7 @@ package com.ragego.gui.objects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.HumanPlayer;
@@ -29,8 +30,10 @@ public class Goban {
         this.stoneLayer = (TiledMapTileLayer) map.getLayers().get("stones");
         gobanOriginCoords = new Vector2(Float.parseFloat(map.getProperties().get("goOriginX", String.class)),
                 Float.parseFloat(map.getProperties().get("goOriginY", String.class)));
-        this.blackStone = map.getTileSets().getTileSet("stoneTS").getTile(0);
-        this.whiteStone = map.getTileSets().getTileSet("stoneTS").getTile(1);
+        final TiledMapTileSet stoneTS = map.getTileSets().getTileSet("stoneTS");
+        int firstGid = stoneTS.getProperties().get("firstgid", Integer.class);
+        this.blackStone = stoneTS.getTile(firstGid + 0);
+        this.whiteStone = stoneTS.getTile(firstGid + 1);
 
         this.gobanSize = Integer.parseInt(map.getProperties().get("gobanSize", String.class));
         board = new GameBoard(new HumanPlayer("Player 1", new GraphicTurnListener(screen, this)), new HumanPlayer("Player 2", new GraphicTurnListener(screen, this)), gobanSize);
@@ -79,6 +82,32 @@ public class Goban {
             stoneLayer.getCell((int)isoCoords.x, (int)isoCoords.y).setTile(null);
         if (playerNb == 2)
             stoneLayer.getCell((int)isoCoords.x, (int)isoCoords.y).setTile(null);
+    }
+
+    public void updateStones() {
+        stoneLayer.getHeight();
+        stoneLayer.getWidth();
+        final int[][] boardRepresentation = board.getRepresentation();
+        for (int line = 0; line < board.getBoardSize(); line++)
+            for (int column = 0; column < board.getBoardSize(); column++) {
+                Vector2 isoCoords = gobanToIso(new Vector2(line, column));
+                TiledMapTileLayer.Cell cell = stoneLayer.getCell((int) isoCoords.x, (int) isoCoords.y);
+                if (cell == null) {
+                    cell = new TiledMapTileLayer.Cell();
+                    stoneLayer.setCell((int) isoCoords.x, (int) isoCoords.y, new TiledMapTileLayer.Cell());
+                }
+                switch (boardRepresentation[line][column]) {
+                    case 1:
+                        cell.setTile(blackStone);
+                        break;
+                    case 2:
+                        cell.setTile(whiteStone);
+                        break;
+                    default:
+                        cell.setTile(null);
+
+                }
+            }
     }
 
     private class GameRunnable implements Runnable {
