@@ -16,8 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.ragego.engine.HumanPlayer;
-import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
 
@@ -36,7 +34,7 @@ public class GoGameScreen extends ScreenAdapter {
     private ExtendViewport viewport;
     private Stage stage;
 
-    GestureDetector gesture;
+    final MyGestureListener gesture = new MyGestureListener();
     InputMultiplexer myInputMultiplexer;
 
     TiledMapTileLayer gridLayer;
@@ -95,13 +93,14 @@ public class GoGameScreen extends ScreenAdapter {
             Goban setup
          */
 
-        goban = new Goban(this, map, new HumanPlayer("Joueur 1", new GraphicTurnListener(this)), new HumanPlayer("Joueur 2", new GraphicTurnListener(this)));
+        goban = new Goban(this, map);
 
         /*
             Interaction components setup
          */
-        gesture = new GestureDetector(new MyGestureListener());
-        Gdx.input.setInputProcessor(gesture);
+        Gdx.input.setInputProcessor(new GestureDetector(gesture));
+
+        goban.startGame();
     }
 
     @Override
@@ -144,26 +143,53 @@ public class GoGameScreen extends ScreenAdapter {
         return map;
     }
 
+    /**
+     * Wait for a user input on Goban
+     *
+     * @return The coordinates
+     */
+    public Vector2 waitForUserInputOnGoban() {
+        Vector2 coordinates;
+        synchronized (gesture) {
+            while ((coordinates = gesture.popLastTouch()) == null) {
+                try {
+                    gesture.wait(5);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return coordinates;
+    }
+
     public class MyGestureListener implements GestureDetector.GestureListener {
 
         @Override
         public boolean touchDown(float x, float y, int pointer, int button) {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
-            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
 
-            System.out.println("Screen coordinates : "
-                    + "X: " + x + " Y: " + y);
+//            System.out.println("Screen coordinates : "
+//                    + "X: " + x + " Y: " + y);
+//
+//            System.out.println("World coordinates : "
+//                    + "X: " + worldCoords.x + " Y: " + worldCoords.y);
+//
+//            System.out.println("Isometric coordinates : "
+//                    + "X: " + isoCoords.x + " Y: " + isoCoords.y);
+//
+//            System.out.println("******************************");
 
-            System.out.println("World coordinates : "
-                    + "X: " + worldCoords.x + " Y: " + worldCoords.y);
-
-            System.out.println("Isometric coordinates : "
-                    + "X: " + isoCoords.x + " Y: " + isoCoords.y);
-
-            System.out.println("******************************");
-
+            lastTouch = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
             return false;
+        }
+
+        private Vector2 lastTouch = null;
+
+        public Vector2 popLastTouch() {
+            Vector2 result = lastTouch;
+            lastTouch = null;
+            return result;
         }
 
         @Override

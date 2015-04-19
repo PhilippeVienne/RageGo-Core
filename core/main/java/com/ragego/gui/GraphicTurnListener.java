@@ -1,5 +1,6 @@
 package com.ragego.gui;
 
+import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.*;
 import com.ragego.gui.objects.Goban;
 import com.ragego.gui.screens.GoGameScreen;
@@ -34,10 +35,13 @@ public class GraphicTurnListener implements TurnListener {
 
     @Override
     public void newTurn(GameBoard board, Player player) {
-        Intersection intersection = null;
+        Intersection intersection;
 
-        // INSERT CODE
-        // Code to wait a click from player and recive Intersection
+        do {
+            final Vector2 input = screen.waitForUserInputOnGoban();
+            input.x--;
+            intersection = Intersection.get((int) input.y, (int) input.x, goban.getBoard());
+        } while (!goban.getBoard().isValidIntersection(intersection));
 
         // Apply turn on game
         if (intersection != null) {
