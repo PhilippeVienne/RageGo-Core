@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
@@ -75,6 +76,11 @@ public class GoGameScreen extends ScreenAdapter {
 
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
+
+        TiledMapTileLayer stoneLayer = (TiledMapTileLayer) map.getLayers().get("stones");
+        TiledMapTile blackStone = map.getTileSets().getTileSet("stoneTS").getTile(0);
+        TiledMapTileLayer.Cell cell = stoneLayer.getCell(10, 10);
+        //cell.setTile(null);
 
         /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
         Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
