@@ -36,15 +36,22 @@ public class GraphicTurnListener implements TurnListener {
     @Override
     public void newTurn(GameBoard board, Player player) {
         Intersection intersection;
-
+        GameNode node;
+        boolean canPlay;
         do {
             final Vector2 input = goban.waitForUserInputOnGoban();
             intersection = Intersection.get((int) input.y, (int) input.x, goban.getBoard());
-        } while (!goban.getBoard().isValidIntersection(intersection));
+            node = new GameNode(goban.getBoard(), null, GameNode.Action.PUT_STONE, intersection, player);
+            try {
+                canPlay = goban.getBoard().canPlay(node);
+            } catch (GoRuleViolation goRuleViolation) {
+                System.out.print("Rule violation : " + goRuleViolation.getMessage());
+                canPlay = false;
+            }
+        } while (!(goban.getBoard().isValidIntersection(intersection) && canPlay));
 
         // Apply turn on game
         if (intersection != null) {
-            GameNode node = new GameNode(goban.getBoard(), null, GameNode.Action.PUT_STONE, intersection, player);
             goban.getBoard().play(node);
         }
     }

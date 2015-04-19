@@ -94,10 +94,6 @@ public class GoGameScreen extends ScreenAdapter {
         TiledMapTile blackStone = map.getTileSets().getTileSet("stoneTS").getTile(0);
         System.out.println(stoneLayer.getWidth());
         System.out.println(stoneLayer.getHeight());
-        stoneLayer.getCell(2, 2).setTile(null);
-        stoneLayer.getCell(3, 3).setTile(null);
-        stoneLayer.getCell(4, 4).setTile(null);
-        stoneLayer.getCell(5, 5).setTile(null);
 
         /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
         Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
@@ -193,7 +189,7 @@ public class GoGameScreen extends ScreenAdapter {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
 
-            lastTouch = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+            lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
             return false;
         }
 

@@ -10,6 +10,7 @@ import com.ragego.engine.HumanPlayer;
 import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.DebugUtils;
+import com.ragego.utils.GuiUtils;
 
 public class Goban {
     private final GoGameScreen screen;
@@ -32,7 +33,7 @@ public class Goban {
                 Float.parseFloat(map.getProperties().get("goOriginY", String.class)));
         final TiledMapTileSet stoneTS = map.getTileSets().getTileSet("stoneTS");
         int firstGid = stoneTS.getProperties().get("firstgid", Integer.class);
-        this.blackStone = stoneTS.getTile(firstGid + 0);
+        this.blackStone = stoneTS.getTile(firstGid);
         this.whiteStone = stoneTS.getTile(firstGid + 1);
 
         this.gobanSize = Integer.parseInt(map.getProperties().get("gobanSize", String.class));
@@ -90,7 +91,7 @@ public class Goban {
         final int[][] boardRepresentation = board.getRepresentation();
         for (int line = 0; line < board.getBoardSize(); line++)
             for (int column = 0; column < board.getBoardSize(); column++) {
-                Vector2 isoCoords = gobanToIso(new Vector2(line, column));
+                Vector2 isoCoords = getVectorIsoTopToIsoRight(gobanToIso(new Vector2(line, column)));
                 TiledMapTileLayer.Cell cell = stoneLayer.getCell((int) isoCoords.x, (int) isoCoords.y);
                 if (cell == null) {
                     cell = new TiledMapTileLayer.Cell();
@@ -108,6 +109,10 @@ public class Goban {
 
                 }
             }
+    }
+
+    private Vector2 getVectorIsoTopToIsoRight(Vector2 vector2) {
+        return GuiUtils.isoTopToIsoLeft(vector2, map.getProperties().get("height", Integer.class));
     }
 
     private class GameRunnable implements Runnable {
