@@ -6,9 +6,7 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -38,6 +36,8 @@ public class GoGameScreen extends ScreenAdapter {
     private final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
 
     TiledMapTileLayer gridLayer;
+    private TiledMapTileLayer selection;
+    private TiledMapTile selectionTile;
 
     @Override
     public void show() {
@@ -64,6 +64,9 @@ public class GoGameScreen extends ScreenAdapter {
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
         gridLayer = (TiledMapTileLayer)map.getLayers().get("grid");
+        selection = (TiledMapTileLayer) map.getLayers().get("selection");
+        final TiledMapTileSet toolTS = map.getTileSets().getTileSet("toolTS");
+        selectionTile = toolTS.getTile(toolTS.getProperties().get("firstgid", Integer.class));
 
         //Map size in world units (+1 tile's height to compensate the 3d effect)
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
@@ -168,6 +171,7 @@ public class GoGameScreen extends ScreenAdapter {
     public class MyGestureListener implements InputProcessor {
 
         private Vector2 lastTouch = null;
+        private TiledMapTileLayer.Cell selectionCell;
 
         public Vector2 popLastTouch() {
             Vector2 result = lastTouch;
@@ -198,17 +202,41 @@ public class GoGameScreen extends ScreenAdapter {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
             Vector3 worldCoords = camera.unproject(tempCoords);
 
+            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+            showCrossOn(touch);
+            return false;
+        }
+
+        private void showCrossOn(Vector2 position) {
+            hideCross();
+            selectionCell = new TiledMapTileLayer.Cell();
+            selectionCell.setTile(selectionTile);
+            selection.setCell((int) position.x, (int) position.y, selectionCell);
+        }
+
+        private void hideCross() {
+            for (int x = 0; x < selection.getWidth(); x++)
+                for (int y = 0; y < selection.getHeight(); y++)
+                    if (selection.getCell(x, y) != null)
+                        selection.getCell(x, y).setTile(null);
+        }
+
+        @Override
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+            Vector3 worldCoords = camera.unproject(tempCoords);
+            hideCross();
             lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
             return false;
         }
 
         @Override
-        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            return false;
-        }
-
-        @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
+            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+            Vector3 worldCoords = camera.unproject(tempCoords);
+
+            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+            showCrossOn(touch);
             return false;
         }
 
