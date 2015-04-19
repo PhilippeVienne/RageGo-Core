@@ -205,4 +205,30 @@ public class StoneGroup {
         return false;
     }
 
+    /**
+     * Check if this group is aside another.
+     *
+     * @param group The group to compare.
+     * @return true if group is aside of this group.
+     */
+    public boolean isAsideOf(final StoneGroup group) {
+        if (group.getBoard() != board) return false;
+        final ArrayList<Intersection> visitedIntersection = new ArrayList<>(stones.size() * 4);
+        for (Stone stone : stones) {
+            final Intersection stoneIntersection = stone.getPosition();
+            for (int deltaColumn = -1; deltaColumn < 2; deltaColumn += 2)
+                for (int deltaLine = -1; deltaLine < 2; deltaLine += 2) {
+                    final Intersection checkedIntersection = Intersection.get(
+                            stoneIntersection.getColumn() + deltaColumn,
+                            stoneIntersection.getLine() + deltaLine,
+                            stoneIntersection.getBoard());
+                    if (visitedIntersection.contains(checkedIntersection)) continue;
+                    visitedIntersection.add(checkedIntersection);
+                    final Stone supposedStone = board.getElement(checkedIntersection);
+                    if (supposedStone == null) continue;
+                    if (supposedStone.getStoneGroup() == group) return true;
+                }
+        }
+        return false;
+    }
 }

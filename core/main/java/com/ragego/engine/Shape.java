@@ -56,7 +56,22 @@ public class Shape {
 
     /**
      * Compute the Shape from a starting shape.
-     * @param stoneGroup The stone group to start compute
+     * @param stoneGroup The stone group to start compute.
+     * @param stoneGroups other stone groups.
+     * @return The shape corresponding to this group.
+     */
+    public static Shape generateShape(StoneGroup stoneGroup, ArrayList<StoneGroup> stoneGroups) {
+        final Shape shape = new Shape(stoneGroup.getBoard(), stoneGroup);
+        for (StoneGroup group : stoneGroups) {
+            if (group == stoneGroup) continue;
+            if (stoneGroup.isAsideOf(group))
+                shape.linkedGroups.add(group);
+        }
+        return shape;
+    }
+
+    /**
+     * Recursive search for shapes
      */
 
 }
