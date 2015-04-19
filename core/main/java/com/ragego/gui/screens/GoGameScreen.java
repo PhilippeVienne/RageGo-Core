@@ -29,7 +29,8 @@ public class GoGameScreen extends ScreenAdapter {
 
     private TiledMap map;
     private Goban goban;
-    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapWidth, mapHeight;
+    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPixWidth, mapPixHeight;
+    private int mapWidth, mapHeight;
     private IsometricTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
@@ -59,8 +60,11 @@ public class GoGameScreen extends ScreenAdapter {
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
         tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
 
-        mapWidth = (float)map.getProperties().get("width", Integer.class) * tileWidthHalf * 2;
-        mapHeight = (float)map.getProperties().get("height", Integer.class) * tileHeightHalf * 2;
+        mapWidth = map.getProperties().get("width", Integer.class);
+        mapHeight = map.getProperties().get("height", Integer.class);
+
+        mapPixWidth = (float)mapWidth * tileWidthHalf * 2;
+        mapPixHeight = (float)mapHeight * tileHeightHalf * 2;
 
         //Map unit (useful for screen/map coordinates conversion)
         mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
@@ -69,10 +73,10 @@ public class GoGameScreen extends ScreenAdapter {
         yOffset = tileHeightHalf;
 
         //Centers camera on map
-        camera.translate(mapWidth * 0.5f, 0);
+        camera.translate(mapPixWidth * 0.5f, 0);
 
         //Maximizes the map size on screen
-        viewport = new ExtendViewport(mapWidth, mapHeight + tileHeightHalf * 2, camera);
+        viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
 
         /*Sets the maps colors (WIP, create a texture color changing method and apply it here.
         Check http://stackoverflow.com/questions/24034352/libgdx-change-color-of-texture-at-runtime for help
@@ -146,7 +150,7 @@ public class GoGameScreen extends ScreenAdapter {
         public boolean touchDown(float x, float y, int pointer, int button) {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
-            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
+            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
 
             System.out.println("Screen coordinates : "
                     + "X: " + x + " Y: " + y);
