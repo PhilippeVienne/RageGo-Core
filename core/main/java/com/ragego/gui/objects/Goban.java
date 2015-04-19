@@ -18,9 +18,9 @@ public class Goban {
     private final GameBoard board;
 
     public Goban(GoGameScreen screen, TiledMap map, HumanPlayer humanPlayer, HumanPlayer player) {
-        this.gridLayer = (TiledMapTileLayer) map.getLayers().get("grid");
         this.screen = screen;
         this.map = screen.getMap();
+        this.gridLayer = (TiledMapTileLayer) map.getLayers().get("grid");
         for (int x = 0; x < gridLayer.getWidth(); x++) {
             for (int y = 0; y < gridLayer.getHeight(); y++) {
                 if (gridLayer.getCell(x, y).getTile().getProperties().get("name").equals("interTop")){

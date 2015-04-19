@@ -16,8 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.ragego.engine.HumanPlayer;
-import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
 
@@ -94,7 +92,7 @@ public class GoGameScreen extends ScreenAdapter {
             Goban setup
          */
 
-        goban = new Goban(this, map, new HumanPlayer("Joueur 1", new GraphicTurnListener(this)), new HumanPlayer("Joueur 2", new GraphicTurnListener(this)));
+        //goban = new Goban(this, map, new HumanPlayer("Joueur 1", new GraphicTurnListener(this)), new HumanPlayer("Joueur 2", new GraphicTurnListener(this)));
 
         /*
             Interaction components setup
@@ -149,7 +147,7 @@ public class GoGameScreen extends ScreenAdapter {
         public boolean touchDown(float x, float y, int pointer, int button) {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
-            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, mapUnit, yOffset);
+            Vector2 isoCoords = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
 
             System.out.println("Screen coordinates : "
                     + "X: " + x + " Y: " + y);

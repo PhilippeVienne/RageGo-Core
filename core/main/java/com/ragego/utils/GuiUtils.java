@@ -7,9 +7,52 @@ import com.badlogic.gdx.math.Vector3;
  * Provides useful methods for the gui package.
  */
 public class GuiUtils {
-    // Constants (useful for screen/map coordinates conversion)
+    //Constants (useful for screen/map coordinates conversion) for alternate method
     private static final double PI_OVER_SIX = Math.PI/6;
     private static final double PI_OVER_THREE = Math.PI / 3;
+
+    /**
+     * Projects world coordinates into isometric coordinates through the solution of a triangle.     *
+     * @param worldCoords The position in world coordinates
+     * @param tileWidthHalf Half the width of the tiles, in world coordinates
+     * @param tileHeightHalf Half the height of the tiles, in world coordinates
+     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin
+     * @return The coordinate corresponding to the position of the cell in the isometric coordinate system
+     */
+    public static Vector2 worldToIso (Vector3 worldCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
+        //Adjusts the position of the map's origin
+        float y = worldCoords.y - yOffset;
+        float x = worldCoords.x;
+
+        System.out.println("World coordinates adjusted : "
+                + "X: " + x + " Y: " + y);
+
+        Vector2 isoCoords = new Vector2();
+        isoCoords.x = (float)(0.5 * ((worldCoords.x / tileWidthHalf) - (worldCoords.y / tileHeightHalf)));
+        isoCoords.y = (float)(0.5 * ((worldCoords.y/tileHeightHalf) + (worldCoords.x / tileWidthHalf)));
+
+        System.out.println("Isometric coordinates projected : "
+                + "X: " + isoCoords.x + " Y: " + isoCoords.y);
+
+        isoCoords.x = Math.round(isoCoords.x);
+        isoCoords.y = Math.round(isoCoords.y - 1);
+
+        return isoCoords;
+    }
+
+    /**
+     * Projects world coordinates into isometric coordinates through the solution of a triangle.
+     *
+     * @param isoCoords The position in the isometric coordinate system
+     * @param tileWidthHalf Half the width of the tiles, in world coordinates
+     * @param tileHeightHalf Half the height of the tiles, in world coordinates
+     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin.
+     * @return The coordinate corresponding to the position of the cell's center in the world coordinate system
+     */
+    public Vector2 isoToWorld (Vector2 isoCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
+        return new Vector2(tileWidthHalf * (isoCoords.x + isoCoords.y + 1),
+                tileHeightHalf * (isoCoords.y - isoCoords.x));
+    }
 
     /**
      * Projects world coordinates into isometric coordinates through the solution of a triangle.
@@ -19,7 +62,8 @@ public class GuiUtils {
      * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin
      * @return The coordinate corresponding to the position of the cell in the isometric coordinate system
      */
-    public static Vector2 worldToIso (Vector3 worldCoords, float mapUnit, float yOffset){
+    @Deprecated
+    public static Vector2 worldToIsoAlternate (Vector3 worldCoords, float mapUnit, float yOffset){
         //Adjust the position of the map's origin
         float y = worldCoords.y - yOffset;
         float x = worldCoords.x;
@@ -45,37 +89,6 @@ public class GuiUtils {
         isoCoords.x = (int)(isoCoords.x/mapUnit);
         isoCoords.y = (int)(isoCoords.y/mapUnit);
 
-
         return isoCoords;
-    }
-
-    @Deprecated
-    public static Vector2 worldToIsoAlternate (Vector3 worldCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
-        //Adjust the position of the map's origin
-        float y = worldCoords.y - yOffset;
-        float x = worldCoords.x;
-
-        System.out.println("World coordinates adjusted : "
-                + "X: " + x + " Y: " + y);
-
-        Vector2 isoCoords = new Vector2();
-        isoCoords.x = (int)(0.5 * ((worldCoords.x / tileWidthHalf) - (worldCoords.y / tileHeightHalf) - 1));
-        isoCoords.y = (int)(0.5 * ((worldCoords.y/tileHeightHalf) + (worldCoords.x / tileWidthHalf) - 1));
-
-        return isoCoords;
-    }
-
-    /**
-     * Projects world coordinates into isometric coordinates through the solution of a triangle.
-     *
-     * @param isoCoords The position in the isometric coordinate system
-     * @param tileWidthHalf Half the width of the tiles, in world coordinates
-     * @param tileHeightHalf Half the height of the tiles, in world coordinates
-     * @param yOffset The offset on the world y-axis between the world's origin and the layer's grid origin.
-     * @return The coordinate corresponding to the position of the cell's center in the world coordinate system
-     */
-    public Vector2 isoToWorld (Vector2 isoCoords, float tileWidthHalf, float tileHeightHalf, float yOffset){
-        return new Vector2(tileWidthHalf * (isoCoords.x + isoCoords.y + 1),
-                tileHeightHalf * (isoCoords.y - isoCoords.x));
     }
 }
