@@ -337,7 +337,7 @@ public class GameBoard {
      */
     public Stone getElement(Intersection intersection) {
         checkBoardForIntersection(intersection);
-        return board.getOrDefault(intersection, null);
+        return board.get(intersection);
     }
 
     /**
@@ -540,14 +540,21 @@ public class GameBoard {
                 message.append(val);
             }
         }
+        byte[] messageHash = new byte[0];
         try {
-            return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(message.toString().getBytes("UTF-8")));
+            messageHash = MessageDigest.getInstance("MD5").digest(message.toString().getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return "";
+        try {
+            return DatatypeConverter.printHexBinary(messageHash);
+        } catch (NoClassDefFoundError e) {
+            // On android, get another solution
+            return new String(messageHash);
+        }
+        //return "";
     }
 
     /**
