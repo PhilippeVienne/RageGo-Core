@@ -57,8 +57,10 @@ public class RageGoGame extends Game {
     }
 
     public void load(ScreenAdapter nextScreen) {
-        if (nextScreen != null)
+        if (nextScreen != null) {
             setScreen(nextScreen);
+            screen.resume();
+        }
     }
 
     public static void goHome() {
