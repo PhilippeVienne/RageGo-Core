@@ -11,7 +11,7 @@ import com.ragego.gui.screens.GoGameScreen;
 public class GraphicTurnListener implements TurnListener {
 
     private final GoGameScreen screen;
-    private Goban goban;
+    private final Goban goban;
 
     /**
      * Create a turn listener with a screen and a goban
@@ -38,8 +38,7 @@ public class GraphicTurnListener implements TurnListener {
         Intersection intersection;
 
         do {
-            final Vector2 input = screen.waitForUserInputOnGoban();
-            input.x--;
+            final Vector2 input = goban.waitForUserInputOnGoban();
             intersection = Intersection.get((int) input.y, (int) input.x, goban.getBoard());
         } while (!goban.getBoard().isValidIntersection(intersection));
 

@@ -34,8 +34,8 @@ public class GoGameScreen extends ScreenAdapter {
     private ExtendViewport viewport;
     private Stage stage;
 
-    final MyGestureListener gesture = new MyGestureListener();
-    InputMultiplexer myInputMultiplexer;
+    private final MyGestureListener gesture = new MyGestureListener();
+    private InputMultiplexer myInputMultiplexer;
 
     TiledMapTileLayer gridLayer;
 
@@ -168,17 +168,6 @@ public class GoGameScreen extends ScreenAdapter {
         public boolean touchDown(float x, float y, int pointer, int button) {
             Vector3 tempCoords = new Vector3(x,y,0);
             Vector3 worldCoords = camera.unproject(tempCoords);
-
-//            System.out.println("Screen coordinates : "
-//                    + "X: " + x + " Y: " + y);
-//
-//            System.out.println("World coordinates : "
-//                    + "X: " + worldCoords.x + " Y: " + worldCoords.y);
-//
-//            System.out.println("Isometric coordinates : "
-//                    + "X: " + isoCoords.x + " Y: " + isoCoords.y);
-//
-//            System.out.println("******************************");
 
             lastTouch = GuiUtils.worldToIso(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
             return false;

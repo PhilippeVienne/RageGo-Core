@@ -40,12 +40,22 @@ public class Goban {
     }
 
     public Vector2 isoToGoban (Vector2 isoCoords){
-        //If isoCoords.x too small or too big, or if isoCoords.y too small or too big
-        return null;
+        isoCoords.add(-gobanOriginCoords.x, -gobanOriginCoords.y);
+        return isoCoords;
+    }
+
+    public Vector2 gobanToIso(Vector2 isoCoords) {
+        isoCoords.add(gobanOriginCoords.x, gobanOriginCoords.y);
+        return isoCoords;
     }
 
     public GameBoard getBoard() {
         return board;
+    }
+
+    public Vector2 waitForUserInputOnGoban() {
+        final Vector2 vector2 = screen.waitForUserInputOnGoban();
+        return isoToGoban(vector2);
     }
 
     private class GameRunnable implements Runnable {

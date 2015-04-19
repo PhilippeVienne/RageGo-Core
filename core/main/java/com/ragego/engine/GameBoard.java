@@ -66,8 +66,8 @@ public class GameBoard {
     /**
      * Create a board with the default size.
      *
-     * @param firstPlayer  The first player (conventional white stone player)
-     * @param secondPlayer The second player (conventional black stone player)
+     * @param firstPlayer  The first player (conventional black stone player)
+     * @param secondPlayer The second player (conventional white stone player)
      */
     public GameBoard(Player firstPlayer, Player secondPlayer) {
         this(firstPlayer, secondPlayer, DEFAULT_BOARD_SIZE);
@@ -76,8 +76,8 @@ public class GameBoard {
     /**
      * Create a board with a custom size.
      *
-     * @param firstPlayer  The first player (conventional white stone player)
-     * @param secondPlayer The second player (conventional black stone player)
+     * @param firstPlayer  The first player (conventional black stone player)
+     * @param secondPlayer The second player (conventional white stone player)
      * @param boardSize    Number of column for this board
      */
     public GameBoard(Player firstPlayer, Player secondPlayer, int boardSize) {
@@ -114,7 +114,7 @@ public class GameBoard {
         for (GameListener listener : listeners) {
             listener.newTurn(this, currentPlayer);
         }
-        if (lastNode.isLocked()) {
+        if (!lastNode.isLocked()) {
             lastNode.recomputeHash();
             lastNode.lock();
         }
@@ -297,7 +297,6 @@ public class GameBoard {
                 );
             }
         }
-        recomputeShape();
     }
 
     /**
@@ -365,7 +364,7 @@ public class GameBoard {
 
         // Look for dead stones.
         // On each shape, check if it's alive.
-        final ArrayList<StoneGroup> stoneGroups = getShapes();
+        final ArrayList<StoneGroup> stoneGroups = getStoneGroups();
         for (StoneGroup stoneGroup : stoneGroups) {
             if (stoneGroup != null && stoneGroup.getPlayer() == player && !stoneGroup.isAlive()) {
                 for (Stone deadStone : stoneGroup.getStones()) {
@@ -401,7 +400,7 @@ public class GameBoard {
     private void placeStoneOnBoard(Stone stone) {
         final Intersection intersection = stone.getPosition();
         checkBoardForIntersection(intersection);
-        StoneGroup stoneGroup = searchForShapesAround(intersection, stone.getPlayer());
+        StoneGroup stoneGroup = searchForStoneGroupAround(intersection, stone.getPlayer());
         if (stoneGroup == null)
             stoneGroup = new StoneGroup(stone.getPlayer(), this, stone);
         else
@@ -422,7 +421,7 @@ public class GameBoard {
      * @param player       The player which should be the owner of shape
      * @return The shape to associate with or null if there is no one.
      */
-    private StoneGroup searchForShapesAround(Intersection intersection, Player player) {
+    private StoneGroup searchForStoneGroupAround(Intersection intersection, Player player) {
         ArrayList<StoneGroup> stoneGroups = new ArrayList<StoneGroup>(4);
         for (Intersection neighbours : intersection.getNeighboursIntersections()) {
             if (getElement(neighbours) != null && getElement(neighbours).getPlayer() == player) {
@@ -555,7 +554,7 @@ public class GameBoard {
      * Retrieve Shapes from this board.
      * @return array of stoneGroups
      */
-    public ArrayList<StoneGroup> getShapes() {
+    public ArrayList<StoneGroup> getStoneGroups() {
         ArrayList<StoneGroup> stoneGroups = new ArrayList<StoneGroup>();
         for (Stone stone : board.values()) {
             if (!stoneGroups.contains(stone.getStoneGroup())) {
@@ -597,7 +596,7 @@ public class GameBoard {
      * A copy is a heavy action because it will copy all stoneGroups and stones (do it with cautious).<br>
      * Data which is copied :
      * <ul>
-     * <li>Shapes: see {@link StoneGroup#copy(GameBoard)}</li>
+     * <li>StoneGroups: see {@link StoneGroup#copy(GameBoard)}</li>
      * <li>Stones: see {@link Stone#copy(GameBoard)}</li>
      * <li>Nodes: see {@link GameNode#copy(GameBoard)}</li>
      * </ul>
@@ -611,7 +610,7 @@ public class GameBoard {
 
         board.boardSize = boardSize;
 
-        final ArrayList<StoneGroup> stoneGroups = getShapes();
+        final ArrayList<StoneGroup> stoneGroups = getStoneGroups();
         for (StoneGroup stoneGroup : stoneGroups) {
             for (Stone stone : stoneGroup.copy(board).getStones())
                 board.board.put(stone.getPosition(), stone);
@@ -635,7 +634,7 @@ public class GameBoard {
      * <p>This remove stoneGroups from all stones of board and recompute stoneGroups for all stones on board.</p>
      * <p>This is a really heavy action and you should never call it on board containing many stones aside.</p>
      */
-    private void recomputeShape() {
+    private void recomputeStoneGroups() {
 
         for (Stone stone : board.values()) {
             final StoneGroup stoneGroup = stone.getStoneGroup();
@@ -708,7 +707,7 @@ public class GameBoard {
      * @param listener the listener to remove.
      */
     @SuppressWarnings("unused")
-    public void removeGameListner(GameListener listener) {
+    public void removeGameListener(GameListener listener) {
         listeners.remove(listener);
     }
 
@@ -768,7 +767,7 @@ public class GameBoard {
 
     /**
      * Delete a stone.
-     * Delete a stone from the board whithout any side effects.
+     * Delete a stone from the board without any side effects.
      *
      * @param stone The stone to delete.
      */
