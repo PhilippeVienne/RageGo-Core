@@ -114,6 +114,11 @@ public class Goban {
         return GuiUtils.isoTopToIsoLeft(vector2, map.getProperties().get("height", Integer.class));
     }
 
+    public boolean isValidOnGoban(Vector2 vector2) {
+        vector2 = isoToGoban(vector2);
+        return vector2.x >= 0 && vector2.x < gobanSize && vector2.y >= 0 && vector2.y < gobanSize;
+    }
+
     private class GameRunnable implements Runnable {
         @Override
         public void run() {

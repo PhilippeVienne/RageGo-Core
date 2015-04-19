@@ -56,10 +56,10 @@ public class GoGameScreen extends ScreenAdapter {
                 return Gdx.files.classpath(fileName);
             }
         }));
-        manager.load("com/ragego/gui/maps/Goban-9-mobile.tmx", TiledMap.class);
+        manager.load("com/ragego/gui/maps/Goban-9-mobile-world.tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
-        map = manager.get("com/ragego/gui/maps/Goban-9-mobile.tmx");
+        map = manager.get("com/ragego/gui/maps/Goban-9-mobile-world.tmx");
 
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
@@ -86,6 +86,7 @@ public class GoGameScreen extends ScreenAdapter {
 
         //Centers camera on map
         camera.translate(mapPixWidth * 0.5f, 0);
+        camera.zoom = 0.4f;
 
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
@@ -160,7 +161,7 @@ public class GoGameScreen extends ScreenAdapter {
                 try {
                     gesture.wait(5);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Gdx.app.debug("Threads", "GameEngine thread has been closed");
                 }
             }
         }
@@ -187,6 +188,7 @@ public class GoGameScreen extends ScreenAdapter {
         @Override
         public boolean keyUp(int keycode) {
             if (keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
+                goban.stopGame();
                 RageGoGame.goHome();
             }
             return false;
@@ -209,9 +211,12 @@ public class GoGameScreen extends ScreenAdapter {
 
         private void showCrossOn(Vector2 position) {
             hideCross();
-            selectionCell = new TiledMapTileLayer.Cell();
-            selectionCell.setTile(selectionTile);
-            selection.setCell((int) position.x, (int) position.y, selectionCell);
+            Vector2 positionCopy = position.cpy();
+            if (goban.isValidOnGoban(GuiUtils.isoLeftToIsoTop(positionCopy, mapHeight))) {
+                selectionCell = new TiledMapTileLayer.Cell();
+                selectionCell.setTile(selectionTile);
+                selection.setCell((int) position.x, (int) position.y, selectionCell);
+            }
         }
 
         private void hideCross() {
