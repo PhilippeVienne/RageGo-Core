@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.ragego.utils</OriginalElement>
+  <nodes>
+    <node x="1215.0" y="0.0">com.ragego.utils.DebugUtils</node>
+    <node x="993.0" y="0.0">com.ragego.utils.FileUtils</node>
+    <node x="650.0" y="0.0">com.ragego.utils.GuiUtils</node>
+    <node x="46.5" y="886.0">com.ragego.utils.StandardGameFormatIOTest</node>
+    <node x="0.0" y="255.0">com.ragego.utils.StandardGameFormatIO</node>
+    <node x="166.0" y="0.0">com.ragego.utils.FormatIO</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.ragego.utils.StandardGameFormatIOTest" target="com.ragego.utils.StandardGameFormatIO">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.ragego.utils.StandardGameFormatIO" target="com.ragego.utils.FormatIO">
+      <point x="0.0" y="-290.5" />
+      <point x="0.0" y="102.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.4415481832543444" x="710.0" y="623.0" />
+  <SelectedNodes>
+    <node>com.ragego.utils.StandardGameFormatIOTest</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

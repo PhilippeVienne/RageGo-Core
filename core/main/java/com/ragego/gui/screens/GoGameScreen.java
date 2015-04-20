@@ -56,10 +56,10 @@ public class GoGameScreen extends ScreenAdapter {
                 return Gdx.files.classpath(fileName);
             }
         }));
-        manager.load("com/ragego/gui/maps/Goban-9-mobile-world.tmx", TiledMap.class);
+        manager.load("com/ragego/gui/maps/Goban.tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
-        map = manager.get("com/ragego/gui/maps/Goban-9-mobile-world.tmx");
+        map = manager.get("com/ragego/gui/maps/Goban.tmx");
 
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
@@ -86,7 +86,6 @@ public class GoGameScreen extends ScreenAdapter {
 
         //Centers camera on map
         camera.translate(mapPixWidth * 0.5f, 0);
-        camera.zoom = 0.4f;
 
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
