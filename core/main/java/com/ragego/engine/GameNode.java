@@ -309,6 +309,7 @@ public class GameNode {
     /**
      * Get value of a property of this node.
      *
+     * @param key The key to get property
      * @return The value or null if there is not one.
      */
     public String getProperty(String key) {

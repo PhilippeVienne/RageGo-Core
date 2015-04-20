@@ -531,6 +531,7 @@ public class GameBoard {
     /**
      * Get a string of the board state.
      * Compute a string which is unique in function of board stones positions.
+     * @return A unique hash for the current board situation
      */
     public String getBoardHash() {
         StringBuilder message = new StringBuilder();
@@ -725,6 +726,7 @@ public class GameBoard {
      * Get letter that represent for player.
      * W is for White player and B is for Black player.
      *
+     * @param player The player to get the letter
      * @return The letter capitalized
      */
     public char getLetterForPlayer(Player player) {
@@ -733,6 +735,7 @@ public class GameBoard {
 
     /**
      * Get the board.
+     * @return The hash map currently in use by this board to store stones
      */
     public HashMap<Intersection, Stone> ia_getBoard() {
         checkIAMode();

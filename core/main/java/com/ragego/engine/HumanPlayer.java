@@ -11,6 +11,7 @@ public class HumanPlayer extends Player {
      * Create a new Human player
      *
      * @param name His name (e.g.: Joe Doe)
+     * @param listener The turn listener attached to this user.
      */
     public HumanPlayer(String name, TurnListener listener) {
         this.name = name;

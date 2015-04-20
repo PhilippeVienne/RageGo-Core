@@ -18,6 +18,7 @@ public interface FormatIO {
     /**
      * Execute {@link #write(java.io.File, com.ragego.engine.GameBoard)} with data stored in this class.
      *
+     * @throws IOException If error occurs when action acts.
      * @return See {@link #write(java.io.File, com.ragego.engine.GameBoard)}
      */
     public boolean write() throws IOException;
@@ -27,6 +28,7 @@ public interface FormatIO {
      *
      * @param game The game to save
      * @return See {@link #write(java.io.File, com.ragego.engine.GameBoard)}
+     * @throws IOException If error occurs when action acts.
      */
     public boolean write(GameBoard game) throws IOException;
 
@@ -36,6 +38,7 @@ public interface FormatIO {
      * @param file The file to write in (erase previous data)
      * @param game The game to save
      * @return true on success, false on failure
+     * @throws IOException If error occurs when action acts.
      */
     public boolean write(File file, GameBoard game) throws IOException;
 
@@ -43,6 +46,7 @@ public interface FormatIO {
      * Execute {@link #readRaw(java.io.File)} with data stored in this class.
      *
      * @return See {@link #readRaw(java.io.File)}
+     * @throws IOException If error occurs when action acts.
      */
     public GameNode[] readRaw() throws IOException;
 
@@ -54,6 +58,7 @@ public interface FormatIO {
      * @param file File to read
      * @return An array of sucessing position during the game.
      * Index 0 is the first state and last index is the last state.
+     * @throws IOException If error occurs when action acts.
      */
     public GameNode[] readRaw(File file) throws IOException;
 
@@ -61,6 +66,7 @@ public interface FormatIO {
      * Execute {@link #read(java.io.File, com.ragego.engine.GameBoard)} with data stored in this class.
      *
      * @return See {@link #read(java.io.File, com.ragego.engine.GameBoard)}
+     * @throws IOException If error occurs when action acts.
      */
     public GameBoard read() throws IOException;
 
@@ -69,6 +75,7 @@ public interface FormatIO {
      *
      * @param game The game to save
      * @return See {@link #read(java.io.File, com.ragego.engine.GameBoard)}
+     * @throws IOException If error occurs when action acts.
      */
     public GameBoard read(GameBoard game) throws IOException;
 
@@ -80,6 +87,7 @@ public interface FormatIO {
      * @param file The file to load
      * @param game An empty GameBoard (previous data could be erased)
      * @return true on success, false on all other state. In case of {@link java.io.IOException}, throw the error.
+     * @throws IOException If error occurs when action acts.
      */
     public GameBoard read(File file, GameBoard game) throws IOException;
 

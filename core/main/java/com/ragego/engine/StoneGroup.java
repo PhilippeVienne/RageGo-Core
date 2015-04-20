@@ -183,8 +183,10 @@ public class StoneGroup {
     }
 
     /**
-     * Copy the shape and stones to a new board.
+     * Copy the stone group and stones to a new board.
      * This function does not add stones to board, do not forget to do it.
+     * @param board The board to copy this stone group
+     * @return The new stone group
      */
     public StoneGroup copy(GameBoard board) {
         StoneGroup stoneGroup = new StoneGroup(player, board);
@@ -196,6 +198,7 @@ public class StoneGroup {
     /**
      * Determine is this group has one or more stones on a Border.
      *
+     * @param border Border we are looking at.
      * @return true if it's on the border
      */
     public boolean isOnBorder(Border border) {

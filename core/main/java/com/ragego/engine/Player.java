@@ -43,6 +43,7 @@ public abstract class Player {
 
     /**
      * Update the listener for the given player.
+     * @param listener The listener to set to this layer
      */
     public void setListener(TurnListener listener) {
         this.listener = listener;

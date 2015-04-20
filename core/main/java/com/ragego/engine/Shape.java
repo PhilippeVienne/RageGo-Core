@@ -5,14 +5,15 @@ import java.util.HashMap;
 
 /**
  * Link {@link StoneGroup}s between to detect big group of stones.
- * <p/>
+ * <p>
  * A Shape is an ensemble of stone of the same player which are near.
  * Near means that the stones are on next intersection. It allows column - 1, column, column + 1 for column and same for
  * line.
- * <p/>
- * <p/>
+ * </p>
+ * <p>
  * This object is a one time use, it's not valid when changes occurs on the board.
  * This is useful for IA computing and for scoring.
+ * </p>
  */
 public class Shape {
 
