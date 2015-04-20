@@ -2,6 +2,7 @@ com.ragego
 com.ragego.engine
 com.ragego.gui
 com.ragego.gui.menu
+com.ragego.gui.objects
 com.ragego.gui.screens
 com.ragego.network
 com.ragego.utils
