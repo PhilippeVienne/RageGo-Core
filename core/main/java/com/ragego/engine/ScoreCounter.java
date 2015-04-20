@@ -8,6 +8,8 @@ package com.ragego.engine;
  */
 public class ScoreCounter implements GameListener {
 
+    public final static double KOMI = 5.5;
+
     /**
      * Board where the score is being counted.
      */
