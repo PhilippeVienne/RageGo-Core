@@ -179,4 +179,8 @@ public class Intersection {
     public Intersection forBoard(GameBoard testBoard) {
         return Intersection.get(column, line, testBoard);
     }
+
+    public static String toCoordinates(Intersection intersection) {
+        return String.valueOf((char)('a'+intersection.column)).concat(String.valueOf((char)('a'+intersection.line)));
+    }
 }

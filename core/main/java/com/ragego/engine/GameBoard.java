@@ -29,7 +29,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = false;
+    public static boolean DEBUG_MODE = true;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
@@ -267,9 +267,11 @@ public class GameBoard {
         lastNode.recomputeHash();
         lastNode.lock();
         if (DEBUG_MODE) {
-            System.out.println("Played node: " + node);
-            DebugUtils.printBoard(this);
-            System.out.println("Board hash is = " + getBoardHash());
+            System.out.println(GameNode.serialize(node));
+            GameNode.unserialize(node,GameNode.serialize(node));
+            //System.out.println("Played node: " + node);
+            //DebugUtils.printBoard(this);
+            //System.out.println("Board hash is = " + getBoardHash());
         }
     }
 
@@ -282,6 +284,7 @@ public class GameBoard {
      *             2 is "Stone owned by White (or second player)". First index is line, second is column.
      */
     private void loadBoardFromArray(int[][] data) {
+        if(data == null) return;
         for (int line = 0; line < data.length; line++) {
             for (int column = 0; column < data[line].length; column++) {
                 if (data[line][column] != 1 && data[line][column] != 2) continue;

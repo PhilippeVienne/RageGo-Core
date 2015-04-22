@@ -16,24 +16,9 @@ public class OnlinePlayer extends HumanPlayer{
 
     private final int id;
 
-    /**
-     * Create a new local online player
-     *
-     * @param name     His name (e.g.: Joe Doe)
-     * @param listener Listener for this player
-     */
-    public OnlinePlayer(String name, TurnListener listener) throws IOException, JSONException {
-        super(name, listener);
-        id=createUserOnline();
-    }
-
     private OnlinePlayer(int id, String code) {
         super(code, new OnlinePlayerListener());
         this.id = id;
-    }
-
-    private int createUserOnline() throws IOException, JSONException {
-        return RageGoServer.createUserOnline();
     }
 
     /**
@@ -47,5 +32,9 @@ public class OnlinePlayer extends HumanPlayer{
         int id = object.getInt("id");
         final String code = object.get("code").toString();
         return new OnlinePlayer(id,code);
+    }
+
+    public int getId() {
+        return id;
     }
 }

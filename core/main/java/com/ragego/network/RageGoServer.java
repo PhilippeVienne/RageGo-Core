@@ -20,12 +20,59 @@ public class RageGoServer extends Resty {
         return instance;
     }
 
-    public static OnlinePlayer getPlayer(int id) throws IOException, JSONException {
-        return OnlinePlayer.loadFromJSON(getInstance().json("http://ragego-server.herokuapp.com/player/"+String.valueOf(id)+".json"));
+    public static OnlinePlayer getPlayer(int id) throws RageGoServerException {
+        try {
+            return OnlinePlayer.loadFromJSON(getInstance().json("http://ragego-server.herokuapp.com/players/" + String.valueOf(id) + ".json"));
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
-    public static int createUserOnline() throws IOException, JSONException {
-        final JSONResource resource = getInstance().json("http://ragego-server.herokuapp.com/players.json", form(data("player", data("playing", String.valueOf(0)))));
-        return resource.object().getInt("id");
+    public static OnlinePlayer createPlayer(boolean playing) throws RageGoServerException{
+        try{
+            final JSONResource resource = getInstance().json("http://ragego-server.herokuapp.com/players.json", form(data("player[playing]", playing?"1":"0")));
+            return OnlinePlayer.loadFromJSON(resource);
+        } catch (Exception e){
+            throw handleException(e);
+        }
+    }
+
+    public static void deletePlayer(OnlinePlayer player) throws RageGoServerException{
+        try {
+            getInstance().json("http://ragego-server.herokuapp.com/players/"+String.valueOf(player.getId())+".json",delete());
+        } catch (IOException e) {
+            throw handleException(e);
+        }
+    }
+
+    public static OnlineGame getGame(int id) throws RageGoServerException{
+        try {
+            return OnlineGame.loadFromJSON(getInstance().json("http://ragego-server.herokuapp.com/games/" + String.valueOf(id) + ".json").object());
+        } catch(Exception e){
+            throw handleException(e);
+        }
+    }
+
+    public static OnlineGame createGame(OnlinePlayer blacks, OnlinePlayer whites) throws RageGoServerException{
+        try {
+            final JSONResource resource = getInstance().json("http://ragego-server.herokuapp.com/games.json",
+                    form(
+                            data("game[whites_id]", String.valueOf(whites.getId())),
+                            data("game[blacks_id]", String.valueOf(blacks.getId()))
+                    ));
+            return new OnlineGame(resource.object().getInt("id"), blacks, whites);
+        } catch (Exception e){
+            throw handleException(e);
+        }
+    }
+
+    public static RageGoServerException handleException(Exception e) {
+        if(e instanceof IOException){
+            return new RageGoServerException(RageGoServerException.ExceptionType.OFFLINE, e);
+        }
+        if(e instanceof JSONException){
+            return new RageGoServerException(RageGoServerException.ExceptionType.DATA_MALFORMED, e);
+        }
+        return new RageGoServerException(RageGoServerException.ExceptionType.UNKNOWN, e);
     }
 }

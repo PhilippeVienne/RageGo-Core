@@ -1,7 +1,11 @@
 package com.ragego.engine;
 
+import com.badlogic.gdx.Game;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * State of the game.
@@ -83,7 +87,6 @@ public class GameNode {
         if (board == null)
             throw new IllegalArgumentException("Board can not be null");
         boardHash = board.getBoardHash();
-        this.rawData = board.getRepresentation();
         this.action = action;
         this.intersection = intersection;
         this.player = player;
@@ -140,6 +143,10 @@ public class GameNode {
         return rawData;
     }
 
+    public void setRawData(int[][] rawData) {
+        this.rawData = rawData;
+    }
+
     public void addSetup(Player player, Intersection intersection) {
 
     }
@@ -158,7 +165,6 @@ public class GameNode {
 
     public void setBoard(GameBoard board) {
         this.board = board;
-        this.rawData = board.getRepresentation();
     }
 
     /**
@@ -377,6 +383,83 @@ public class GameNode {
         START_GAME,
         PASS,
         PUT_STONE,
-        NOTHING, IA_SPECIAL_ACTION
+        NOTHING,
+        IA_SPECIAL_ACTION
+    }
+
+    public static String serialize(GameNode node){
+        StringBuilder builder = new StringBuilder("a,");
+        builder.append(node.action.name());
+        builder.append(':');
+        if(node.player != null){
+            builder.append("p,");
+            builder.append(node.board.getBlackPlayer() == node.player ? 'B' : 'W');
+            builder.append(':');
+        }
+        if(node.intersection != null){
+            builder.append("i,");
+            builder.append(Intersection.toCoordinates(node.intersection));
+            builder.append(":");
+        }
+        if(node.boardHash != null){
+            builder.append("h,");
+            builder.append(node.boardHash);
+            builder.append(":");
+        }
+        {
+            builder.append("l,");
+            builder.append(node.locked?'1':'0');
+            builder.append(":");
+        }
+        if(node.rawData != null){
+            builder.append("r,");
+            for (int[] line : node.rawData) {
+                for (int value : line) {
+                    builder.append(value);
+                }
+            }
+            builder.append(":");
+        }
+        return builder.toString();
+    }
+
+    public static GameNode unserialize(GameNode node, String data){
+        StringTokenizer tokenizer = new StringTokenizer(data,":,");
+        while (tokenizer.hasMoreTokens()){
+            char code = tokenizer.nextToken().charAt(0);
+            String value = tokenizer.nextToken();
+            switch (code){
+                case 'a':
+                    node.action = Action.valueOf(value);
+                    break;
+                case 'p':
+                    if(node.board != null)
+                        node.player = "B".equals(value)?node.board.getBlackPlayer():node.board.getWhitePlayer();
+                    break;
+                case 'h':
+                    node.boardHash = value;
+                    break;
+                case 'i':
+                    if(node.board != null)
+                        node.intersection = Intersection.get(value,node.board);
+                    break;
+                case 'l':
+                    node.locked = "1".equals(value);
+                    break;
+                case 'r':
+                    int size = (int) Math.sqrt(value.length());
+                    node.rawData = new int[size][size];
+                    if(((double)size)!=Math.sqrt(value.length())) throw new IllegalArgumentException("Value for raw data is not deserializable");
+                    for(int i=0;i<value.length();i++){
+                        node.rawData[i/size][i%size] = value.charAt(i) - '0';
+                    }
+                    break;
+                default:
+
+                    break;
+
+            }
+        }
+        return node;
     }
 }
