@@ -43,6 +43,17 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
+    //create a single Jar with all dependencies
+    task fatJar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': 'RageGo',
+                    'Implementation-Version': '1.0',
+                    'Main-Class': 'com.ragego.desktop.DesktopLauncher'
+        }
+        baseName = project.name + '-all'
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
+    }
 
     dependencies {
         compile project(":core")
@@ -77,6 +88,7 @@ project(":core") {
 
 
     dependencies {
+        compile "us.monoid.web:resty:0.3.2"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
