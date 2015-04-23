@@ -143,7 +143,10 @@ public class OnlineScreen extends ScreenAdapter{
         validateButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                hisCode = tf.getText();
+                String temp = tf.getText();
+                if (temp.matches("[A-La-l2-9]{5}")) {
+                    RageGoGame.getInstance().load(new GoGameScreen());
+                }
             }
         });
 
