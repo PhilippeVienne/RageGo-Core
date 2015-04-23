@@ -121,7 +121,7 @@ public class OnlineScreen extends ScreenAdapter{
         tfs.cursor = new TextureRegionDrawable(new TextureRegion(tfCursor));
         tf = new TextField("", tfs);
         tf.setWidth(250);
-        tf.setMaxLength(6);
+        tf.setMaxLength(5);
         tf.setOnlyFontChars(true);
         tf.setAlignment(1); //Centers the entered text
         tf.setTextFieldListener(new TextField.TextFieldListener() {
@@ -143,7 +143,7 @@ public class OnlineScreen extends ScreenAdapter{
         validateButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Validate Button clicked");
+                hisCode = tf.getText();
             }
         });
 
@@ -157,7 +157,7 @@ public class OnlineScreen extends ScreenAdapter{
         cancelButton.addListener( new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Cancel Button clicked");
+                RageGoGame.goHome();
             }
         });
 
