@@ -2,12 +2,14 @@ package com.ragego.network;
 
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.GameNode;
+import us.monoid.json.JSONArray;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
 import us.monoid.web.JSONResource;
 import us.monoid.web.Resty;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -156,5 +158,22 @@ public class RageGoServer extends Resty {
             return new RageGoServerException(RageGoServerException.ExceptionType.DATA_MALFORMED, e);
         }
         return new RageGoServerException(RageGoServerException.ExceptionType.UNKNOWN, e);
+    }
+
+    public static ArrayList<Integer> getNodesFor(OnlineGame game, OnlinePlayer player) throws RageGoServerException {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        try {
+            final JSONArray nodes = getInstance().json(RAGEGO_SERVER + "/nodes/for/game/" + String.valueOf(game.getId()) + "/player/" + String.valueOf(player.getId()) + ".json").array();
+            for (int i = 0; i < nodes.length(); i++) {
+                ids.add(nodes.getJSONObject(i).getInt("id"));
+            }
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+        return ids;
+    }
+
+    public interface NewGameListener {
+        void newGame(OnlineGame game);
     }
 }

@@ -9,10 +9,13 @@ import java.io.IOException;
 public class OnlinePlayer extends HumanPlayer{
 
     private final int id;
+    private final String code;
+    private OnlineGame currentGame;
 
     private OnlinePlayer(int id, String code) {
         super(code, new OnlinePlayerListener());
         this.id = id;
+        this.code = code;
     }
 
     /**
@@ -30,5 +33,17 @@ public class OnlinePlayer extends HumanPlayer{
 
     public int getId() {
         return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public OnlineGame getCurrentGame() {
+        return currentGame;
+    }
+
+    public void setCurrentGame(OnlineGame currentGame) {
+        this.currentGame = currentGame;
     }
 }
