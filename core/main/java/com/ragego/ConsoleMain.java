@@ -27,6 +27,11 @@ public class ConsoleMain implements TurnListener {
             position++;
             return coups[index];
         }
+
+        @Override
+        public void remove() {
+
+        }
     };
 
     public ConsoleMain() {

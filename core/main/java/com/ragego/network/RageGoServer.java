@@ -159,6 +159,15 @@ public class RageGoServer extends Resty {
         }
     }
 
+    public static OnlineGame join(OnlineGame game) {
+        try {
+            getInstance().json(RAGEGO_SERVER + "/game/" + String.valueOf(game.getId()) + "/join.json");
+        } catch (IOException e) {
+            throw handleException(e);
+        }
+        return game;
+    }
+
     public static OnlineNode createNode(GameNode node, OnlineGame game, OnlinePlayer player) throws RageGoServerException {
         try {
             final OnlineNode onlineNode = OnlineNode.loadFromJSON(getInstance().json(RAGEGO_SERVER + "/nodes.json", form(
