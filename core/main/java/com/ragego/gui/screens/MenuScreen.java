@@ -53,7 +53,7 @@ public class MenuScreen extends ScreenAdapter{
         soloButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                nextScreen = new GoGameScreen();
+                Gdx.app.log(TAG, "Solo Button clicked");
             }
         });
 
@@ -62,7 +62,7 @@ public class MenuScreen extends ScreenAdapter{
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Online Button clicked");
+                nextScreen = new OnlineScreen();
             }
         });
 
@@ -89,7 +89,7 @@ public class MenuScreen extends ScreenAdapter{
         multiPlayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Multiplayer Button clicked");
+                nextScreen = new GoGameScreen();
             }
         });
 
