@@ -46,7 +46,13 @@ public class OnlineScreen extends ScreenAdapter{
     private Texture tfSelection, tfBackground, tfCursor;
 
     public OnlineScreen() {
-        yourCode = RageGoServer.updateLocalPlayer(new HumanPlayer("Player 1", new GraphicTurnListener(goGameScreen))).getCode();
+    }
+
+    @Override
+    public void show () {
+        if (RageGoServer.getLocalPlayer() == null)
+            RageGoServer.updateLocalPlayer(new HumanPlayer("Player 1", new GraphicTurnListener(goGameScreen)));
+        yourCode = RageGoServer.getLocalPlayer().getCode();
         RageGoServer.addListener(new RageGoServer.NewGameListener() {
             @Override
             public void newGame(OnlineGame game) {
@@ -54,10 +60,6 @@ public class OnlineScreen extends ScreenAdapter{
                 RageGoGame.getInstance().setScreen(goGameScreen);
             }
         });
-    }
-
-    @Override
-    public void show () {
         viewport = new FitViewport(SCENE_WIDTH, SCENE_HEIGHT);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
