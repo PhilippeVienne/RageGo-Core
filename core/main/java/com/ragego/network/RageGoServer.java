@@ -2,6 +2,7 @@ package com.ragego.network;
 
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.GameNode;
+import com.ragego.engine.HumanPlayer;
 import us.monoid.json.JSONArray;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
@@ -25,6 +26,34 @@ public class RageGoServer extends Resty {
     private static Map<Integer, OnlineGame> games = Collections.synchronizedMap(new HashMap<Integer, OnlineGame>());
     private static Map<Integer, OnlinePlayer> players = Collections.synchronizedMap(new HashMap<Integer, OnlinePlayer>());
     private static Map<Integer, OnlineNode> nodes = Collections.synchronizedMap(new HashMap<Integer, OnlineNode>());
+    private static OnlinePlayer localPlayer;
+    private static ArrayList<NewGameListener> newGameListeners = new ArrayList<NewGameListener>(1);
+    private static boolean listeningNewGameThread = false;
+    private static Thread listenNewGameThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (listeningNewGameThread) {
+                try {
+                    JSONArray games = getInstance().json(RAGEGO_SERVER + "/games/for/" + String.valueOf(RageGoServer.getLocalPlayerID()) + ".json").array();
+                    for (int i = 0; i < games.length(); i++) {
+                        final OnlineGame game = OnlineGame.loadFromJSON(games.getJSONObject(i));
+                        for (NewGameListener listener : newGameListeners) {
+                            listener.newGame(game);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw handleException(e);
+                } catch (JSONException e) {
+                    throw handleException(e);
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    listeningNewGameThread = false;
+                }
+            }
+        }
+    }, "NewGameThread");
 
     public static RageGoServer getInstance(){
         if(instance == null)
@@ -171,6 +200,37 @@ public class RageGoServer extends Resty {
             throw handleException(e);
         }
         return ids;
+    }
+
+    public static void addListener(NewGameListener listener) {
+        newGameListeners.add(listener);
+    }
+
+    public static void removeListener(NewGameListener listener) {
+        newGameListeners.remove(listener);
+    }
+
+    public static void startWaitingForGame() {
+        listeningNewGameThread = true;
+        listenNewGameThread.start();
+    }
+
+    public static void stopWaitingForGame() {
+        listeningNewGameThread = false;
+    }
+
+    public static int getLocalPlayerID() {
+        return localPlayer.getId();
+    }
+
+    public static OnlinePlayer getLocalPlayer() {
+        return localPlayer;
+    }
+
+    public static OnlinePlayer updateLocalPlayer(HumanPlayer player) {
+        localPlayer = createPlayer(false);
+        localPlayer.setListener(player.getListener());
+        return localPlayer;
     }
 
     public interface NewGameListener {
