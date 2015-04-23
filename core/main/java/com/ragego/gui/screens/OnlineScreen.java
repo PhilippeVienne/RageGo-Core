@@ -145,6 +145,7 @@ public class OnlineScreen extends ScreenAdapter{
             public void clicked(InputEvent event, float x, float y) {
                 String temp = tf.getText();
                 if (temp.matches("[A-La-l2-9]{5}")) {
+                    Gdx.app.log(TAG, "Validate button clicked");
                     RageGoGame.getInstance().load(new GoGameScreen());
                 }
             }
