@@ -12,10 +12,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,7 +45,8 @@ public class OnlineScreen extends ScreenAdapter{
     private AssetManager manager;
     private GoGameScreen goGameScreen = new GoGameScreen();
 
-    private Texture tfSelection, tfBackground, tfCursor;
+    private Texture tfSelection, tfBackground, tfCursor, validateButtonUpTex, validateButtonDownTex,
+            cancelButtonUpTex, cancelButtonDownTex;
 
     public OnlineScreen() {
     }
@@ -76,10 +79,17 @@ public class OnlineScreen extends ScreenAdapter{
                 return Gdx.files.classpath(fileName);
             }
         }));
+
         manager.load("com/ragego/gui/fonts/acme_9_regular.fnt", BitmapFont.class);
+
         manager.load("com/ragego/gui/temp/tfSelection.png", Texture.class);
         manager.load("com/ragego/gui/temp/tfbackground.png", Texture.class);
         manager.load("com/ragego/gui/temp/cursor.png", Texture.class);
+
+        manager.load("com/ragego/gui/menu/button_validate_up.png", Texture.class);
+        manager.load("com/ragego/gui/menu/button_validate_down.png", Texture.class);
+        manager.load("com/ragego/gui/menu/button_cancel_up.png", Texture.class);
+        manager.load("com/ragego/gui/menu/button_cancel_down.png", Texture.class);
 
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
@@ -115,7 +125,7 @@ public class OnlineScreen extends ScreenAdapter{
         tf.setOnlyFontChars(true);
         tf.setAlignment(1); //Centers the entered text
         tf.setTextFieldListener(new TextField.TextFieldListener() {
-            public void keyTyped (TextField textField, char key) {
+            public void keyTyped(TextField textField, char key) {
                 if (key == '\n') textField.getOnscreenKeyboard().show(false);
             }
         });
@@ -123,12 +133,40 @@ public class OnlineScreen extends ScreenAdapter{
                 hisCodeLabel.getY() + hisCodeLabel.getHeight() * 0.5f - tf.getHeight() * 0.5f);
 
         //Validation and cancellation buttons
+        validateButtonUpTex = manager.get("com/ragego/gui/menu/button_validate_up.png");
+        validateButtonDownTex = manager.get("com/ragego/gui/menu/button_validate_down.png");
+        Button.ButtonStyle validateButtonStyle = new Button.ButtonStyle();
+        validateButtonStyle.up = new TextureRegionDrawable(new TextureRegion(validateButtonUpTex));
+        validateButtonStyle.down = new TextureRegionDrawable(new TextureRegion(validateButtonDownTex));
+        validateButton = new Button(validateButtonStyle);
+        validateButton.setPosition(middlepointX - validateButton.getWidth() * 1.5f, tf.getY() - validateButton.getHeight());
+        validateButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(TAG, "Validate Button clicked");
+            }
+        });
 
+        cancelButtonUpTex = manager.get("com/ragego/gui/menu/button_cancel_up.png");
+        cancelButtonDownTex = manager.get("com/ragego/gui/menu/button_cancel_down.png");
+        Button.ButtonStyle cancelButtonStyle = new Button.ButtonStyle();
+        cancelButtonStyle.up = new TextureRegionDrawable(new TextureRegion(cancelButtonUpTex));
+        cancelButtonStyle.down = new TextureRegionDrawable(new TextureRegion(cancelButtonDownTex));
+        cancelButton = new Button(cancelButtonStyle);
+        cancelButton.setPosition(middlepointX + cancelButton.getWidth() * 1.5f, tf.getY() - cancelButton.getHeight());
+        cancelButton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(TAG, "Cancel Button clicked");
+            }
+        });
 
         //Adds actors to scene
         stage.addActor(yourCodeLabel);
         stage.addActor(hisCodeLabel);
         stage.addActor(tf);
+        stage.addActor(validateButton);
+        stage.addActor(cancelButton);
         //stage.setDebugAll(true);
     }
 
