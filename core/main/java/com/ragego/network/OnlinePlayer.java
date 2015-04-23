@@ -46,4 +46,12 @@ public class OnlinePlayer extends HumanPlayer{
     public void setCurrentGame(OnlineGame currentGame) {
         this.currentGame = currentGame;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof OnlinePlayer) {
+            return ((OnlinePlayer) obj).id == id;
+        }
+        return super.equals(obj);
+    }
 }

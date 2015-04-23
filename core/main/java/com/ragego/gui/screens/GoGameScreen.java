@@ -21,23 +21,20 @@ import com.ragego.utils.GuiUtils;
  */
 public class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
-
-    private AssetManager manager;
-    private TiledMap map;
-    private Goban goban;
-    private float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPixWidth, mapPixHeight;
-    private int mapWidth, mapHeight;
-    private IsometricTiledMapRenderer renderer;
-    private OrthographicCamera camera;
-    private ExtendViewport viewport;
-    private Stage stage;
-
-    private final MyGestureListener gesture = new MyGestureListener();
-    private final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
-
-    TiledMapTileLayer gridLayer;
-    private TiledMapTileLayer selection;
-    private TiledMapTile selectionTile;
+    protected final MyGestureListener gesture = new MyGestureListener();
+    protected final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
+    protected AssetManager manager;
+    protected TiledMap map;
+    protected Goban goban;
+    protected float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPixWidth, mapPixHeight;
+    protected int mapWidth, mapHeight;
+    protected IsometricTiledMapRenderer renderer;
+    protected OrthographicCamera camera;
+    protected ExtendViewport viewport;
+    protected Stage stage;
+    protected TiledMapTileLayer gridLayer;
+    protected TiledMapTileLayer selection;
+    protected TiledMapTile selectionTile;
 
     @Override
     public void show() {
@@ -100,8 +97,6 @@ public class GoGameScreen extends ScreenAdapter {
             Interaction components setup
          */
         Gdx.input.setInputProcessor(inputMultiplexer);
-
-        goban.startGame();
     }
 
     @Override
@@ -158,6 +153,7 @@ public class GoGameScreen extends ScreenAdapter {
         synchronized (gesture) {
             while ((coordinates = gesture.popLastTouch()) == null) {
                 try {
+                    Thread.sleep(0, 500);
                     gesture.wait(5);
                 } catch (InterruptedException e) {
                     Gdx.app.debug("Threads", "GameEngine thread has been closed");

@@ -6,8 +6,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.GameBoard;
-import com.ragego.engine.HumanPlayer;
-import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.GuiUtils;
 
@@ -20,8 +18,8 @@ public class Goban {
     private final TiledMapTile whiteStone;
     private final Vector2 gobanOriginCoords;
     private final int gobanSize;
-    private final GameBoard board;
     private final Thread engineThread;
+    private GameBoard board;
 
     public Goban(GoGameScreen screen, TiledMap map) {
         this.screen = screen;
@@ -36,16 +34,17 @@ public class Goban {
         this.whiteStone = stoneTS.getTile(firstGid + 1);
 
         this.gobanSize = Integer.parseInt(map.getProperties().get("gobanSize", String.class));
-        board = new GameBoard(new HumanPlayer("Player 1", new GraphicTurnListener(screen, this)), new HumanPlayer("Player 2", new GraphicTurnListener(screen, this)), gobanSize);
         engineThread = new Thread(new GameRunnable());
     }
 
     public void startGame() {
-        engineThread.start();
+        if (board != null)
+            engineThread.start();
     }
 
     public void stopGame() {
-        engineThread.interrupt();
+        if (!engineThread.isInterrupted())
+            engineThread.interrupt();
     }
 
     public Vector2 isoToGoban (Vector2 isoCoords){
@@ -117,6 +116,14 @@ public class Goban {
     public boolean isValidOnGoban(Vector2 vector2) {
         vector2 = isoToGoban(vector2);
         return vector2.x >= 0 && vector2.x < gobanSize && vector2.y >= 0 && vector2.y < gobanSize;
+    }
+
+    public int getSize() {
+        return gobanSize;
+    }
+
+    public void setGameBoard(GameBoard gameBoard) {
+        this.board = gameBoard;
     }
 
     private class GameRunnable implements Runnable {

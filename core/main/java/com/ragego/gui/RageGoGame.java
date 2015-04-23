@@ -12,6 +12,7 @@ import com.ragego.gui.screens.MenuScreen;
 public class RageGoGame extends Game {
 
     private static RageGoGame instance = new RageGoGame();
+    private MenuScreen homeScreen = null;
 
     private RageGoGame() {
         super();
@@ -21,7 +22,13 @@ public class RageGoGame extends Game {
         return instance;
     }
 
-    private MenuScreen homeScreen = null;
+    public static void loadScreen(ScreenAdapter nextScreen) {
+        getInstance().load(nextScreen);
+    }
+
+    public static void goHome() {
+        getInstance().load(getInstance().getHomeScreen());
+    }
 
     @Override
     public void create() {
@@ -61,10 +68,6 @@ public class RageGoGame extends Game {
             setScreen(nextScreen);
             screen.resume();
         }
-    }
-
-    public static void goHome() {
-        getInstance().load(getInstance().getHomeScreen());
     }
 
     public MenuScreen getHomeScreen() {
