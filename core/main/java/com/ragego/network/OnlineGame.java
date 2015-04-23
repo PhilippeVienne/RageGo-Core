@@ -14,7 +14,7 @@ public class OnlineGame {
     private int id;
     private OnlinePlayer whites;
     private OnlinePlayer blacks;
-    private ArrayList<Integer> playedNode;
+    private ArrayList<Integer> playedNode = new ArrayList<Integer>();
 
     public OnlineGame(int id, OnlinePlayer whites, OnlinePlayer blacks) {
         this.id = id;

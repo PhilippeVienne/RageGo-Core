@@ -6,12 +6,12 @@ import com.ragego.engine.TurnListener;
 
 public class OnlinePlayerListener implements TurnListener {
 
-    private OnlineGame currentGame;
-
     @Override
     public void newTurn(GameBoard board, Player player) {
         if (player instanceof OnlinePlayer) {
-            currentGame = ((OnlinePlayer) player).getCurrentGame();
+            OnlineGame currentGame = ((OnlinePlayer) player).getCurrentGame();
+            if (currentGame == null)
+                throw new IllegalStateException("Player is not playing");
             OnlineNode node = currentGame.waitForNewNode((OnlinePlayer) player, board);
             board.play(node.getNode());
         } else {

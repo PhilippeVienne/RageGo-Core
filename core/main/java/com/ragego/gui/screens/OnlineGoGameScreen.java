@@ -1,6 +1,7 @@
 package com.ragego.gui.screens;
 
 import com.ragego.engine.GameBoard;
+import com.ragego.engine.Player;
 import com.ragego.gui.GraphicTurnListener;
 import com.ragego.network.OnlineGame;
 import com.ragego.network.OnlinePlayer;
@@ -24,10 +25,20 @@ public class OnlineGoGameScreen extends GoGameScreen {
     @Override
     public void show() {
         super.show();
-        OnlinePlayer local = RageGoServer.getLocalPlayer();
+        final OnlinePlayer local = RageGoServer.getLocalPlayer();
         OnlinePlayer remote = onlineGame.getWhites() == local ? onlineGame.getBlacks() : onlineGame.getWhites();
-        local.setListener(new GraphicTurnListener(this, goban));
-        goban.setGameBoard(new GameBoard(local, remote, goban.getSize()));
+        local.setListener(new GraphicTurnListener(this, goban) {
+            @Override
+            public void endOfTurn(GameBoard board, Player player, Player nextPlayer) {
+                super.endOfTurn(board, player, nextPlayer);
+                if (player == local) {
+                    RageGoServer.createNode(board.getLastNode(), onlineGame, (OnlinePlayer) player);
+                }
+            }
+        });
+        local.setCurrentGame(onlineGame);
+        remote.setCurrentGame(onlineGame);
+        goban.setGameBoard(new GameBoard(onlineGame.getBlacks(), onlineGame.getWhites(), goban.getSize()));
         goban.startGame();
     }
 

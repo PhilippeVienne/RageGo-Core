@@ -25,7 +25,9 @@ import com.ragego.engine.HumanPlayer;
 import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.RageGoGame;
 import com.ragego.network.OnlineGame;
+import com.ragego.network.OnlinePlayer;
 import com.ragego.network.RageGoServer;
+import com.ragego.network.RageGoServerException;
 
 public class OnlineScreen extends ScreenAdapter{
     private static final String TAG = "WidgetsSample";
@@ -60,9 +62,18 @@ public class OnlineScreen extends ScreenAdapter{
             @Override
             public void newGame(OnlineGame game) {
                 hisCode = game.getBlacks().getCode();
-                RageGoGame.getInstance().setScreen(goGameScreen);
+                final OnlineGoGameScreen screen = new OnlineGoGameScreen(game);
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        RageGoGame.getInstance().setScreen(screen);
+                    }
+                });
+                RageGoServer.join(game);
+                RageGoServer.removeListener(this);
             }
         });
+        RageGoServer.startWaitingForGame();
         viewport = new FitViewport(SCENE_WIDTH, SCENE_HEIGHT);
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
@@ -144,8 +155,16 @@ public class OnlineScreen extends ScreenAdapter{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 String temp = tf.getText();
-                if (temp.matches("[A-La-l2-9]{5}")) {
-                    RageGoGame.getInstance().load(new GoGameScreen());
+                if (temp.matches("[A-La-l2-9]{5}") && !temp.equals(yourCode)) {
+                    try {
+                        final OnlinePlayer player = RageGoServer.getPlayer(temp);
+                        final OnlineGame game = RageGoServer.createGame(RageGoServer.getLocalPlayer(), player);
+                        OnlineGoGameScreen screen = new OnlineGoGameScreen(game);
+                        RageGoServer.stopWaitingForGame();
+                        RageGoGame.loadScreen(screen);
+                    } catch (RageGoServerException exception) {
+                        System.out.println("No player for code: " + temp);
+                    }
                 }
             }
         });

@@ -10,10 +10,7 @@ import us.monoid.web.JSONResource;
 import us.monoid.web.Resty;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Server class to communicate with the game server.
@@ -27,7 +24,7 @@ public class RageGoServer extends Resty {
     private static Map<Integer, OnlinePlayer> players = Collections.synchronizedMap(new HashMap<Integer, OnlinePlayer>());
     private static Map<Integer, OnlineNode> nodes = Collections.synchronizedMap(new HashMap<Integer, OnlineNode>());
     private static OnlinePlayer localPlayer;
-    private static ArrayList<NewGameListener> newGameListeners = new ArrayList<NewGameListener>(1);
+    private static List<NewGameListener> newGameListeners = Collections.synchronizedList(new ArrayList<NewGameListener>(1));
     private static boolean listeningNewGameThread = false;
     private static Thread listenNewGameThread = new Thread(new Runnable() {
         @Override
@@ -59,6 +56,20 @@ public class RageGoServer extends Resty {
         if(instance == null)
             instance = new RageGoServer();
         return instance;
+    }
+
+    public static OnlinePlayer getPlayer(String code) throws RageGoServerException {
+        try {
+            final OnlinePlayer onlinePlayer = OnlinePlayer.loadFromJSON(getInstance().json(RAGEGO_SERVER + "/player/" + code + ".json").object());
+            if (onlinePlayer != null && players.containsKey(onlinePlayer.getId())) {
+                return players.get(onlinePlayer.getId());
+            }
+            if (onlinePlayer != null)
+                players.put(onlinePlayer.getId(), onlinePlayer);
+            return onlinePlayer;
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     public static OnlinePlayer getPlayer(int id) throws RageGoServerException {
@@ -135,7 +146,7 @@ public class RageGoServer extends Resty {
                             data("game[whites_id]", String.valueOf(whites.getId())),
                             data("game[blacks_id]", String.valueOf(blacks.getId()))
                     ));
-            final OnlineGame onlineGame = new OnlineGame(resource.object().getInt("id"), blacks, whites);
+            final OnlineGame onlineGame = new OnlineGame(resource.object().getInt("id"), whites, blacks);
             games.put(onlineGame.getId(), onlineGame);
             return onlineGame;
         } catch (Exception e){
@@ -161,7 +172,7 @@ public class RageGoServer extends Resty {
 
     public static OnlineGame join(OnlineGame game) {
         try {
-            getInstance().json(RAGEGO_SERVER + "/game/" + String.valueOf(game.getId()) + "/join.json");
+            getInstance().json(RAGEGO_SERVER + "/games/" + String.valueOf(game.getId()) + "/join.json");
         } catch (IOException e) {
             throw handleException(e);
         }
@@ -220,6 +231,7 @@ public class RageGoServer extends Resty {
     }
 
     public static void startWaitingForGame() {
+        if (listeningNewGameThread) return;
         listeningNewGameThread = true;
         listenNewGameThread.start();
     }
