@@ -1,17 +1,11 @@
 package com.ragego.network;
 
 import com.ragego.engine.HumanPlayer;
-import com.ragego.engine.TurnListener;
-import com.ragego.gui.RageGoGame;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
-import us.monoid.web.JSONResource;
 
 import java.io.IOException;
 
-/**
- * Created by Philippe Vienne on 21/04/2015.
- */
 public class OnlinePlayer extends HumanPlayer{
 
     private final int id;
@@ -23,12 +17,12 @@ public class OnlinePlayer extends HumanPlayer{
 
     /**
      * Create an online player from server data
-     * @param json Server data for this Player
+     * @param object Server data for this Player
      * @throws JSONException if server data is incorrect
      * @throws IOException if server data is incorrect
      */
-    public static OnlinePlayer loadFromJSON(JSONResource json) throws IOException, JSONException {
-        final JSONObject object = json.toObject();
+    public static OnlinePlayer loadFromJSON(JSONObject object) throws IOException, JSONException {
+        if (object == null) return null;
         int id = object.getInt("id");
         final String code = object.get("code").toString();
         return new OnlinePlayer(id,code);
