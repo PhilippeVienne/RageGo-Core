@@ -103,7 +103,8 @@ public class OnlineScreen extends ScreenAdapter{
         tf.setPosition(hisCodeLabel.getX() + hisCodeLabel.getWidth(),
                 hisCodeLabel.getY() + hisCodeLabel.getHeight() * 0.5f - tf.getHeight() * 0.5f);
 
-        //
+        //Validation and cancellation buttons
+
 
         //Adds actors to scene
         stage.addActor(yourCodeLabel);
