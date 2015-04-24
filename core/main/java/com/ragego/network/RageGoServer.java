@@ -19,12 +19,12 @@ import java.util.*;
 public class RageGoServer extends Resty {
 
     private static final String RAGEGO_SERVER = "http://ragego-server.herokuapp.com";
+    private static final List<NewGameListener> newGameListeners = Collections.synchronizedList(new ArrayList<NewGameListener>(1));
     private static RageGoServer instance;
     private static Map<Integer, OnlineGame> games = Collections.synchronizedMap(new HashMap<Integer, OnlineGame>());
     private static Map<Integer, OnlinePlayer> players = Collections.synchronizedMap(new HashMap<Integer, OnlinePlayer>());
     private static Map<Integer, OnlineNode> nodes = Collections.synchronizedMap(new HashMap<Integer, OnlineNode>());
     private static OnlinePlayer localPlayer;
-    private static List<NewGameListener> newGameListeners = Collections.synchronizedList(new ArrayList<NewGameListener>(1));
     private static boolean listeningNewGameThread = false;
     private static Thread listenNewGameThread = new Thread(new Runnable() {
         @Override
@@ -227,7 +227,14 @@ public class RageGoServer extends Resty {
     }
 
     public static void removeListener(NewGameListener listener) {
-        newGameListeners.remove(listener);
+        synchronized (newGameListeners) {
+            try {
+                newGameListeners.wait();
+                newGameListeners.remove(listener);
+            } catch (InterruptedException e) {
+                newGameListeners.remove(listener);
+            }
+        }
     }
 
     public static void startWaitingForGame() {

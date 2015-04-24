@@ -60,17 +60,16 @@ public class OnlineScreen extends ScreenAdapter{
         yourCode = RageGoServer.getLocalPlayer().getCode();
         RageGoServer.addListener(new RageGoServer.NewGameListener() {
             @Override
-            public void newGame(OnlineGame game) {
-                hisCode = game.getBlacks().getCode();
-                final OnlineGoGameScreen screen = new OnlineGoGameScreen(game);
+            public void newGame(final OnlineGame game) {
+                final RageGoServer.NewGameListener listener = this;
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        RageGoGame.getInstance().setScreen(screen);
+                        RageGoGame.getInstance().setScreen(new OnlineGoGameScreen(game));
+                        RageGoServer.join(game);
+                        RageGoServer.removeListener(listener);
                     }
                 });
-                RageGoServer.join(game);
-                RageGoServer.removeListener(this);
             }
         });
         RageGoServer.startWaitingForGame();

@@ -107,7 +107,6 @@ public class GoGameScreen extends ScreenAdapter {
         camera.update();
 
         renderer.setView(camera);
-        goban.updateStones();
         renderer.render();
     }
 

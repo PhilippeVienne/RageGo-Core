@@ -29,7 +29,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = true;
+    public static boolean DEBUG_MODE = false;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
@@ -267,11 +267,9 @@ public class GameBoard {
         lastNode.recomputeHash();
         lastNode.lock();
         if (DEBUG_MODE) {
-            System.out.println(GameNode.serialize(node));
-            GameNode.unserialize(node,GameNode.serialize(node));
-            //System.out.println("Played node: " + node);
-            //DebugUtils.printBoard(this);
-            //System.out.println("Board hash is = " + getBoardHash());
+            System.out.println("Played node: " + node);
+            DebugUtils.printBoard(this);
+            System.out.println("Board hash is = " + getBoardHash());
         }
     }
 
