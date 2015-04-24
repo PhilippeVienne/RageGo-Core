@@ -53,10 +53,10 @@ public class GoGameScreen extends ScreenAdapter {
                 return Gdx.files.classpath(fileName);
             }
         }));
-        manager.load("com/ragego/gui/maps/Goban.tmx", TiledMap.class);
+        manager.load("com/ragego/gui/maps/Goban_world_test.tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
-        map = manager.get("com/ragego/gui/maps/Goban.tmx");
+        map = manager.get("com/ragego/gui/maps/Goban_world_test.tmx");
 
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
@@ -78,7 +78,7 @@ public class GoGameScreen extends ScreenAdapter {
         //Map unit (useful for screen/map coordinates conversion)
         mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
 
-        //Active Tile Layer Offset on y-axis (TODO make it map.tmx dependent)
+        //Active Tile Layer Offset on y-axis
         yOffset = tileHeightHalf;
 
         //Centers camera on map
