@@ -26,7 +26,7 @@ public class GoGameScreen extends ScreenAdapter {
     protected AssetManager manager;
     protected TiledMap map;
     protected Goban goban;
-    protected float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPixWidth, mapPixHeight;
+    protected float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPartPixWidth, mapPartPixHeight;
     protected int mapWidth, mapHeight;
     protected IsometricTiledMapRenderer renderer;
     protected OrthographicCamera camera;
@@ -35,6 +35,9 @@ public class GoGameScreen extends ScreenAdapter {
     protected TiledMapTileLayer gridLayer;
     protected TiledMapTileLayer selection;
     protected TiledMapTile selectionTile;
+
+    protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
+        topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
 
     @Override
     public void show() {
@@ -60,32 +63,61 @@ public class GoGameScreen extends ScreenAdapter {
 
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
-        gridLayer = (TiledMapTileLayer)map.getLayers().get("grid");
+        gridLayer = (TiledMapTileLayer) map.getLayers().get("grid");
         selection = (TiledMapTileLayer) map.getLayers().get("selection");
         final TiledMapTileSet toolTS = map.getTileSets().getTileSet("toolTS");
         selectionTile = toolTS.getTile(toolTS.getProperties().get("firstgid", Integer.class));
 
-        //Map size in world units (+1 tile's height to compensate the 3d effect)
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
         tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
-
-        mapWidth = map.getProperties().get("width", Integer.class);
-        mapHeight = map.getProperties().get("height", Integer.class);
-
-        mapPixWidth = (float)mapWidth * tileWidthHalf * 2;
-        mapPixHeight = (float)mapHeight * tileHeightHalf * 2;
-
-        //Map unit (useful for screen/map coordinates conversion)
-        mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
 
         //Active Tile Layer Offset on y-axis
         yOffset = tileHeightHalf;
 
+        //Map unit (useful for screen/map coordinates conversion)
+        mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
+
+        mapWidth = map.getProperties().get("width", Integer.class);
+        mapHeight = map.getProperties().get("height", Integer.class);
+
+        //Getting the coordinates of extremum tiles for screen sizing and centering
+        topTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxTopX", String.class)),
+                Float.parseFloat(map.getProperties().get("maxTopY", String.class)));
+        topTileWorldCoords = GuiUtils.isoToWorld(topTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+        bottomTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxBottomX", String.class)),
+                Float.parseFloat(map.getProperties().get("maxBottomY", String.class)));
+        bottomTileWorldCoords = GuiUtils.isoToWorld(bottomTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+        leftTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxLeftX", String.class)),
+                Float.parseFloat(map.getProperties().get("maxLeftY", String.class)));
+        leftTileWorldCoords = GuiUtils.isoToWorld(leftTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+        rightTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxRightX", String.class)),
+                Float.parseFloat(map.getProperties().get("maxRightY", String.class)));
+        rightTileWorldCoords = GuiUtils.isoToWorld(rightTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+
+        //Size of the visible part of the map in world units + a padding of one tile
+        mapPartPixWidth = rightTileWorldCoords.x - leftTileWorldCoords.x + tileWidthHalf * 2 + tileWidthHalf * 4;
+        mapPartPixHeight = topTileWorldCoords.y - bottomTileWorldCoords.y  + tileHeightHalf * 4 + tileHeightHalf * 4;
+
+        System.out.println("mapPartPixWidth : "+mapPartPixWidth+" & mapPartPixHeight : "+mapPartPixHeight);
+
+        //Determines the center coordinates of the map's visible part for camera centering
+        mapPartCenter = new Vector2((rightTileWorldCoords.x + leftTileWorldCoords.x - 2 * tileWidthHalf) * 0.5f,
+            (topTileWorldCoords.y + bottomTileWorldCoords.y - 4 * tileHeightHalf) * 0.5f);
+
+        //Centers camera on map
+        camera.translate(mapPartCenter.x, mapPartCenter.y);
+
+        /*
+        //Map size in world units
+        float mapPixWidth = (float) mapWidth * tileWidthHalf * 2;
+        float mapPixHeight = (float)mapHeight * tileHeightHalf * 2;
         //Centers camera on map
         camera.translate(mapPixWidth * 0.5f, 0);
+        */
+
 
         //Maximizes the map size on screen
-        viewport = new ExtendViewport(mapPixWidth, mapPixHeight + tileHeightHalf * 2, camera);
+        viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
 
         /*
             Goban setup
@@ -198,7 +230,7 @@ public class GoGameScreen extends ScreenAdapter {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
             Vector3 worldCoords = camera.unproject(tempCoords);
 
-            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
             showCrossOn(touch);
             return false;
         }
@@ -234,7 +266,7 @@ public class GoGameScreen extends ScreenAdapter {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
             Vector3 worldCoords = camera.unproject(tempCoords);
 
-            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
             showCrossOn(touch);
             return false;
         }
