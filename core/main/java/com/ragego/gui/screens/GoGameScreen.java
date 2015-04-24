@@ -70,15 +70,14 @@ public class GoGameScreen extends ScreenAdapter {
 
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
         tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
-
-        //Active Tile Layer Offset on y-axis
-        yOffset = tileHeightHalf;
-
-        //Map unit (useful for screen/map coordinates conversion)
-        mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
-
         mapWidth = map.getProperties().get("width", Integer.class);
         mapHeight = map.getProperties().get("height", Integer.class);
+
+        //Offset between the actual coordinate system and the world coordinate system on the y-axis
+        yOffset = tileHeightHalf;
+
+        //Map unit (useful for screen/map coordinates conversion). Uncomment if using alternate conversion method.
+        //mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
 
         //Getting the coordinates of extremum tiles for screen sizing and centering
         topTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxTopX", String.class)),
@@ -98,23 +97,12 @@ public class GoGameScreen extends ScreenAdapter {
         mapPartPixWidth = rightTileWorldCoords.x - leftTileWorldCoords.x + tileWidthHalf * 2 + tileWidthHalf * 4;
         mapPartPixHeight = topTileWorldCoords.y - bottomTileWorldCoords.y  + tileHeightHalf * 4 + tileHeightHalf * 4;
 
-        System.out.println("mapPartPixWidth : "+mapPartPixWidth+" & mapPartPixHeight : "+mapPartPixHeight);
-
         //Determines the center coordinates of the map's visible part for camera centering
         mapPartCenter = new Vector2((rightTileWorldCoords.x + leftTileWorldCoords.x - 2 * tileWidthHalf) * 0.5f,
             (topTileWorldCoords.y + bottomTileWorldCoords.y - 4 * tileHeightHalf) * 0.5f);
 
         //Centers camera on map
         camera.translate(mapPartCenter.x, mapPartCenter.y);
-
-        /*
-        //Map size in world units
-        float mapPixWidth = (float) mapWidth * tileWidthHalf * 2;
-        float mapPixHeight = (float)mapHeight * tileHeightHalf * 2;
-        //Centers camera on map
-        camera.translate(mapPixWidth * 0.5f, 0);
-        */
-
 
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
