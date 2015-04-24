@@ -3,150 +3,227 @@
   <ID>JAVA</ID>
   <OriginalElement>com.ragego.gui</OriginalElement>
   <nodes>
-    <node x="22.967984693877497" y="367.5">com.ragego.gui.menu.HexagonalMenu</node>
-    <node x="460.9679846938775" y="324.0">com.ragego.gui.screens.GoGameScreen.MyGestureListener</node>
-    <node x="1139.957142857143" y="0.0">com.ragego.gui.GraphicTurnListener</node>
-    <node x="868.9679846938776" y="235.0">com.ragego.gui.objects.Goban</node>
-    <node x="164.09298469387755" y="1508.0">com.ragego.gui.screens.MenuScreen</node>
-    <node x="42.18333333333328" y="1.0">com.ragego.gui.menu.HexagonalMenu.Position</node>
-    <node x="133.09298469387755" y="1853.0">com.ragego.gui.RageGoGame</node>
-    <node x="621.6408163265307" y="789.0">com.ragego.gui.screens.GoGameScreen</node>
-    <node x="0.0" y="1030.5">com.ragego.gui.menu.HexagonalButton</node>
-    <node x="968.6446428571429" y="67.0">com.ragego.gui.objects.Goban.GameRunnable</node>
+    <node x="1124.6895161290324" y="2210.5">com.ragego.gui.screens.SimpleGoGameScreen</node>
+    <node x="0.0" y="2598.0">com.ragego.gui.menu.HexagonalMenu</node>
+    <node x="383.7903225806452" y="657.0">com.ragego.gui.screens.GoGameScreen.MyGestureListener</node>
+    <node x="791.7903225806451" y="491.0">com.ragego.gui.objects.Goban</node>
+    <node x="222.6236559139786" y="3431.0">com.ragego.gui.RageGoGame</node>
+    <node x="425.3145161290324" y="1189.0">com.ragego.gui.screens.GoGameScreen</node>
+    <node x="685.0833333333335" y="2187.5">com.ragego.gui.screens.OnlineGoGameScreen</node>
+    <node x="1146.2728494623657" y="292.0">com.ragego.gui.objects.Goban.GameRunnable</node>
+    <node x="838.2728494623657" y="214.0">com.ragego.gui.objects.GobanGameBoardListener</node>
+    <node x="887.5645161290324" y="1908.0">com.ragego.gui.GraphicTurnListener</node>
+    <node x="445.70833333333337" y="2389.0">com.ragego.gui.screens.OnlineScreen</node>
+    <node x="1006.7728494623657" y="0.0">com.ragego.gui.objects.GraphicStone</node>
+    <node x="247.92943548387098" y="3086.0">com.ragego.gui.screens.MenuScreen</node>
+    <node x="122.42943548387098" y="1909.0">com.ragego.gui.menu.HexagonalMenu.Position</node>
+    <node x="192.04166666666674" y="2143.0">com.ragego.gui.menu.HexagonalButton</node>
   </nodes>
   <notes />
   <edges>
+    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.screens.SimpleGoGameScreen">
+      <point x="132.0" y="-147.5" />
+      <point x="544.929435483871" y="3066.0" />
+      <point x="1199.1895161290324" y="3066.0" />
+      <point x="0.0" y="25.5" />
+    </edge>
     <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.screens.GoGameScreen">
-      <point x="190.33333333333326" y="247.0" />
-      <point x="1344.801318027211" y="759.0" />
-      <point x="1148.069387755102" y="759.0" />
-      <point x="191.42857142857127" y="-334.5" />
+      <point x="88.875" y="324.0" />
+      <point x="1236.1653225806451" y="1169.0" />
+      <point x="1039.4811827956992" y="1169.0" />
+      <point x="279.16666666666663" y="-334.5" />
+    </edge>
+    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.menu.HexagonalButton">
+      <point x="0.0" y="-147.5" />
+      <point x="412.929435483871" y="3066.0" />
+      <point x="435.20833333333337" y="3066.0" />
+      <point x="435.20833333333337" y="2369.0" />
+      <point x="449.29166666666674" y="2369.0" />
+      <point x="110.25" y="93.0" />
+    </edge>
+    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.menu.HexagonalMenu">
+      <point x="-132.0" y="-147.5" />
+      <point x="280.929435483871" y="3066.0" />
+      <point x="104.5" y="3066.0" />
+      <point x="-104.5" y="114.5" />
+    </edge>
+    <edge source="com.ragego.gui.menu.HexagonalButton" target="com.ragego.gui.menu.HexagonalMenu">
+      <point x="36.75" y="93.0" />
+      <point x="375.79166666666674" y="2369.0" />
+      <point x="383.1666666666667" y="2369.0" />
+      <point x="174.16666666666669" y="-114.5" />
+    </edge>
+    <edge source="com.ragego.gui.GraphicTurnListener" target="com.ragego.gui.objects.Goban">
+      <point x="72.75" y="-92.5" />
+      <point x="1105.8145161290324" y="1888.0" />
+      <point x="1252.3528225806454" y="1888.0" />
+      <point x="1252.3528225806454" y="1169.0" />
+      <point x="1413.9153225806451" y="1169.0" />
+      <point x="266.62499999999994" y="324.0" />
+    </edge>
+    <edge source="com.ragego.gui.GraphicTurnListener" target="com.ragego.gui.screens.GoGameScreen">
+      <point x="-72.75" y="-92.5" />
+      <point x="960.3145161290324" y="1888.0" />
+      <point x="894.3145161290324" y="1888.0" />
+      <point x="134.0" y="334.5" />
+    </edge>
+    <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.objects.GobanGameBoardListener">
+      <point x="-222.1875" y="-324.0" />
+      <point x="925.1028225806451" y="471.0" />
+      <point x="970.7728494623657" y="471.0" />
+      <point x="0.0" y="103.5" />
+    </edge>
+    <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.objects.Goban.GameRunnable">
+      <point x="222.1875" y="-324.0" />
+      <point x="1369.4778225806451" y="451.0" />
+      <point x="1174.5228494623657" y="451.0" />
+      <point x="-28.25" y="25.5" />
+    </edge>
+    <edge source="com.ragego.gui.screens.OnlineScreen" target="com.ragego.gui.GraphicTurnListener">
+      <point x="243.7500000000001" y="-323.5" />
+      <point x="1014.4583333333335" y="2369.0" />
+      <point x="1033.0645161290324" y="2369.0" />
+      <point x="0.0" y="92.5" />
+    </edge>
+    <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.objects.GraphicStone">
+      <point x="44.4375" y="-324.0" />
+      <point x="1191.7278225806451" y="471.0" />
+      <point x="1124.7728494623657" y="471.0" />
+      <point x="1124.7728494623657" y="184.0" />
+      <point x="1147.3978494623657" y="184.0" />
+      <point x="28.125" y="82.0" />
+    </edge>
+    <edge source="com.ragego.gui.screens.GoGameScreen" target="com.ragego.gui.screens.GoGameScreen.MyGestureListener">
+      <point x="-279.16666666666686" y="-334.5" />
+      <point x="481.14784946236557" y="1169.0" />
+      <point x="448.4569892473118" y="1169.0" />
+      <point x="-129.33333333333337" y="158.0" />
+    </edge>
+    <edge source="com.ragego.gui.menu.HexagonalButton" target="com.ragego.gui.menu.HexagonalMenu.Position">
+      <point x="0.0" y="-93.0" />
+      <point x="339.04166666666674" y="2123.0" />
+      <point x="280.804435483871" y="2123.0" />
+      <point x="67.875" y="91.5" />
+    </edge>
+    <edge source="com.ragego.gui.objects.GobanGameBoardListener" target="com.ragego.gui.objects.Goban">
+      <point x="88.33333333333326" y="103.5" />
+      <point x="1059.106182795699" y="471.0" />
+      <point x="1013.9778225806451" y="471.0" />
+      <point x="-133.3125" y="-324.0" />
+    </edge>
+    <edge source="com.ragego.gui.screens.SimpleGoGameScreen" target="com.ragego.gui.GraphicTurnListener">
+      <point x="-37.25" y="-25.5" />
+      <point x="1161.9395161290324" y="2123.0" />
+      <point x="1130.0645161290324" y="2123.0" />
+      <point x="97.0" y="92.5" />
+    </edge>
+    <edge source="com.ragego.gui.screens.OnlineGoGameScreen" target="com.ragego.gui.GraphicTurnListener">
+      <point x="71.5" y="-48.5" />
+      <point x="899.5833333333335" y="2123.0" />
+      <point x="936.0645161290324" y="2123.0" />
+      <point x="-97.0" y="92.5" />
+    </edge>
+    <edge source="com.ragego.gui.objects.GraphicStone" target="com.ragego.gui.objects.Goban">
+      <point x="84.375" y="82.0" />
+      <point x="1203.6478494623657" y="194.0" />
+      <point x="1135.7728494623657" y="194.0" />
+      <point x="1135.7728494623657" y="461.0" />
+      <point x="1280.6028225806451" y="461.0" />
+      <point x="133.3125" y="-324.0" />
     </edge>
     <edge source="com.ragego.gui.objects.Goban.GameRunnable" target="com.ragego.gui.objects.Goban">
       <point x="28.25" y="25.5" />
-      <point x="1053.394642857143" y="215.0" />
-      <point x="1083.0929846938775" y="215.0" />
-      <point x="-71.375" y="-247.0" />
-    </edge>
-    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.menu.HexagonalButton">
-      <point x="-123.75" y="-147.5" />
-      <point x="205.34298469387755" y="1483.0" />
-      <point x="147.0" y="1483.0" />
-      <point x="0.0" y="93.0" />
+      <point x="1231.0228494623657" y="441.0" />
+      <point x="1458.3528225806451" y="441.0" />
+      <point x="311.06249999999994" y="-324.0" />
     </edge>
     <edge source="com.ragego.gui.menu.HexagonalMenu" target="com.ragego.gui.menu.HexagonalMenu.Position">
-      <point x="-2.8421709430404007E-14" y="-114.5" />
-      <point x="231.9679846938775" y="215.0" />
-      <point x="155.30833333333328" y="215.0" />
-      <point x="22.625" y="91.5" />
+      <point x="-104.5" y="-114.5" />
+      <point x="104.5" y="2359.0" />
+      <point x="170.54166666666674" y="2359.0" />
+      <point x="170.54166666666674" y="2113.0" />
+      <point x="190.30443548387098" y="2113.0" />
+      <point x="-22.625" y="91.5" />
     </edge>
-    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.screens.GoGameScreen">
-      <point x="123.75" y="-147.5" />
-      <point x="452.84298469387755" y="1483.0" />
-      <point x="956.6408163265307" y="1483.0" />
-      <point x="0.0" y="334.5" />
+    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.screens.OnlineScreen">
+      <point x="66.0" y="-147.5" />
+      <point x="478.929435483871" y="3056.0" />
+      <point x="770.7083333333334" y="3056.0" />
+      <point x="0.0" y="323.5" />
     </edge>
-    <edge source="com.ragego.gui.screens.MenuScreen" target="com.ragego.gui.menu.HexagonalMenu">
-      <point x="-41.25" y="-147.5" />
-      <point x="287.84298469387755" y="1483.0" />
-      <point x="347.61964285714294" y="1483.0" />
-      <point x="347.61964285714294" y="769.0" />
-      <point x="315.5679846938775" y="769.0" />
-      <point x="83.60000000000002" y="114.5" />
+    <edge source="com.ragego.gui.objects.GobanGameBoardListener" target="com.ragego.gui.objects.GraphicStone">
+      <point x="0.0" y="-103.5" />
+      <point x="970.7728494623657" y="194.0" />
+      <point x="1034.8978494623657" y="194.0" />
+      <point x="-84.375" y="82.0" />
     </edge>
-    <edge source="com.ragego.gui.menu.HexagonalButton" target="com.ragego.gui.menu.HexagonalMenu">
-      <point x="-36.75" y="-93.0" />
-      <point x="110.25" y="769.0" />
-      <point x="64.76798469387757" y="769.0" />
-      <point x="-167.2" y="114.5" />
+    <edge source="com.ragego.gui.screens.OnlineScreen" target="com.ragego.gui.screens.OnlineGoGameScreen">
+      <point x="81.25000000000011" y="-323.5" />
+      <point x="851.9583333333335" y="2369.0" />
+      <point x="828.0833333333335" y="2369.0" />
+      <point x="0.0" y="48.5" />
     </edge>
-    <edge source="com.ragego.gui.GraphicTurnListener" target="com.ragego.gui.objects.Goban">
-      <point x="0.0" y="92.5" />
-      <point x="1285.457142857143" y="215.0" />
-      <point x="1368.5929846938775" y="215.0" />
-      <point x="214.125" y="-247.0" />
-    </edge>
-    <edge source="com.ragego.gui.GraphicTurnListener" target="com.ragego.gui.screens.GoGameScreen">
-      <point x="97.0" y="92.5" />
-      <point x="1382.457142857143" y="215.0" />
-      <point x="1450.4679846938775" y="215.0" />
-      <point x="1450.4679846938775" y="769.0" />
-      <point x="1243.7836734693878" y="769.0" />
-      <point x="287.14285714285705" y="-334.5" />
-    </edge>
-    <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.objects.Goban.GameRunnable">
-      <point x="-214.125" y="-247.0" />
-      <point x="940.3429846938776" y="215.0" />
-      <point x="996.8946428571429" y="215.0" />
-      <point x="-28.25" y="25.5" />
-    </edge>
-    <edge source="com.ragego.gui.objects.Goban" target="com.ragego.gui.GraphicTurnListener">
-      <point x="71.375" y="-247.0" />
-      <point x="1225.8429846938775" y="215.0" />
-      <point x="1188.457142857143" y="215.0" />
-      <point x="-97.0" y="92.5" />
+    <edge source="com.ragego.gui.screens.SimpleGoGameScreen" target="com.ragego.gui.screens.GoGameScreen">
+      <point x="37.25" y="-25.5" />
+      <point x="1236.4395161290324" y="1878.0" />
+      <point x="1028.3145161290322" y="1878.0" />
+      <point x="267.9999999999999" y="334.5" />
     </edge>
     <edge source="com.ragego.gui.RageGoGame" target="com.ragego.gui.screens.MenuScreen">
-      <point x="-98.0" y="-148.0" />
-      <point x="231.09298469387755" y="1828.0" />
-      <point x="246.59298469387755" y="1828.0" />
+      <point x="-103.0" y="-159.0" />
+      <point x="325.6236559139786" y="3406.0" />
+      <point x="330.429435483871" y="3406.0" />
       <point x="-82.5" y="147.5" />
     </edge>
+    <edge source="com.ragego.gui.screens.OnlineScreen" target="com.ragego.gui.screens.GoGameScreen">
+      <point x="-243.7499999999999" y="-323.5" />
+      <point x="526.9583333333335" y="2369.0" />
+      <point x="656.3702956989249" y="2369.0" />
+      <point x="656.3702956989249" y="1888.0" />
+      <point x="492.3145161290324" y="1888.0" />
+      <point x="-268.0" y="334.5" />
+    </edge>
     <edge source="com.ragego.gui.screens.GoGameScreen.MyGestureListener" target="com.ragego.gui.screens.GoGameScreen">
-      <point x="129.33333333333326" y="158.0" />
-      <point x="784.3013180272108" y="769.0" />
-      <point x="860.926530612245" y="769.0" />
-      <point x="-95.71428571428578" y="-334.5" />
+      <point x="129.33333333333337" y="158.0" />
+      <point x="707.1236559139786" y="1169.0" />
+      <point x="704.4811827956989" y="1169.0" />
+      <point x="-55.833333333333485" y="-334.5" />
     </edge>
     <edge source="com.ragego.gui.menu.HexagonalMenu.Position" target="com.ragego.gui.menu.HexagonalMenu">
-      <point x="67.875" y="91.5" />
-      <point x="200.55833333333328" y="205.0" />
-      <point x="371.30131802721087" y="205.0" />
-      <point x="139.33333333333337" y="-114.5" />
+      <point x="22.625" y="91.5" />
+      <point x="235.55443548387098" y="2123.0" />
+      <point x="181.54166666666674" y="2123.0" />
+      <point x="181.54166666666674" y="2369.0" />
+      <point x="174.16666666666674" y="2369.0" />
+      <point x="-34.83333333333326" y="-114.5" />
     </edge>
-    <edge source="com.ragego.gui.screens.GoGameScreen" target="com.ragego.gui.screens.GoGameScreen.MyGestureListener">
-      <point x="-191.42857142857144" y="-334.5" />
-      <point x="765.2122448979592" y="759.0" />
-      <point x="654.9679846938775" y="759.0" />
-      <point x="0.0" y="158.0" />
+    <edge source="com.ragego.gui.screens.OnlineGoGameScreen" target="com.ragego.gui.screens.GoGameScreen">
+      <point x="-71.5" y="-48.5" />
+      <point x="756.5833333333335" y="1888.0" />
+      <point x="760.3145161290324" y="1888.0" />
+      <point x="0.0" y="334.5" />
     </edge>
     <edge source="com.ragego.gui.menu.HexagonalMenu" target="com.ragego.gui.menu.HexagonalButton">
-      <point x="-83.60000000000002" y="114.5" />
-      <point x="148.36798469387747" y="769.0" />
-      <point x="183.75" y="769.0" />
-      <point x="36.75" y="-93.0" />
-    </edge>
-    <edge source="com.ragego.gui.menu.HexagonalButton" target="com.ragego.gui.menu.HexagonalMenu.Position">
-      <point x="-110.25" y="-93.0" />
-      <point x="36.75" y="769.0" />
-      <point x="12.46798469387761" y="769.0" />
-      <point x="12.46798469387761" y="215.0" />
-      <point x="64.80833333333328" y="215.0" />
-      <point x="-67.875" y="91.5" />
+      <point x="34.83333333333334" y="-114.5" />
+      <point x="243.83333333333337" y="2369.0" />
+      <point x="228.79166666666674" y="2369.0" />
+      <point x="-110.25" y="93.0" />
     </edge>
     <edge source="com.ragego.gui.screens.GoGameScreen" target="com.ragego.gui.objects.Goban">
-      <point x="95.71428571428567" y="-334.5" />
-      <point x="1052.3551020408163" y="749.0" />
-      <point x="1154.4679846938775" y="749.0" />
-      <point x="0.0" y="247.0" />
+      <point x="167.4999999999999" y="-334.5" />
+      <point x="927.8145161290323" y="1159.0" />
+      <point x="1058.4153225806451" y="1159.0" />
+      <point x="-88.875" y="324.0" />
     </edge>
   </edges>
-  <settings layout="Hierarchic Group" zoom="0.5577224527431995" x="594.3312391502027" y="1643.1453252872614" />
-  <SelectedNodes>
-    <node>com.ragego.gui.screens.GoGameScreen.MyGestureListener</node>
-    <node>com.ragego.gui.GraphicTurnListener</node>
-    <node>com.ragego.gui.objects.Goban</node>
-    <node>com.ragego.gui.screens.MenuScreen</node>
-    <node>com.ragego.gui.RageGoGame</node>
-    <node>com.ragego.gui.screens.GoGameScreen</node>
-    <node>com.ragego.gui.objects.Goban.GameRunnable</node>
-  </SelectedNodes>
+  <settings layout="Hierarchic Group" zoom="0.23083045900769436" x="751.5" y="1874.5" />
+  <SelectedNodes />
   <Categories>
     <Category>Fields</Category>
-    <Category>Constructors</Category>
-    <Category>Methods</Category>
-    <Category>Properties</Category>
     <Category>Inner Classes</Category>
+    <Category>Constructors</Category>
+    <Category>Properties</Category>
+    <Category>Methods</Category>
   </Categories>
   <SCOPE>All</SCOPE>
   <VISIBILITY>private</VISIBILITY>

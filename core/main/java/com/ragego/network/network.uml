@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="172.02500000000003" y="0.0">com.ragego.network.RageGoServerException.ExceptionType</node>
+    <node x="405.4" y="594.0">com.ragego.network.OnlineNode</node>
+    <node x="491.275" y="145.0">com.ragego.network.OnlinePlayer</node>
+    <node x="325.50000000000006" y="1790.0">com.ragego.network.RageGoServer.NewGameListener</node>
+    <node x="0.0" y="940.0">com.ragego.network.RageGoServer</node>
+    <node x="94.25166666666667" y="189.5">com.ragego.network.RageGoServerException</node>
+    <node x="244.03833333333336" y="358.0">com.ragego.network.OnlineGame</node>
+    <node x="495.275" y="0.0">com.ragego.network.OnlinePlayerListener</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.ragego.network.OnlineGame" target="com.ragego.network.RageGoServerException">
+      <point x="-113.0" y="-93.0" />
+      <point x="300.53833333333336" y="338.0" />
+      <point x="350.75166666666667" y="338.0" />
+      <point x="85.5" y="37.0" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer" target="com.ragego.network.RageGoServer.NewGameListener">
+      <point x="5.6843418860808015E-14" y="400.0" />
+      <point x="0.0" y="-25.5" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer" target="com.ragego.network.OnlineNode">
+      <point x="171.4000000000001" y="-400.0" />
+      <point x="0.0" y="148.0" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer" target="com.ragego.network.OnlinePlayer">
+      <point x="342.79999999999995" y="-400.0" />
+      <point x="771.3" y="915.0" />
+      <point x="804.9000000000001" y="915.0" />
+      <point x="804.9000000000001" y="338.0" />
+      <point x="738.0250000000001" y="338.0" />
+      <point x="105.75000000000003" y="81.5" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer.NewGameListener" target="com.ragego.network.RageGoServer">
+      <point x="-68.66666666666669" y="-25.5" />
+      <point x="359.83333333333337" y="1765.0" />
+      <point x="142.83333333333331" y="1765.0" />
+      <point x="-285.6666666666667" y="400.0" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServerException.ExceptionType" target="com.ragego.network.RageGoServerException">
+      <point x="30.75" y="47.5" />
+      <point x="264.27500000000003" y="120.0" />
+      <point x="350.75166666666667" y="120.0" />
+      <point x="85.5" y="-37.0" />
+    </edge>
+    <edge source="com.ragego.network.OnlinePlayer" target="com.ragego.network.OnlineGame">
+      <point x="-35.25" y="81.5" />
+      <point x="597.025" y="338.0" />
+      <point x="526.5383333333334" y="338.0" />
+      <point x="113.0" y="-93.0" />
+    </edge>
+    <edge source="com.ragego.network.OnlineNode" target="com.ragego.network.OnlineGame">
+      <point x="-97.25" y="-148.0" />
+      <point x="502.65" y="569.0" />
+      <point x="526.5383333333334" y="569.0" />
+      <point x="113.0" y="93.0" />
+    </edge>
+    <edge source="com.ragego.network.OnlinePlayer" target="com.ragego.network.OnlinePlayerListener">
+      <point x="0.0" y="-81.5" />
+      <point x="0.0" y="47.5" />
+    </edge>
+    <edge source="com.ragego.network.OnlineGame" target="com.ragego.network.OnlinePlayer">
+      <point x="0.0" y="-93.0" />
+      <point x="413.53833333333336" y="328.0" />
+      <point x="526.525" y="328.0" />
+      <point x="-105.75" y="81.5" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer" target="com.ragego.network.OnlineGame">
+      <point x="-171.39999999999986" y="-400.0" />
+      <point x="257.10000000000014" y="915.0" />
+      <point x="373.25" y="915.0" />
+      <point x="373.25" y="569.0" />
+      <point x="300.53833333333336" y="569.0" />
+      <point x="-113.0" y="93.0" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServerException" target="com.ragego.network.RageGoServerException.ExceptionType">
+      <point x="-85.5" y="-37.0" />
+      <point x="179.75166666666667" y="120.0" />
+      <point x="202.77500000000003" y="120.0" />
+      <point x="-30.75" y="47.5" />
+    </edge>
+    <edge source="com.ragego.network.OnlineNode" target="com.ragego.network.OnlinePlayer">
+      <point x="97.25" y="-148.0" />
+      <point x="697.15" y="338.0" />
+      <point x="667.525" y="338.0" />
+      <point x="35.25" y="81.5" />
+    </edge>
+    <edge source="com.ragego.network.RageGoServer" target="com.ragego.network.RageGoServerException">
+      <point x="-342.79999999999984" y="-400.0" />
+      <point x="85.70000000000016" y="915.0" />
+      <point x="195.0883333333333" y="915.0" />
+      <point x="195.0883333333333" y="338.0" />
+      <point x="179.75166666666667" y="338.0" />
+      <point x="-85.5" y="37.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.6674905964535196" x="559.9474319755273" y="1259.6945741426503" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

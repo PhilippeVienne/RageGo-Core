@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="62.93460061443943" y="189.0">com.ragego.engine.GameNode</node>
+    <node x="1068.5387672811062" y="3213.0">com.ragego.engine.Shape</node>
+    <node x="1532.1041666666667" y="553.5">com.ragego.engine.AbstractTurnListener</node>
+    <node x="393.08882488479264" y="0.0">com.ragego.engine.GameNode.Action</node>
+    <node x="1880.1041666666667" y="0.0">com.ragego.engine.IAPlayer</node>
+    <node x="441.1041666666668" y="1051.0">com.ragego.engine.GameBoard</node>
+    <node x="1357.6121351766515" y="22.0">com.ragego.engine.TurnListener</node>
+    <node x="853.5387672811062" y="3023.0">com.ragego.engine.Player</node>
+    <node x="36.5" y="2244.0">com.ragego.engine.GameComputer</node>
+    <node x="344.5" y="2123.0">com.ragego.engine.Intersection</node>
+    <node x="789.5387672811062" y="3301.5">com.ragego.engine.HumanPlayer</node>
+    <node x="1181.778801843318" y="542.5">com.ragego.engine.GameListener</node>
+    <node x="501.41630184331814" y="2545.0">com.ragego.engine.Stone</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.ragego.engine.Intersection" target="com.ragego.engine.GameBoard">
+      <point x="0.0" y="-181.0" />
+      <point x="632.0" y="2103.0" />
+      <point x="641.7291666666667" y="2103.0" />
+      <point x="-334.375" y="511.0" />
+    </edge>
+    <edge source="com.ragego.engine.Player" target="com.ragego.engine.TurnListener">
+      <point x="104.79999999999995" y="-70.0" />
+      <point x="1089.3387672811061" y="3003.0" />
+      <point x="1521.6041666666667" y="3003.0" />
+      <point x="1521.6041666666667" y="164.0" />
+      <point x="1494.6121351766515" y="164.0" />
+      <point x="0.0" y="47.5" />
+    </edge>
+    <edge source="com.ragego.engine.Stone" target="com.ragego.engine.GameBoard">
+      <point x="49.58333333333337" y="-214.0" />
+      <point x="848.4996351766515" y="2505.0" />
+      <point x="985.8541666666667" y="2505.0" />
+      <point x="985.8541666666667" y="2103.0" />
+      <point x="909.2291666666667" y="2103.0" />
+      <point x="-66.875" y="511.0" />
+    </edge>
+    <edge source="com.ragego.engine.Shape" target="com.ragego.engine.GameBoard">
+      <point x="110.00000000000006" y="-125.5" />
+      <point x="1398.5387672811062" y="2103.0" />
+      <point x="1444.2291666666667" y="2103.0" />
+      <point x="468.12499999999994" y="511.0" />
+    </edge>
+    <edge source="com.ragego.engine.AbstractTurnListener" target="com.ragego.engine.TurnListener">
+      <point x="0.0" y="-36.5" />
+      <point x="1683.6041666666667" y="164.0" />
+      <point x="1585.9454685099847" y="164.0" />
+      <point x="91.33333333333326" y="47.5" />
+    </edge>
+    <edge source="com.ragego.engine.Player" target="com.ragego.engine.Stone">
+      <point x="-52.39999999999998" y="-70.0" />
+      <point x="932.1387672811061" y="2993.0" />
+      <point x="650.1663018433181" y="2993.0" />
+      <point x="-148.75" y="214.0" />
+    </edge>
+    <edge source="com.ragego.engine.Stone" target="com.ragego.engine.Intersection">
+      <point x="-148.7499999999999" y="-214.0" />
+      <point x="650.1663018433183" y="2515.0" />
+      <point x="488.25" y="2515.0" />
+      <point x="-143.75" y="181.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameListener" target="com.ragego.engine.TurnListener">
+      <point x="0.0" y="-47.5" />
+      <point x="1303.778801843318" y="164.0" />
+      <point x="1403.2788018433182" y="164.0" />
+      <point x="-91.33333333333326" y="47.5" />
+    </edge>
+    <edge source="com.ragego.engine.GameBoard" target="com.ragego.engine.Player">
+      <point x="334.375" y="511.0" />
+      <point x="1310.4791666666667" y="2103.0" />
+      <point x="1146.0333333333335" y="2103.0" />
+      <point x="1146.0333333333335" y="2993.0" />
+      <point x="1036.9387672811063" y="2993.0" />
+      <point x="52.40000000000009" y="-70.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode" target="com.ragego.engine.Player">
+      <point x="-355.7142857142858" y="401.0" />
+      <point x="122.22031490015365" y="1011.0" />
+      <point x="15.0" y="1011.0" />
+      <point x="15.0" y="3003.0" />
+      <point x="879.7387672811062" y="3003.0" />
+      <point x="-104.79999999999995" y="-70.0" />
+    </edge>
+    <edge source="com.ragego.engine.Stone" target="com.ragego.engine.Player">
+      <point x="148.75" y="214.0" />
+      <point x="947.6663018433181" y="3003.0" />
+      <point x="984.5387672811062" y="3003.0" />
+      <point x="0.0" y="-70.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameComputer" target="com.ragego.engine.GameNode">
+      <point x="-72.0" y="-60.0" />
+      <point x="108.5" y="1031.0" />
+      <point x="359.363172043011" y="1031.0" />
+      <point x="-118.57142857142844" y="401.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode" target="com.ragego.engine.GameBoard">
+      <point x="355.7142857142858" y="401.0" />
+      <point x="833.6488863287252" y="1031.0" />
+      <point x="976.1041666666667" y="1031.0" />
+      <point x="0.0" y="-511.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode" target="com.ragego.engine.Intersection">
+      <point x="1.1368683772161603E-13" y="401.0" />
+      <point x="477.93460061443955" y="1031.0" />
+      <point x="368.2788018433181" y="1031.0" />
+      <point x="368.2788018433181" y="2093.0" />
+      <point x="440.33333333333337" y="2093.0" />
+      <point x="-191.66666666666663" y="-181.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameBoard" target="com.ragego.engine.Intersection">
+      <point x="-200.625" y="511.0" />
+      <point x="775.4791666666667" y="2103.0" />
+      <point x="823.6666666666666" y="2103.0" />
+      <point x="191.66666666666663" y="-181.0" />
+    </edge>
+    <edge source="com.ragego.engine.HumanPlayer" target="com.ragego.engine.Player">
+      <point x="0.0" y="-37.0" />
+      <point x="-65.5" y="70.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode" target="com.ragego.engine.GameNode.Action">
+      <point x="-207.5" y="-401.0" />
+      <point x="270.43460061443943" y="164.0" />
+      <point x="440.83882488479264" y="164.0" />
+      <point x="-47.75" y="69.5" />
+    </edge>
+    <edge source="com.ragego.engine.GameBoard" target="com.ragego.engine.Stone">
+      <point x="200.625" y="511.0" />
+      <point x="1176.7291666666667" y="2093.0" />
+      <point x="1073.5804915514595" y="2093.0" />
+      <point x="1073.5804915514595" y="2525.0" />
+      <point x="1046.832968509985" y="2525.0" />
+      <point x="247.91666666666686" y="-214.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode" target="com.ragego.engine.Stone">
+      <point x="-237.1428571428571" y="401.0" />
+      <point x="240.79174347158232" y="1021.0" />
+      <point x="26.0" y="1021.0" />
+      <point x="26.0" y="2525.0" />
+      <point x="550.9996351766515" y="2525.0" />
+      <point x="-247.91666666666663" y="-214.0" />
+    </edge>
+    <edge source="com.ragego.engine.Shape" target="com.ragego.engine.Player">
+      <point x="-110.0" y="-125.5" />
+      <point x="1178.5387672811062" y="3188.0" />
+      <point x="1050.0387672811062" y="3188.0" />
+      <point x="65.5" y="70.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameNode.Action" target="com.ragego.engine.GameNode">
+      <point x="47.75" y="69.5" />
+      <point x="536.3388248847926" y="164.0" />
+      <point x="685.4346006144394" y="164.0" />
+      <point x="207.5" y="-401.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameBoard" target="com.ragego.engine.GameNode">
+      <point x="-428.0" y="-511.0" />
+      <point x="548.1041666666667" y="1031.0" />
+      <point x="596.5060291858681" y="1031.0" />
+      <point x="118.57142857142867" y="401.0" />
+    </edge>
+    <edge source="com.ragego.engine.GameBoard" target="com.ragego.engine.GameListener">
+      <point x="214.0" y="-511.0" />
+      <point x="1190.1041666666667" y="1031.0" />
+      <point x="1242.778801843318" y="1031.0" />
+      <point x="-61.0" y="47.5" />
+    </edge>
+    <edge source="com.ragego.engine.GameComputer" target="com.ragego.engine.GameBoard">
+      <point x="72.0" y="-60.0" />
+      <point x="252.5" y="2103.0" />
+      <point x="507.9791666666668" y="2103.0" />
+      <point x="-468.125" y="511.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.24971297359357061" x="1029.5" y="1732.0" />
+  <SelectedNodes>
+    <node>com.ragego.engine.IAPlayer</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Constructors</Category>
+    <Category>Properties</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
