@@ -2,11 +2,12 @@ package com.ragego.gui.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -46,18 +47,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         /*
             Map setup
          */
-        manager = new AssetManager(new FileHandleResolver() {
-            @Override
-            public FileHandle resolve(String fileName) {
-                return Gdx.files.classpath(fileName);
-            }
-        });
-        manager.setLoader(TiledMap.class, new TmxMapLoader(new FileHandleResolver() {
-            @Override
-            public FileHandle resolve(String fileName) {
-                return Gdx.files.classpath(fileName);
-            }
-        }));
+        manager = RageGoGame.getAssetManager();
         manager.load("com/ragego/gui/maps/" + getMapToLoad() + ".tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");

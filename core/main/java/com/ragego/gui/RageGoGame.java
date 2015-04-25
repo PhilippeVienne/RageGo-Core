@@ -11,7 +11,8 @@ import com.ragego.gui.screens.MenuScreen;
  */
 public class RageGoGame extends Game {
 
-    private static RageGoGame instance = new RageGoGame();
+    private static final RageGoGame instance = new RageGoGame();
+    private static final RageGoAssetManager manager = new RageGoAssetManager();
     private MenuScreen homeScreen = null;
 
     private RageGoGame() {
@@ -20,6 +21,10 @@ public class RageGoGame extends Game {
 
     public static RageGoGame getInstance() {
         return instance;
+    }
+
+    public static RageGoAssetManager getAssetManager() {
+        return manager;
     }
 
     public static void loadScreen(ScreenAdapter nextScreen) {

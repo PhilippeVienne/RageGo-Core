@@ -3,15 +3,11 @@ package com.ragego.gui.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -74,18 +70,7 @@ public class OnlineScreen extends ScreenAdapter{
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        manager = new AssetManager(new FileHandleResolver() {
-            @Override
-            public FileHandle resolve(String fileName) {
-                return Gdx.files.classpath(fileName);
-            }
-        });
-        manager.setLoader(TiledMap.class, new TmxMapLoader(new FileHandleResolver() {
-            @Override
-            public FileHandle resolve(String fileName) {
-                return Gdx.files.classpath(fileName);
-            }
-        }));
+        manager = RageGoGame.getAssetManager();
 
         manager.load("com/ragego/gui/fonts/acme_9_regular.fnt", BitmapFont.class);
 
