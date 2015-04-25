@@ -234,16 +234,23 @@ public class StandardGameFormatIO implements FormatIO {
                     val = parseValue();
 
                 if (name.equals("W")) {
-                    node.setAction(GameNode.Action.PUT_STONE);
-                    node.setIntersection(Intersection.get(val, game));
+                    if (val.length() > 0) {
+                        node.setAction(GameNode.Action.PUT_STONE);
+                        node.setIntersection(Intersection.get(val, game));
+                    } else {
+                        node.setAction(GameNode.Action.PASS);
+                    }
                     node.setPlayer(game.getWhitePlayer());
                 } else if (name.equals("B")) {
-                    node.setAction(GameNode.Action.PUT_STONE);
-                    node.setIntersection(Intersection.get(val, game));
+                    if (val.length() > 0) {
+                        node.setAction(GameNode.Action.PUT_STONE);
+                        node.setIntersection(Intersection.get(val, game));
+                    } else {
+                        node.setAction(GameNode.Action.PASS);
+                    }
                     node.setPlayer(game.getBlackPlayer());
                 } else if (name.equals("AB")) {
                     node.addSetup(game.getBlackPlayer(), Intersection.get(val, game));
-
                 } else if (name.equals("AW")) {
                     node.addSetup(game.getWhitePlayer(), Intersection.get(val, game));
 

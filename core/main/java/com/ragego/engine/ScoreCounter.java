@@ -141,6 +141,20 @@ public class ScoreCounter implements GameListener {
                 }
             }
         }
+        String[] lines = new String[score.length];
+        for (int i = 0; i < lines.length; i++) {
+            lines[i] = " " + String.valueOf(i) + "  ";
+        }
+        for (Player[] aScore : score) {
+            for (int i1 = 0; i1 < aScore.length; i1++) {
+                Player anAScore = aScore[i1];
+                lines[i1] += board.getLetterForPlayer(anAScore);
+                lines[i1] += "  ";
+            }
+        }
+        for (String line : lines) {
+            System.out.println(line);
+        }
     }
 
     /**
@@ -155,30 +169,32 @@ public class ScoreCounter implements GameListener {
         int areaDiff = 0;
         int territoryDiff = 0;
         for (Intersection p : board.getBoardIntersections()) {
-            Player c = board.getPlayerOn(p);
-            Player sc = getScoredPlayer(p);
-            if (sc == board.getBlackPlayer()) {
+            Player playerOnIntersection = board.getPlayerOn(p);
+            Player playerWhoOwnIntersection = getScoredPlayer(p);
+            if (playerWhoOwnIntersection == board.getBlackPlayer()) {
                 ++areaBlack;
                 ++areaDiff;
-            } else if (sc == board.getWhitePlayer()) {
+            } else if (playerWhoOwnIntersection == board.getWhitePlayer()) {
                 ++areaWhite;
                 --areaDiff;
             }
-            if (c == null) {
-                if (sc == board.getBlackPlayer()) {
-                    ++territoryBlack;
+            if (playerOnIntersection == null) { // We have no stone on this intersection
+                if (playerWhoOwnIntersection == board.getBlackPlayer()) { // Territory is owned by blacks
+                    ++territoryBlack; // Increase his score
                     ++territoryDiff;
-                } else if (sc == board.getWhitePlayer()) {
-                    ++territoryWhite;
+                } else if (playerWhoOwnIntersection == board.getWhitePlayer()) { // owned by whites
+                    ++territoryWhite; // Increase white's score
                     --territoryDiff;
                 }
             }
-            if (c == board.getBlackPlayer() && sc == board.getWhitePlayer()) {
+            // Black player is in a white area so he is captivated
+            if (playerOnIntersection == board.getBlackPlayer() && playerWhoOwnIntersection == board.getWhitePlayer()) {
                 ++capturedBlack;
                 ++territoryWhite;
                 --territoryDiff;
             }
-            if (c == board.getWhitePlayer() && sc == board.getBlackPlayer()) {
+            // White player is in a black area so he is captivated
+            if (playerOnIntersection == board.getWhitePlayer() && playerWhoOwnIntersection == board.getBlackPlayer()) {
                 ++capturedWhite;
                 ++territoryBlack;
                 ++territoryDiff;
@@ -203,27 +219,12 @@ public class ScoreCounter implements GameListener {
         return score[p.getColumn()][p.getLine()];
     }
 
-    private boolean findRegion(Intersection p, Player player, Marker marker,
-                               ArrayList<Intersection> stones) {
-        if (marker.get(p))
-            return true;
-        Player playerOnP = board.getPlayerOn(p);
-        if (playerOnP == player)
-            return playerOnP != null;
-        marker.set(p);
-        stones.add(p);
-        for (Intersection adj : p.getNeighboursIntersections())
-            if (!findRegion(adj, player, marker, stones))
-                return false;
-        return true;
-    }
-
     private boolean isTerritory(Marker mark, Intersection p,
                                 ArrayList<Intersection> territory, Player player) {
-        Player c = board.getPlayerOn(p);
-        if (c == board.getOpponent(player))
+        Player playerOnIntersection = board.getPlayerOn(p);
+        if (playerOnIntersection == board.getOpponent(player))
             return false;
-        if (c != null && c.equals(player))
+        if (playerOnIntersection != null && playerOnIntersection.equals(player))
             return true;
         if (mark.get(p))
             return true;

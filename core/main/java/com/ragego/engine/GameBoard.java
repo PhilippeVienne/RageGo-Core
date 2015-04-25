@@ -815,4 +815,8 @@ public class GameBoard {
             }
         return intersections;
     }
+
+    public int getNumberForPlayer(Player player) {
+        return player == firstPlayer ? 1 : (player == secondPlayer ? 2 : 0);
+    }
 }
