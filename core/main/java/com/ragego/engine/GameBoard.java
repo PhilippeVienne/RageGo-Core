@@ -62,6 +62,7 @@ public class GameBoard {
      * Declare if IA functions are callable.
      */
     private boolean ia_functions_enabled = false;
+    private ArrayList<Intersection> boardIntersections;
 
     /**
      * Create a board with the default size.
@@ -812,5 +813,19 @@ public class GameBoard {
 
     public Stone getElement(int column, int line) {
         return getElement(Intersection.get(column, line, this));
+    }
+
+    public Player getPlayerOn(Intersection p) {
+        final Stone element = getElement(p);
+        return element == null ? null : element.getPlayer();
+    }
+
+    public ArrayList<Intersection> getBoardIntersections() {
+        ArrayList<Intersection> intersections = new ArrayList<Intersection>(boardSize * boardSize);
+        for (int x = 0; x < boardSize; x++)
+            for (int y = 0; y < boardSize; y++) {
+                intersections.add(Intersection.get(x, y, this));
+            }
+        return intersections;
     }
 }

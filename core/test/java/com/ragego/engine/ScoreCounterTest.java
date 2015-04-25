@@ -1,9 +1,13 @@
 package com.ragego.engine;
 
+import com.ragego.utils.DebugUtils;
+import com.ragego.utils.FileUtils;
+import com.ragego.utils.StandardGameFormatIO;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -30,18 +34,12 @@ public class ScoreCounterTest {
     }
 
     @Test
-    public void givePointToOpponentWhenStoneIsCaptivated(){
-        player1.registerNodeToPlay(board,"aa","bb");
-        board.nextMove();
-        player2.registerNodeToPlay(board,"ab");
-        board.nextMove();
-        board.nextMove();
-        assertThat(scoreCounter.getPoints(player1),is(0));
-        assertThat(scoreCounter.getPoints(player2),is(0));
-        player2.registerNodeToPlay(board,"ba");
-        board.nextMove();
-        assertThat(scoreCounter.getPoints(player1),is(0));
-        assertThat(scoreCounter.getPoints(player2),is(1));
+    public void givePointToOpponentWhenStoneIsCaptivated() throws Exception {
+        GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "ban9-test-full.sgf"), board).read();
+        game.getScoreCounter().compute();
+        game.getScoreCounter().getScore(new Komi(5.5), ScoreCounter.ScoringMethod.AREA);
+        DebugUtils.printBoard(game);
+        System.out.println("hello");
     }
 
 }
