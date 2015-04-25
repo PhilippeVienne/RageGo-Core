@@ -10,7 +10,6 @@ import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.objects.Goban;
@@ -19,19 +18,22 @@ import com.ragego.utils.GuiUtils;
 /**
  * Manages the display of a generic Go Game Screen.
  */
-public class GoGameScreen extends ScreenAdapter {
+public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
-    protected final MyGestureListener gesture = new MyGestureListener();
+    protected final GobanInputListener gesture = new GobanInputListener();
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
     protected AssetManager manager;
     protected TiledMap map;
     protected Goban goban;
-    protected float mapUnit, yOffset, tileWidthHalf, tileHeightHalf, mapPartPixWidth, mapPartPixHeight;
+    protected float yOffset;
+    protected float tileWidthHalf;
+    protected float tileHeightHalf;
+    protected float mapPartPixWidth;
+    protected float mapPartPixHeight;
     protected int mapWidth, mapHeight;
     protected IsometricTiledMapRenderer renderer;
     protected OrthographicCamera camera;
     protected ExtendViewport viewport;
-    protected Stage stage;
     protected TiledMapTileLayer gridLayer;
     protected TiledMapTileLayer selection;
     protected TiledMapTile selectionTile;
@@ -40,7 +42,7 @@ public class GoGameScreen extends ScreenAdapter {
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
 
     @Override
-    public void show() {
+    public final void show() {
         /*
             Map setup
          */
@@ -56,11 +58,10 @@ public class GoGameScreen extends ScreenAdapter {
                 return Gdx.files.classpath(fileName);
             }
         }));
-        manager.load("com/ragego/gui/maps/Goban_world_test.tmx", TiledMap.class);
+        manager.load("com/ragego/gui/maps/" + getMapToLoad() + ".tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
-        map = manager.get("com/ragego/gui/maps/Goban_world_test.tmx");
-
+        map = manager.get("com/ragego/gui/maps/" + getMapToLoad() + ".tmx");
         renderer = new IsometricTiledMapRenderer(map);
         camera = new OrthographicCamera();
         gridLayer = (TiledMapTileLayer) map.getLayers().get("grid");
@@ -75,9 +76,6 @@ public class GoGameScreen extends ScreenAdapter {
 
         //Offset between the actual coordinate system and the world coordinate system on the y-axis
         yOffset = tileHeightHalf;
-
-        //Map unit (useful for screen/map coordinates conversion). Uncomment if using alternate conversion method.
-        //mapUnit = (float)(Math.sqrt(Math.pow(tileWidthHalf, 2) + Math.pow(tileHeightHalf, 2)));
 
         //Getting the coordinates of extremum tiles for screen sizing and centering
         topTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxTopX", String.class)),
@@ -107,11 +105,8 @@ public class GoGameScreen extends ScreenAdapter {
         //Maximizes the map size on screen
         viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
 
-        /*
-            Goban setup
-         */
-
         goban = new Goban(this, map);
+        setupGoban(goban);
 
         /*
             Interaction components setup
@@ -119,8 +114,22 @@ public class GoGameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
+    /**
+     * This function is called to configure a goban for this GameScreen.
+     * In this function you should setup {@link com.ragego.engine.GameBoard} and {@link com.ragego.engine.Player}s for
+     * this GoGame screen.
+     *
+     * @param goban The goban to setup.
+     */
+    protected abstract void setupGoban(Goban goban);
+
+    /**
+     * Specify the map to load for this GoGame screen.
+     */
+    protected abstract String getMapToLoad();
+
     @Override
-    public void render(float delta) {
+    public final void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -131,7 +140,7 @@ public class GoGameScreen extends ScreenAdapter {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public final void resize(int width, int height) {
         viewport.update(width, height);
         camera.update();
         renderer.setView(camera);
@@ -140,11 +149,12 @@ public class GoGameScreen extends ScreenAdapter {
 
     @Override
     public void pause() {
-
+        if (goban != null) goban.stopGame();
     }
 
     @Override
     public void resume() {
+        if (goban != null) goban.startGame();
     }
 
     @Override
@@ -183,7 +193,7 @@ public class GoGameScreen extends ScreenAdapter {
     }
 
     @SuppressWarnings("unused")
-    public class MyGestureListener implements InputProcessor {
+    public class GobanInputListener implements InputProcessor {
 
         private Vector2 lastTouch = null;
         private TiledMapTileLayer.Cell selectionCell;
@@ -215,12 +225,16 @@ public class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-            Vector3 worldCoords = camera.unproject(tempCoords);
+            if (button == Input.Buttons.LEFT) {
+                Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+                Vector3 worldCoords = camera.unproject(tempCoords);
 
-            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
-            showCrossOn(touch);
-            return false;
+                Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
+                showCrossOn(touch);
+                return false;
+            } else {
+                return true;
+            }
         }
 
         private void showCrossOn(Vector2 position) {
@@ -234,6 +248,7 @@ public class GoGameScreen extends ScreenAdapter {
         }
 
         private void hideCross() {
+            selectionCell = null;
             for (int x = 0; x < selection.getWidth(); x++)
                 for (int y = 0; y < selection.getHeight(); y++)
                     if (selection.getCell(x, y) != null)
@@ -242,21 +257,28 @@ public class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-            Vector3 worldCoords = camera.unproject(tempCoords);
-            hideCross();
-            lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-            return false;
+            if (button == Input.Buttons.LEFT) {
+                Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
+                hideCross();
+                lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
+                return false;
+            } else {
+                return true;
+            }
         }
 
         @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
-            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-            Vector3 worldCoords = camera.unproject(tempCoords);
+            if (selectionCell != null) {
+                Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+                Vector3 worldCoords = camera.unproject(tempCoords);
 
-            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
-            showCrossOn(touch);
-            return false;
+                Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
+                showCrossOn(touch);
+                return false;
+            } else {
+                return true;
+            }
         }
 
         @Override

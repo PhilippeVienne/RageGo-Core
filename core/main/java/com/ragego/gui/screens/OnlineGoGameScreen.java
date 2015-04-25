@@ -3,6 +3,7 @@ package com.ragego.gui.screens;
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.Player;
 import com.ragego.gui.GraphicTurnListener;
+import com.ragego.gui.objects.Goban;
 import com.ragego.network.OnlineGame;
 import com.ragego.network.OnlinePlayer;
 import com.ragego.network.RageGoServer;
@@ -23,8 +24,7 @@ public class OnlineGoGameScreen extends GoGameScreen {
     }
 
     @Override
-    public void show() {
-        super.show();
+    protected void setupGoban(Goban goban) {
         final OnlinePlayer local = RageGoServer.getLocalPlayer();
         OnlinePlayer remote = onlineGame.getWhites() == local ? onlineGame.getBlacks() : onlineGame.getWhites();
         local.setListener(new GraphicTurnListener(this, goban) {
@@ -40,6 +40,11 @@ public class OnlineGoGameScreen extends GoGameScreen {
         remote.setCurrentGame(onlineGame);
         goban.setGameBoard(new GameBoard(onlineGame.getBlacks(), onlineGame.getWhites(), goban.getSize()));
         goban.startGame();
+    }
+
+    @Override
+    protected String getMapToLoad() {
+        return "Goban_world_test";
     }
 
     public OnlineGame getOnlineGame() {

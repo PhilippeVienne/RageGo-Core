@@ -22,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.engine.HumanPlayer;
-import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.RageGoGame;
 import com.ragego.network.OnlineGame;
 import com.ragego.network.OnlinePlayer;
@@ -39,13 +38,11 @@ public class OnlineScreen extends ScreenAdapter{
     private BitmapFont font;
     private Button validateButton, cancelButton;
     private TextField tf;
-    private String yourCode = "7ddA9L";
-    private String hisCode = "9HCb8f";
+    private String yourCode = "loading ...";
 
     private Stage stage;
 
     private AssetManager manager;
-    private GoGameScreen goGameScreen = new GoGameScreen();
 
     private Texture tfSelection, tfBackground, tfCursor, validateButtonUpTex, validateButtonDownTex,
             cancelButtonUpTex, cancelButtonDownTex;
@@ -56,7 +53,7 @@ public class OnlineScreen extends ScreenAdapter{
     @Override
     public void show () {
         if (RageGoServer.getLocalPlayer() == null)
-            RageGoServer.updateLocalPlayer(new HumanPlayer("Player 1", new GraphicTurnListener(goGameScreen)));
+            RageGoServer.updateLocalPlayer(new HumanPlayer("Player 1", null));
         yourCode = RageGoServer.getLocalPlayer().getCode();
         RageGoServer.addListener(new RageGoServer.NewGameListener() {
             @Override

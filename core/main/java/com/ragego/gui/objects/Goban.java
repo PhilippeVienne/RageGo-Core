@@ -49,7 +49,7 @@ public class Goban {
     }
 
     public void startGame() {
-        if (board != null)
+        if (board != null && !engineThread.isAlive())
             engineThread.start();
     }
 

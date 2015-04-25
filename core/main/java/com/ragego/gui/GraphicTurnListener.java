@@ -52,7 +52,7 @@ public class GraphicTurnListener implements TurnListener {
         } while (!(goban.getBoard().isValidIntersection(intersection) && canPlay));
 
         // Apply turn on game
-        if (intersection != null && node != null) {
+        if (intersection != null) {
             goban.getBoard().play(node);
         }
     }
