@@ -1,11 +1,8 @@
 package com.ragego.engine;
 
 import com.ragego.utils.DebugUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -543,21 +540,11 @@ public class GameBoard {
                 message.append(val);
             }
         }
-        byte[] messageHash = new byte[0];
         try {
-            messageHash = MessageDigest.getInstance("MD5").digest(message.toString().getBytes("UTF-8"));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            return DigestUtils.md5Hex(message.toString()).toUpperCase();
+        } catch (Exception e) {
+            return message.toString(); // A bigger hash
         }
-        try {
-            return DatatypeConverter.printHexBinary(messageHash);
-        } catch (NoClassDefFoundError e) {
-            // On android, get another solution
-            return new String(messageHash);
-        }
-        //return "";
     }
 
     /**
