@@ -1,10 +1,10 @@
-# RageGo [![Build Status](https://travis-ci.org/PhilippeGeek/RageGo.svg?branch=master)](https://travis-ci.org/PhilippeGeek/RageGo) [![Join the chat at https://gitter.im/PhilippeGeek/RageGo](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PhilippeGeek/RageGo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# RageGo 
 
 RageGo : Role-play and Aesthetic Game Engine for Go
 
-JAVADOC : http://philippegeek.github.io/RageGo/javadoc/
+DOC : http://ragego.github.io/RageGo/javadoc/
 
-TRAVIS : https://travis-ci.org/PhilippeGeek/RageGo
+[![Build Status](https://travis-ci.org/RageGo/RageGo.svg?branch=master)](https://travis-ci.org/RageGo/RageGo)
 
 # About
 
