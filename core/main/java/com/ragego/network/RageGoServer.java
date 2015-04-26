@@ -3,6 +3,7 @@ package com.ragego.network;
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.GameNode;
 import com.ragego.engine.HumanPlayer;
+import com.ragego.gui.RageGoGame;
 import us.monoid.json.JSONArray;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
@@ -30,6 +31,13 @@ public class RageGoServer extends Resty {
         @Override
         public void run() {
             while (listeningNewGameThread) {
+                while (!RageGoGame.getInstance().isConnected()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        listeningNewGameThread = false;
+                    }
+                }
                 try {
                     JSONArray games = getInstance().json(RAGEGO_SERVER + "/games/for/" + String.valueOf(RageGoServer.getLocalPlayerID()) + ".json").array();
                     for (int i = 0; i < games.length(); i++) {
@@ -39,7 +47,8 @@ public class RageGoServer extends Resty {
                         }
                     }
                 } catch (IOException e) {
-                    throw handleException(e);
+                    if (RageGoGame.getInstance().isConnected())
+                        throw handleException(e);
                 } catch (JSONException e) {
                     throw handleException(e);
                 }

@@ -171,7 +171,6 @@ public class OnlineScreen extends ScreenAdapter {
             validateButton.setPosition(middlepointX - validateButton.getPrefWidth() * 1.5f, tf.getY() - validateButton.getPrefHeight());
             cancelButton.setPosition(middlepointX + cancelButton.getPrefWidth() * 1.5f, tf.getY() - cancelButton.getPrefHeight());
         }
-        stage.setDebugAll(true);
 
         //Adds actors to scene
         stage.addActor(yourCodeLabel);
