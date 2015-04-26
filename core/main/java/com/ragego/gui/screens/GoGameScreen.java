@@ -154,7 +154,6 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        manager.dispose();
         renderer.dispose();
     }
 
