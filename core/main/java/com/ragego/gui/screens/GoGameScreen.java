@@ -93,6 +93,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
         camera.translate(mapPartCenter.x, mapPartCenter.y);
 
         //Maximizes the map size on screen
+        camera.viewportWidth = mapPartPixWidth;
+        camera.viewportHeight = mapPartPixHeight;
         viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
 
         goban = new Goban(this, map);
