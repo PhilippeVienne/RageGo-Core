@@ -129,61 +129,68 @@ public abstract class GoGameScreen extends ScreenAdapter {
             public void clicked(InputEvent event, float x, float y) {
             }
         });
-        /*
-        //Solo Button
-        HexaBarButton soloButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_solo.png", HexaBar.Position.TOP);
-        soloButton.addListener(new ClickListener() {
+
+        // Back Button
+        HexaBarButton backButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/back_button_up.png",
+                "com/ragego/gui/hexabar/back_button_down.png", 2);
+        backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Solo Button clicked");
             }
         });
 
-        //Online Button
-        HexaBarButton onlineButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_online.png", HexaBar.Position.RIGHT_TOP);
-        onlineButton.addListener(new ClickListener() {
+        // Mark Button
+        HexaBarButton markButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/mark_button_up.png",
+                "com/ragego/gui/hexabar/mark_button_down.png", 3);
+        markButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                nextScreen = new OnlineScreen();
             }
         });
 
-        //Credits Button
-        HexaBarButton creditsButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_credits.png", HexaBar.Position.RIGHT_BOTTOM);
-        creditsButton.addListener(new ClickListener() {
+        // Pass Button
+        HexaBarButton passButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/pass_button_up.png",
+                "com/ragego/gui/hexabar/pass_button_down.png", 4);
+        passButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Credits Button clicked");
             }
         });
 
-        //Return Button
-        HexaBarButton returnButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_return.png", HexaBar.Position.BOTTOM);
+        // Save Button
+        HexaBarButton saveButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/save_button_up.png",
+                "com/ragego/gui/hexabar/save_button_down.png", 5);
+        saveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+
+        // Inactive Buttons
+        HexaBarButton inactiveButton1 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 6);
+        HexaBarButton inactiveButton2 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 7);
+        HexaBarButton inactiveButton3 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 8);
+        HexaBarButton inactiveButton4 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 9);
+
+        // Settings Button
+        HexaBarButton settingsButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/settings_button_up.png",
+                "com/ragego/gui/hexabar/settings_button_down.png", 10);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+
+        // Return Button
+        HexaBarButton returnButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/return_button_up.png",
+                "com/ragego/gui/hexabar/return_button_down.png", 11);
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
+                goban.stopGame();
+                RageGoGame.goHome();
             }
         });
-
-        //Multiplayer Button
-        HexaBarButton multiPlayerButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_multiplayer.png", HexaBar.Position.LEFT_TOP);
-        multiPlayerButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                nextScreen = new SimpleGoGameScreen();
-            }
-        });
-
-        //Parameters Button
-        HexaBarButton parametersButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_parameters.png", HexaBar.Position.LEFT_BOTTOM);
-        parametersButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Parameters Button clicked");
-            }
-        });
-        */
     }
 
     /**
@@ -220,6 +227,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         camera.update();
         renderer.setView(camera);
         renderer.render();
+        hudStage.getViewport().update(width, height);
     }
 
     @Override

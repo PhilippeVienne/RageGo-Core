@@ -28,6 +28,19 @@ public class HexaBarButton extends Button {
     /**
      * @param hexabar The hexabar where the button will be
      * @param upTexToLoad The up texture to load
+     * @param position The wanted position in the hex coordinates system
+     */
+    public HexaBarButton(HexaBar hexabar, String upTexToLoad, int position) {
+        this.hexabar = hexabar;
+        loadTex(upTexToLoad, null);
+        setSize(getPrefWidth(), getPrefHeight());
+        setPosition(position);
+        hexabar.addButton(this);
+    }
+
+    /**
+     * @param hexabar The hexabar where the button will be
+     * @param upTexToLoad The up texture to load
      * @param downTexToLoad The down texture to load
      * @param position The wanted position in the hex coordinates system
      */
@@ -46,11 +59,13 @@ public class HexaBarButton extends Button {
      * @param downTexToLoad URI to give to {@link com.badlogic.gdx.Gdx#files}
      */
     private void loadTex(String upTexToLoad, String downTexToLoad) {
-        upTexture = new Texture(Gdx.files.classpath(upTexToLoad));
-        downTexture = new Texture(Gdx.files.classpath(downTexToLoad));
         Button.ButtonStyle style = new Button.ButtonStyle();
-        style.up = new TextureRegionDrawable(new TextureRegion(upTexture));
+        upTexture = new Texture(Gdx.files.classpath(upTexToLoad));
+        if (downTexToLoad != null){
+        downTexture = new Texture(Gdx.files.classpath(downTexToLoad));
         style.down = new TextureRegionDrawable(new TextureRegion(downTexture));
+        }
+        style.up = new TextureRegionDrawable(new TextureRegion(upTexture));
         setStyle(style);
     }
 
