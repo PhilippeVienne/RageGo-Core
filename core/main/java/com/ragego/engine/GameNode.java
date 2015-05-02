@@ -83,7 +83,7 @@ public class GameNode {
     public GameNode(GameBoard board, GameNode parent, GameNode.Action action, Intersection intersection, Player player) {
         if (board == null)
             throw new IllegalArgumentException("Board can not be null");
-        boardHash = board.getBoardHash();
+        //boardHash = board.getBoardHash();
         this.action = action;
         this.intersection = intersection;
         this.player = player;

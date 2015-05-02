@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.menu.HexaBar;
 import com.ragego.gui.menu.HexaBarButton;
@@ -27,6 +29,11 @@ import com.ragego.utils.GuiUtils;
  */
 public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
+    private static final float HALF_TAP_SQUARE_SIZE = 20.0f;
+    private static final float TAP_COUNT_INTERVAL = 0.4f;
+    private static final float LONG_PRESS_DURATION = 1.1f;
+    private static final float MAX_FLING_DELAY = 0.15f;
+
     protected AssetManager manager;
     protected TiledMap map;
     protected Goban goban;
@@ -45,10 +52,11 @@ public abstract class GoGameScreen extends ScreenAdapter {
         protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
 
-    protected final GobanInputListener gesture = new GobanInputListener();
+    protected final GobanInputProcessor gobanInputProcessor = new GobanInputProcessor();
+    private GestureDetector gestureDetector;
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
-    protected ScreenViewport hudViewport;
+    protected Viewport hudViewport;
     protected Stage hudStage;
     protected HexaBar hexaBar;
 
@@ -111,17 +119,24 @@ public abstract class GoGameScreen extends ScreenAdapter {
         setupGoban(goban);
 
         /*
-            HUD setup
+            Input processors and HUD setup
         */
         hudViewport = new ScreenViewport();
-        hudStage = new Stage();
-        //stage.setDebugAll(true);
+        hudStage = new Stage(hudViewport);
+        //hudStage.setDebugAll(true);
 
+        gestureDetector = new GestureDetector(HALF_TAP_SQUARE_SIZE,
+                TAP_COUNT_INTERVAL,
+                LONG_PRESS_DURATION,
+                MAX_FLING_DELAY,
+                new GestureHandler());
+        
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
-        inputMultiplexer.addProcessor(gesture);
+        inputMultiplexer.addProcessor(gestureDetector);
+        inputMultiplexer.addProcessor(gobanInputProcessor);
 
-        hexaBar = new HexaBar(hudStage);
+        hexaBar = new HexaBar(hudViewport, hudStage);
 
         // Forward Button
         HexaBarButton forwardButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/forward_button_up.png",
@@ -229,7 +244,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
         camera.update();
         renderer.setView(camera);
         renderer.render();
-        hudStage.getViewport().update(width, height);
+        hudViewport.update(width, height, true);
+        hexaBar.update(hudViewport);
     }
 
     @Override
@@ -264,11 +280,11 @@ public abstract class GoGameScreen extends ScreenAdapter {
      */
     public Vector2 waitForUserInputOnGoban() {
         Vector2 coordinates;
-        synchronized (gesture) {
-            while ((coordinates = gesture.popLastTouch()) == null) {
+        synchronized (gobanInputProcessor) {
+            while ((coordinates = gobanInputProcessor.popLastTouch()) == null) {
                 try {
                     Thread.sleep(0, 500);
-                    gesture.wait(5);
+                    gobanInputProcessor.wait(5);
                 } catch (InterruptedException e) {
                     Gdx.app.debug("Threads", "GameEngine thread has been closed");
                 }
@@ -278,7 +294,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     }
 
     @SuppressWarnings("unused")
-    public class GobanInputListener implements InputProcessor {
+    public class GobanInputProcessor implements InputProcessor {
 
         private Vector2 lastTouch = null;
         private TiledMapTileLayer.Cell selectionCell;
@@ -375,5 +391,54 @@ public abstract class GoGameScreen extends ScreenAdapter {
         public boolean scrolled(int amount) {
             return false;
         }
+    }
+
+    //TODO : improve zoom implementation when Hash problem solved
+    public class GestureHandler implements GestureDetector.GestureListener {
+        float initialScale = 1;
+
+        @Override
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean longPress(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+            return false;
+        }
+
+        @Override
+        public boolean panStop(float x, float y, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean zoom(float initialDistance, float distance) {
+            initialScale = camera.zoom;
+            float ratio = initialDistance / distance;
+            camera.zoom = initialScale * ratio;
+            return false;
+        }
+
+        @Override
+        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+            return false;
+        }
+
     }
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.HashMap;
 
@@ -18,24 +19,35 @@ public class HexaBar {
     private static final String BAR_BACKGROUND_TEXTURE = "com/ragego/gui/hexabar/frame_white.png";
     private static final int BUTTONS_NB = 11;
     private final Texture backgroundTexture;
-    private final Button hexaBar;
+    public final Button hexaBar;
     private HashMap<Integer, HexaBarButton> buttons = new HashMap<Integer, HexaBarButton>(BUTTONS_NB);
     private Stage stage;
+    private Vector2 hexaBarCenter;
 
-    public HexaBar(Stage stage) {
+    public HexaBar(Viewport viewport, Stage stage) {
         this.stage = stage;
         backgroundTexture = new Texture(Gdx.files.classpath(BAR_BACKGROUND_TEXTURE));
         Button.ButtonStyle hexaBarStyle = new Button.ButtonStyle();
         hexaBarStyle.up = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
         hexaBar = new Button(hexaBarStyle);
-        Vector2 menuBackCenter = new Vector2(hexaBar.getWidth() * 0.5f, hexaBar.getHeight() * 0.5f);
-        hexaBar.setPosition(stage.getWidth() * 0.5f - menuBackCenter.x, 0);
+        hexaBarCenter = new Vector2(hexaBar.getWidth() * 0.5f, hexaBar.getHeight() * 0.5f);
+        hexaBar.setPosition(viewport.getScreenWidth() * 0.5f - hexaBarCenter.x, 0);
         stage.addActor(hexaBar);
     }
 
     public void addButton(HexaBarButton button) {
         buttons.put(button.getPosition(), button);
         stage.addActor(button);
+    }
+    public void update (Viewport viewport) {
+        hexaBarCenter.x = hexaBar.getWidth() * 0.5f;
+        hexaBarCenter.y = hexaBar.getHeight() * 0.5f;
+        hexaBar.setPosition(viewport.getScreenWidth() * 0.5f - hexaBarCenter.x, 0);
+        int counter = 1;
+        for (HexaBarButton button : buttons.values()) {
+            button.setPosition(counter);
+            counter++;
+        }
     }
 
     /**
