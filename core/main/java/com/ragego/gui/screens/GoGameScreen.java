@@ -4,6 +4,8 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -14,7 +16,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -59,6 +63,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected Viewport hudViewport;
     protected Stage hudStage;
     protected HexaBar hexaBar;
+    protected Button hudButtonLeft = new Button();
+    protected Button hudButtonRight = new Button();
+    protected boolean hudVisible = false;
 
     @Override
     public final void show() {
@@ -208,6 +215,38 @@ public abstract class GoGameScreen extends ScreenAdapter {
                 RageGoGame.goHome();
             }
         });
+        
+        //Default behaviour is to hide the menu
+        for (int i = 0 ; i < hudStage.getActors().size; i++) {
+            hudStage.getActors().get(i).setVisible(false);
+        }
+
+        // HUD visibility button
+        Button.ButtonStyle hudButtonStyle = new Button.ButtonStyle();
+        hudButtonStyle.up = new TextureRegionDrawable(new TextureRegion(
+                new Texture("com/ragego/gui/hexabar/hud_button_up.png")));
+        hudButtonStyle.down = new TextureRegionDrawable(new TextureRegion(
+                new Texture("com/ragego/gui/hexabar/hud_button_down.png")));
+        hudButtonLeft = new Button(hudButtonStyle);
+        hudButtonRight = new Button(hudButtonStyle);
+        ClickListener hudButtonClickListener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                hudVisible = !hudVisible;
+                if (hudVisible) {
+                    for (int i = 0 ; i < hudStage.getActors().size; i++) {
+                        hudStage.getActors().get(i).setVisible(true);
+                    }
+                    hudButtonLeft.setVisible(false);
+                    hudButtonRight.setVisible(false);
+                }
+            }
+        };
+        hudButtonLeft.addListener(hudButtonClickListener);
+        hudButtonLeft.setPosition(0, 0);
+        hudButtonRight.setPosition(hudViewport.getScreenWidth() - hudButtonRight.getWidth(), 0);
+        hudStage.addActor(hudButtonLeft);
+        hudStage.addActor(hudButtonRight);
     }
 
     /**
@@ -246,6 +285,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
         renderer.render();
         hudViewport.update(width, height, true);
         hexaBar.update(hudViewport);
+        hudButtonLeft.setPosition(0, 0);
+        hudButtonRight.setPosition(hudViewport.getScreenWidth() - hudButtonRight.getWidth(), 0);
     }
 
     @Override
@@ -326,6 +367,14 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            if (hudVisible) {
+                hudVisible = false;
+                for (int i = 0 ; i < hudStage.getActors().size; i++) {
+                    hudStage.getActors().get(i).setVisible(false);
+                }
+                hudButtonLeft.setVisible(true);
+                hudButtonRight.setVisible(true);
+            }
             if (button == Input.Buttons.LEFT) {
                 Vector3 tempCoords = new Vector3(screenX, screenY, 0);
                 Vector3 worldCoords = camera.unproject(tempCoords);
