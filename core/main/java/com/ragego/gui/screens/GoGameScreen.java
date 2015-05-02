@@ -11,8 +11,14 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.menu.HexaBar;
+import com.ragego.gui.menu.HexaBarButton;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
 
@@ -38,9 +44,12 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected TiledMapTileLayer gridLayer;
     protected TiledMapTileLayer selection;
     protected TiledMapTile selectionTile;
-
-    protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
+        protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
+
+    protected ScreenViewport hudViewport;
+    protected Stage hudStage;
+    protected HexaBar hexaBar;
 
     @Override
     public final void show() {
@@ -101,9 +110,80 @@ public abstract class GoGameScreen extends ScreenAdapter {
         setupGoban(goban);
 
         /*
-            Interaction components setup
-         */
+            HUD setup
+        */
+        hudViewport = new ScreenViewport();
+        hudStage = new Stage();
+        //stage.setDebugAll(true);
+
         Gdx.input.setInputProcessor(inputMultiplexer);
+        inputMultiplexer.addProcessor(hudStage);
+
+        hexaBar = new HexaBar(hudStage);
+
+        // Forward Button
+        HexaBarButton forwardButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/forward_button_up.png",
+                "com/ragego/gui/hexabar/forward_button_down.png", 1);
+        forwardButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        /*
+        //Solo Button
+        HexaBarButton soloButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_solo.png", HexaBar.Position.TOP);
+        soloButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(TAG, "Solo Button clicked");
+            }
+        });
+
+        //Online Button
+        HexaBarButton onlineButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_online.png", HexaBar.Position.RIGHT_TOP);
+        onlineButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextScreen = new OnlineScreen();
+            }
+        });
+
+        //Credits Button
+        HexaBarButton creditsButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_credits.png", HexaBar.Position.RIGHT_BOTTOM);
+        creditsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(TAG, "Credits Button clicked");
+            }
+        });
+
+        //Return Button
+        HexaBarButton returnButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_return.png", HexaBar.Position.BOTTOM);
+        returnButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
+
+        //Multiplayer Button
+        HexaBarButton multiPlayerButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_multiplayer.png", HexaBar.Position.LEFT_TOP);
+        multiPlayerButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextScreen = new SimpleGoGameScreen();
+            }
+        });
+
+        //Parameters Button
+        HexaBarButton parametersButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/button_parameters.png", HexaBar.Position.LEFT_BOTTOM);
+        parametersButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log(TAG, "Parameters Button clicked");
+            }
+        });
+        */
     }
 
     /**
@@ -129,6 +209,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         renderer.setView(camera);
         renderer.render();
+
+        hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+        hudStage.draw();
     }
 
     @Override
@@ -157,6 +240,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         renderer.dispose();
+        hudStage.dispose();
     }
 
     public TiledMap getMap() {
