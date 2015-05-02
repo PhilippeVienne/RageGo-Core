@@ -97,17 +97,15 @@ public class GameBoard {
             if (currentPlayer == null) currentPlayer = getFirstPlayer();
         }
         { // Spread events that a turn is starting
-            //final String signature = getBoardHash();
+            final String signature = getBoardHash();
             getFirstPlayer().getListener().startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
             getSecondPlayer().getListener().startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
             for (GameListener listener : listeners) {
                 listener.startOfTurn(this, currentPlayer, getOpponent(currentPlayer));
             }
-            /*
             if (!signature.equals(getBoardHash())) {
                 throw new IllegalStateException("A player has modified the board, and this should not be");
             }
-            */
         }
         // Play the turn
         currentPlayer.getListener().newTurn(this, currentPlayer);
