@@ -27,8 +27,6 @@ import com.ragego.utils.GuiUtils;
  */
 public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
-    protected final GobanInputListener gesture = new GobanInputListener();
-    protected final InputMultiplexer inputMultiplexer = new InputMultiplexer(gesture);
     protected AssetManager manager;
     protected TiledMap map;
     protected Goban goban;
@@ -46,6 +44,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected TiledMapTile selectionTile;
         protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
+
+    protected final GobanInputListener gesture = new GobanInputListener();
+    protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
     protected ScreenViewport hudViewport;
     protected Stage hudStage;
@@ -118,6 +119,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
+        inputMultiplexer.addProcessor(gesture);
 
         hexaBar = new HexaBar(hudStage);
 
