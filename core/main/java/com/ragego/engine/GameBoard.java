@@ -1,6 +1,5 @@
 package com.ragego.engine;
 
-import com.ragego.utils.DebugUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = false;
+    public static boolean DEBUG_MODE = true;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
@@ -230,6 +229,7 @@ public class GameBoard {
             throw new IllegalArgumentException("The wanted action is violating a Go rule", goRuleViolation);
         }
         node.setParent(lastNode);
+        node.setPlayer(currentPlayer);
         lastNode = node;
         for (GameListener listener : listeners) {
             listener.playNode(node);
@@ -261,12 +261,13 @@ public class GameBoard {
                     throw new RuntimeException("Player is not an IAPlayer");
                 }
                 break;
+            default:
+                throw new IllegalArgumentException("Node is not valid");
         }
         lastNode.recomputeHash();
         lastNode.lock();
         if (DEBUG_MODE) {
             System.out.println("Played node: " + node);
-            DebugUtils.printBoard(this);
             System.out.println("Board hash is = " + getBoardHash());
         }
     }
@@ -818,5 +819,9 @@ public class GameBoard {
 
     public int getNumberForPlayer(Player player) {
         return player == firstPlayer ? 1 : (player == secondPlayer ? 2 : 0);
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 }

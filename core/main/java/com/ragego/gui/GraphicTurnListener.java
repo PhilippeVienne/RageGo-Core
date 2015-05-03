@@ -35,24 +35,29 @@ public class GraphicTurnListener implements TurnListener {
 
     @Override
     public void newTurn(GameBoard board, Player player) {
-        Intersection intersection;
-        GameNode node = null;
+        Intersection intersection = Intersection.get(-1, -1, board);
+        GameNode node = new GameNode(board, GameNode.Action.NOTHING);
         boolean canPlay = false;
         do {
             final Vector2 input = goban.waitForUserInputOnGoban();
-            intersection = Intersection.get((int) input.y, (int) input.x, goban.getBoard());
-            if (!goban.getBoard().isValidIntersection(intersection)) continue;
-            node = new GameNode(goban.getBoard(), null, GameNode.Action.PUT_STONE, intersection, player);
+            if (input == null) {
+                node = new GameNode(board, null, GameNode.Action.PASS, intersection, player);
+            } else {
+                intersection = Intersection.get((int) input.y, (int) input.x, goban.getBoard());
+                if (!goban.getBoard().isValidIntersection(intersection)) continue;
+                node = new GameNode(goban.getBoard(), null, GameNode.Action.PUT_STONE, intersection, player);
+            }
             try {
                 canPlay = goban.getBoard().canPlay(node);
             } catch (GoRuleViolation goRuleViolation) {
                 System.out.print("Rule violation : " + goRuleViolation.getMessage());
                 canPlay = false;
             }
-        } while (!(goban.getBoard().isValidIntersection(intersection) && canPlay));
+        }
+        while ((!(goban.getBoard().isValidIntersection(intersection) || node.getAction() == GameNode.Action.PASS) && canPlay));
 
         // Apply turn on game
-        if (intersection != null) {
+        if (node.getAction() == GameNode.Action.PASS || node.getAction() == GameNode.Action.PUT_STONE) {
             goban.getBoard().play(node);
         }
     }

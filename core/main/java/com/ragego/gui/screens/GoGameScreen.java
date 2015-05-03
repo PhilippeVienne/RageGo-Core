@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -37,7 +38,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
     private static final float TAP_COUNT_INTERVAL = 0.4f;
     private static final float LONG_PRESS_DURATION = 1.1f;
     private static final float MAX_FLING_DELAY = 0.15f;
-
+    protected final GobanInputProcessor gobanInputProcessor = new GobanInputProcessor();
+    protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
     protected AssetManager manager;
     protected TiledMap map;
     protected Goban goban;
@@ -55,17 +57,13 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected TiledMapTile selectionTile;
         protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
-
-    protected final GobanInputProcessor gobanInputProcessor = new GobanInputProcessor();
-    private GestureDetector gestureDetector;
-    protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
-
     protected Viewport hudViewport;
     protected Stage hudStage;
     protected HexaBar hexaBar;
     protected Button hudButtonLeft = new Button();
     protected Button hudButtonRight = new Button();
     protected boolean hudVisible = false;
+    private GestureDetector gestureDetector;
 
     @Override
     public final void show() {
@@ -178,6 +176,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         passButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                goban.markTurnAsShouldBePassed();
             }
         });
 
@@ -233,20 +232,25 @@ public abstract class GoGameScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 hudVisible = !hudVisible;
-                if (hudVisible) {
-                    for (int i = 0 ; i < hudStage.getActors().size; i++) {
-                        hudStage.getActors().get(i).setVisible(true);
-                    }
-                    hudButtonLeft.setVisible(false);
-                    hudButtonRight.setVisible(false);
-                }
+                showHud();
             }
         };
         hudButtonLeft.addListener(hudButtonClickListener);
         hudButtonLeft.setPosition(0, 0);
+        hudButtonRight.addListener(hudButtonClickListener);
         hudButtonRight.setPosition(hudViewport.getScreenWidth() - hudButtonRight.getWidth(), 0);
         hudStage.addActor(hudButtonLeft);
         hudStage.addActor(hudButtonRight);
+    }
+
+    private void showHud() {
+        if (hudVisible) {
+            for (Actor actor : hudStage.getActors())
+                if (actor != null)
+                    actor.setVisible(true);
+            hudButtonLeft.setVisible(false);
+            hudButtonRight.setVisible(false);
+        }
     }
 
     /**
@@ -322,7 +326,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     public Vector2 waitForUserInputOnGoban() {
         Vector2 coordinates;
         synchronized (gobanInputProcessor) {
-            while ((coordinates = gobanInputProcessor.popLastTouch()) == null) {
+            while ((coordinates = gobanInputProcessor.popLastTouch()) == null && !goban.passTurn()) {
                 try {
                     Thread.sleep(0, 500);
                     gobanInputProcessor.wait(5);
@@ -331,7 +335,21 @@ public abstract class GoGameScreen extends ScreenAdapter {
                 }
             }
         }
+        if (goban.passTurn()) // Null return means user pass his turn
+            return null;
         return coordinates;
+    }
+
+    private void hideHud() {
+        if (hudVisible) {
+            hudVisible = false;
+            for (Actor actor : hudStage.getActors()) {
+                if (actor != null)
+                    actor.setVisible(false);
+            }
+            hudButtonLeft.setVisible(true);
+            hudButtonRight.setVisible(true);
+        }
     }
 
     @SuppressWarnings("unused")
@@ -367,14 +385,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            if (hudVisible) {
-                hudVisible = false;
-                for (int i = 0 ; i < hudStage.getActors().size; i++) {
-                    hudStage.getActors().get(i).setVisible(false);
-                }
-                hudButtonLeft.setVisible(true);
-                hudButtonRight.setVisible(true);
-            }
+            hideHud();
             if (button == Input.Buttons.LEFT) {
                 Vector3 tempCoords = new Vector3(screenX, screenY, 0);
                 Vector3 worldCoords = camera.unproject(tempCoords);

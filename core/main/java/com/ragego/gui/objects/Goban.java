@@ -1,5 +1,6 @@
 package com.ragego.gui.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -22,10 +23,12 @@ public class Goban {
     private final TiledMapTile whiteStone;
     private final Vector2 gobanOriginCoords;
     private final int gobanSize;
-    private final Thread engineThread;
     private final List<GraphicStone> stones = new ArrayList<GraphicStone>(19 * 19);
+    private Thread engineThread;
     private GameBoard board;
     private GobanGameBoardListener listener;
+    private boolean gameRunning = false;
+    private boolean passTurn = false;
 
     public Goban(GoGameScreen screen, TiledMap map) {
         this.screen = screen;
@@ -37,7 +40,7 @@ public class Goban {
         this.blackStone = stoneTS.getTile(firstGid);
         this.whiteStone = stoneTS.getTile(firstGid + 1);
         this.gobanSize = Integer.parseInt(map.getProperties().get("gobanSize", String.class));
-        engineThread = new Thread(new GameRunnable());
+        engineThread = new Thread(new GameRunnable(), "GameEngine-Thread");
     }
 
     public TiledMapTileLayer getGridLayer() {
@@ -49,13 +52,21 @@ public class Goban {
     }
 
     public void startGame() {
+        gameRunning = true;
         if (board != null && !engineThread.isAlive())
-            engineThread.start();
+            try {
+                engineThread.start();
+            } catch (Exception e) {
+                Gdx.app.error("Game", "Could not start computing engine", e);
+            }
     }
 
     public void stopGame() {
-        if (!engineThread.isInterrupted())
+        gameRunning = false;
+        if (!engineThread.isInterrupted()) {
             engineThread.interrupt();
+            engineThread = new Thread(new GameRunnable(), "GameEngine-Thread");
+        }
     }
 
     public Vector2 isoToGoban (Vector2 isoCoords){
@@ -74,7 +85,8 @@ public class Goban {
 
     public Vector2 waitForUserInputOnGoban() {
         final Vector2 vector2 = screen.waitForUserInputOnGoban();
-        return isoToGoban(vector2);
+        if (vector2 == null) return null;
+        else return isoToGoban(vector2);
     }
 
     private Vector2 getStonePositionOnMap(Intersection intersection) {
@@ -145,15 +157,22 @@ public class Goban {
     }
 
     public void updateCurrentPlayer() {
-        // NOT SUPPORTED YET
+        passTurn = false;
+    }
+
+    public boolean passTurn() {
+        return passTurn;
+    }
+
+    public void markTurnAsShouldBePassed() {
+        passTurn = true;
     }
 
     private class GameRunnable implements Runnable {
         @Override
         public void run() {
-            board.nextMove();
-            if (!engineThread.isInterrupted())
-                run();
+            while (gameRunning)
+                board.nextMove();
         }
     }
 }
