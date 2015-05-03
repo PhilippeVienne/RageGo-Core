@@ -223,9 +223,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
         // HUD visibility button
         Button.ButtonStyle hudButtonStyle = new Button.ButtonStyle();
         hudButtonStyle.up = new TextureRegionDrawable(new TextureRegion(
-                new Texture("com/ragego/gui/hexabar/hud_button_up.png")));
+                new Texture(Gdx.files.classpath("com/ragego/gui/hexabar/hud_button_up.png"))));
         hudButtonStyle.down = new TextureRegionDrawable(new TextureRegion(
-                new Texture("com/ragego/gui/hexabar/hud_button_down.png")));
+                new Texture(Gdx.files.classpath("com/ragego/gui/hexabar/hud_button_down.png"))));
         hudButtonLeft = new Button(hudButtonStyle);
         hudButtonRight = new Button(hudButtonStyle);
         ClickListener hudButtonClickListener = new ClickListener() {
@@ -242,6 +242,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         hudStage.addActor(hudButtonLeft);
         hudStage.addActor(hudButtonRight);
     }
+
 
     private void showHud() {
         if (hudVisible) {
