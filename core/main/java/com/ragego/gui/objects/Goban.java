@@ -40,7 +40,7 @@ public class Goban {
         this.blackStone = stoneTS.getTile(firstGid);
         this.whiteStone = stoneTS.getTile(firstGid + 1);
         this.gobanSize = Integer.parseInt(map.getProperties().get("gobanSize", String.class));
-        engineThread = new Thread(new GameRunnable(), "GameEngine-Thread");
+        engineThread = generateGameThread();
     }
 
     public TiledMapTileLayer getGridLayer() {
@@ -65,8 +65,20 @@ public class Goban {
         gameRunning = false;
         if (!engineThread.isInterrupted()) {
             engineThread.interrupt();
-            engineThread = new Thread(new GameRunnable(), "GameEngine-Thread");
+            engineThread = generateGameThread();
         }
+    }
+
+    private Thread generateGameThread() {
+        final Thread thread = new Thread(new GameRunnable(), "GameEngine-Thread");
+        thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                Gdx.app.error(t.getName(), e.getMessage(), e);
+                stopGame();
+            }
+        });
+        return thread;
     }
 
     public Vector2 isoToGoban (Vector2 isoCoords){

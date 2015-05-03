@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manages positions and display for an hexagonal menu.
@@ -18,8 +19,8 @@ public class HexaBar {
 
     private static final String BAR_BACKGROUND_TEXTURE = "com/ragego/gui/hexabar/frame_white.png";
     private static final int BUTTONS_NB = 11;
-    private final Texture backgroundTexture;
     public final Button hexaBar;
+    private final Texture backgroundTexture;
     private HashMap<Integer, HexaBarButton> buttons = new HashMap<Integer, HexaBarButton>(BUTTONS_NB);
     private Stage stage;
     private Vector2 hexaBarCenter;
@@ -43,10 +44,8 @@ public class HexaBar {
         hexaBarCenter.x = hexaBar.getWidth() * 0.5f;
         hexaBarCenter.y = hexaBar.getHeight() * 0.5f;
         hexaBar.setPosition(viewport.getScreenWidth() * 0.5f - hexaBarCenter.x, 0);
-        int counter = 1;
-        for (HexaBarButton button : buttons.values()) {
-            button.setPosition(counter);
-            counter++;
+        for (Map.Entry<Integer, HexaBarButton> buttonEntry : buttons.entrySet()) {
+            buttonEntry.getValue().setPosition(buttonEntry.getKey());
         }
     }
 
