@@ -306,7 +306,6 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     @Override
     public void hide() {
-        dispose();
     }
 
     @Override
@@ -372,10 +371,6 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean keyUp(int keycode) {
-            if (keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
-                goban.stopGame();
-                RageGoGame.goHome();
-            }
             return false;
         }
 
@@ -399,7 +394,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
             }
         }
 
-        private void showCrossOn(Vector2 position) {
+        private void showCrossOn(final Vector2 position) {
             hideCross();
             Vector2 positionCopy = position.cpy();
             if (goban.isValidOnGoban(GuiUtils.isoLeftToIsoTop(positionCopy, mapHeight))) {

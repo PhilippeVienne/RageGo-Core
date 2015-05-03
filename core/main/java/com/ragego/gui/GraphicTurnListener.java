@@ -36,9 +36,11 @@ public class GraphicTurnListener implements TurnListener {
     @Override
     public void newTurn(GameBoard board, Player player) {
         Intersection intersection = Intersection.get(-1, -1, board);
-        GameNode node = new GameNode(board, GameNode.Action.NOTHING);
-        boolean canPlay = false;
+        GameNode node;
+        boolean canPlay;
         do {
+            canPlay = false;
+            node = new GameNode(board, GameNode.Action.NOTHING);
             final Vector2 input = goban.waitForUserInputOnGoban();
             if (input == null) {
                 node = new GameNode(board, null, GameNode.Action.PASS, intersection, player);
@@ -54,10 +56,10 @@ public class GraphicTurnListener implements TurnListener {
                 canPlay = false;
             }
         }
-        while ((!(goban.getBoard().isValidIntersection(intersection) || node.getAction() == GameNode.Action.PASS) && canPlay));
+        while (!canPlay);
 
         // Apply turn on game
-        if (node.getAction() == GameNode.Action.PASS || node.getAction() == GameNode.Action.PUT_STONE) {
+        if (node.getAction() == GameNode.Action.PASS || (node.getAction() == GameNode.Action.PUT_STONE && board.isValidIntersection(node.getIntersection()))) {
             goban.getBoard().play(node);
         }
     }
