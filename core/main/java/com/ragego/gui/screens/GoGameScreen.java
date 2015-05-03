@@ -134,7 +134,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
                 TAP_COUNT_INTERVAL,
                 LONG_PRESS_DURATION,
                 MAX_FLING_DELAY,
-                new GestureHandler());
+                new ZoomPinchHandler());
         
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
@@ -455,7 +455,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
     }
 
     //TODO : improve zoom implementation when Hash problem solved
-    public class GestureHandler implements GestureDetector.GestureListener {
+    public class ZoomPinchHandler implements GestureDetector.GestureListener {
+        final float maxScale = 1; // x1 zoom
+        final float minScale = 0.25f; // x4 zoom
         float initialScale = 1;
 
         @Override
@@ -491,8 +493,10 @@ public abstract class GoGameScreen extends ScreenAdapter {
         @Override
         public boolean zoom(float initialDistance, float distance) {
             initialScale = camera.zoom;
-            float ratio = initialDistance / distance;
-            camera.zoom = initialScale * ratio;
+            float wantedScale = initialScale * (initialDistance / distance);
+            if (wantedScale < minScale) wantedScale = minScale;
+            else if (wantedScale > maxScale) wantedScale = maxScale;
+            camera.zoom = wantedScale;
             return false;
         }
 
