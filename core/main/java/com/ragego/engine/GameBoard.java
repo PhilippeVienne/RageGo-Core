@@ -229,7 +229,8 @@ public class GameBoard {
             throw new IllegalArgumentException("The wanted action is violating a Go rule", goRuleViolation);
         }
         node.setParent(lastNode);
-        node.setPlayer(currentPlayer);
+        if (currentPlayer != null) // We are not in an auto-computing mode.
+            node.setPlayer(currentPlayer);
         lastNode = node;
         for (GameListener listener : listeners) {
             listener.playNode(node);
@@ -255,11 +256,14 @@ public class GameBoard {
                 try {
                     IAPlayer iaPlayer = (IAPlayer) currentPlayer;
                     ia_functions_enabled = true;
-                    iaPlayer.makeSpecialTurn();
+                    if (iaPlayer != null)
+                        iaPlayer.makeSpecialTurn();
                     ia_functions_enabled = false;
                 } catch (ClassCastException e) {
                     throw new RuntimeException("Player is not an IAPlayer");
                 }
+                break;
+            case NOTHING:
                 break;
             default:
                 throw new IllegalArgumentException("Node is not valid");

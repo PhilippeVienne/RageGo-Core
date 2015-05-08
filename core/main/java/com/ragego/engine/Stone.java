@@ -15,13 +15,13 @@ public class Stone {
     private boolean capturated = false;
     private StoneGroup stoneGroup;
 
-    public Stone() {
-        this(null, null);
-    }
-
-    public Stone(Intersection intersection) {
-        this(intersection, null);
-    }
+//    public Stone() {
+//        this(null, null);
+//    }
+//
+//    public Stone(Intersection intersection) {
+//        this(intersection, null);
+//    }
 
     public Stone(Intersection intersection, Player player) {
         this.position = intersection;
@@ -92,7 +92,7 @@ public class Stone {
                 continue;
             }
             final Stone element = board.getElement(intersection);
-            if (element != null && element.getPlayer().equals(getPlayer()) && element.getStoneGroup() != stoneGroup)
+            if (element != null && getPlayer().equals(element.getPlayer()) && element.getStoneGroup() != stoneGroup)
                 liberty++;
         }
         return liberty;
