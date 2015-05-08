@@ -81,12 +81,21 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Gdx.app.log("IHM", "Touch down on " + screenX + "," + screenY + " with " + pointer);
         if (screen.hudVisible) {
             screen.hideHud();
         }
         pointers[pointer] = new Vector2(screenX, screenY);
         updateCurrentAction();
         resetCounters();
+        if (placingStone) {
+            Vector3 tempCoords = new Vector3(screenX, screenY, 0);
+            Vector3 worldCoords = screen.getCamera().unproject(tempCoords);
+            Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.yOffset);
+            showCrossOn(touch);
+        } else {
+            hideCross();
+        }
         return false;
     }
 
