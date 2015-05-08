@@ -1,6 +1,8 @@
 package com.ragego.gui.screens;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,7 +39,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     private static final float TAP_COUNT_INTERVAL = 0.4f;
     private static final float LONG_PRESS_DURATION = 1.1f;
     private static final float MAX_FLING_DELAY = 0.15f;
-    protected final GobanInputProcessor gobanInputProcessor = new GobanInputProcessor();
+    protected final GoGameScreenMouseTouchListener gobanInputProcessor = new GoGameScreenMouseTouchListener(this);
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
     protected AssetManager manager;
     protected TiledMap map;
@@ -138,8 +139,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
-        inputMultiplexer.addProcessor(gestureDetector);
-        inputMultiplexer.addProcessor(gobanInputProcessor);
+        gobanInputProcessor.addToMultiplexer(inputMultiplexer);
 
         hexaBar = new HexaBar(hudViewport, hudStage);
 
@@ -244,7 +244,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     }
 
 
-    private void showHud() {
+    void showHud() {
         if (hudVisible) {
             for (Actor actor : hudStage.getActors())
                 if (actor != null)
@@ -340,7 +340,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         return coordinates;
     }
 
-    private void hideHud() {
+    void hideHud() {
         if (hudVisible) {
             hudVisible = false;
             for (Actor actor : hudStage.getActors()) {
@@ -352,101 +352,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
         }
     }
 
-    @SuppressWarnings("unused")
-    public class GobanInputProcessor implements InputProcessor {
-
-        private Vector2 lastTouch = null;
-        private TiledMapTileLayer.Cell selectionCell;
-
-        public Vector2 popLastTouch() {
-            Vector2 result = lastTouch;
-            lastTouch = null;
-            return result;
-        }
-
-        @Override
-        public boolean keyDown(int keycode) {
-            return false;
-        }
-
-        @Override
-        public boolean keyUp(int keycode) {
-            return false;
-        }
-
-        @Override
-        public boolean keyTyped(char character) { // Only if you want to listen characters
-            return false;
-        }
-
-        @Override
-        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            hideHud();
-            if (button == Input.Buttons.LEFT) {
-                Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-                Vector3 worldCoords = camera.unproject(tempCoords);
-
-                Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
-                showCrossOn(touch);
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        private void showCrossOn(final Vector2 position) {
-            hideCross();
-            Vector2 positionCopy = position.cpy();
-            if (goban.isValidOnGoban(GuiUtils.isoLeftToIsoTop(positionCopy, mapHeight))) {
-                selectionCell = new TiledMapTileLayer.Cell();
-                selectionCell.setTile(selectionTile);
-                selection.setCell((int) position.x, (int) position.y, selectionCell);
-            }
-        }
-
-        private void hideCross() {
-            selectionCell = null;
-            for (int x = 0; x < selection.getWidth(); x++)
-                for (int y = 0; y < selection.getHeight(); y++)
-                    if (selection.getCell(x, y) != null)
-                        selection.getCell(x, y).setTile(null);
-        }
-
-        @Override
-        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            if (button == Input.Buttons.LEFT) {
-                Vector3 worldCoords = camera.unproject(new Vector3(screenX, screenY, 0));
-                hideCross();
-                lastTouch = GuiUtils.worldToIsoTop(worldCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        @Override
-        public boolean touchDragged(int screenX, int screenY, int pointer) {
-            if (selectionCell != null) {
-                Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-                Vector3 worldCoords = camera.unproject(tempCoords);
-
-                Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, tileWidthHalf, tileHeightHalf, yOffset);
-                showCrossOn(touch);
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        @Override
-        public boolean mouseMoved(int screenX, int screenY) {
-            return false;
-        }
-
-        @Override
-        public boolean scrolled(int amount) {
-            return false;
-        }
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 
     //TODO : improve zoom implementation when Hash problem solved
@@ -454,6 +361,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         final float maxScale = 1; // x1 zoom
         final float minScale = 0.25f; // x4 zoom
         float initialScale = 1;
+        float panDeltaX = 0.0f, panDeltaY = 0.0f;
 
         @Override
         public boolean touchDown(float x, float y, int pointer, int button) {
@@ -477,22 +385,53 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         @Override
         public boolean pan(float x, float y, float deltaX, float deltaY) {
-            return false;
+            gobanInputProcessor.setActiveToPutStones(false);
+            panDeltaX += deltaX * 0.5f;
+            panDeltaY += deltaY * 0.5f;
+            return true;
         }
 
         @Override
         public boolean panStop(float x, float y, int pointer, int button) {
-            return false;
+            if (pointer == 1) {
+                camera.translate(panDeltaX, panDeltaY);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            System.err.println("Interrupted Thread");
+                        }
+                        gobanInputProcessor.setActiveToPutStones(true);
+                    }
+                }).start();
+            }
+            panDeltaX = 0.0f;
+            panDeltaY = 0.0f;
+            return true;
         }
 
         @Override
         public boolean zoom(float initialDistance, float distance) {
+            gobanInputProcessor.setActiveToPutStones(false);
             initialScale = camera.zoom;
             float wantedScale = initialScale * (initialDistance / distance);
             if (wantedScale < minScale) wantedScale = minScale;
             else if (wantedScale > maxScale) wantedScale = maxScale;
             camera.zoom = wantedScale;
-            return false;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        System.err.println("Interrupted Thread");
+                    }
+                    gobanInputProcessor.setActiveToPutStones(true);
+                }
+            }).start();
+            return true;
         }
 
         @Override
