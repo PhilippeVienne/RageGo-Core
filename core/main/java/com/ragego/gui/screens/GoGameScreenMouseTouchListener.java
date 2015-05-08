@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.ragego.utils.GuiUtils;
 
 /**
@@ -22,7 +21,12 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     private Vector2 lastTouch = null;
     private TiledMapTileLayer.Cell selectionCell;
     private boolean activeToPutStones = true;
-    private Array<Vector2> pointers = new Array<Vector2>(5);
+    private Vector2[] pointers = new Vector2[20];
+    private Vector2[] zoomStartPoints = new Vector2[2];
+    private float zoom = 0f;
+    private float initialZoom = 1f;
+    private float deltaX;
+    private float deltaY;
 
     public GoGameScreenMouseTouchListener(GoGameScreen screen) {
         if (screen == null)
@@ -77,13 +81,48 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        pointers.set(pointer, new Vector2(screenX, screenY));
+        if (screen.hudVisible) {
+            screen.hideHud();
+        }
+        pointers[pointer] = new Vector2(screenX, screenY);
+        updateCurrentAction();
+        resetCounters();
         return false;
+    }
+
+    private void resetCounters() {
+        zoom = 0f;
+        initialZoom = screen.camera.zoom;
+        deltaX = 0f;
+        deltaY = 0f;
+    }
+
+    /**
+     * Determine what gesture we have.
+     * 1 is a stone placement, 2 is a zoom and 3 a panning. On a computer with a mouse, it always be the 1 value.
+     */
+    private void updateCurrentAction() {
+        switch (getActivePointersCount()) {
+            case 1:
+                placingStone = true;
+                zooming = false;
+                panning = false;
+                break;
+            case 2:
+                zooming = true;
+                panning = false;
+                placingStone = false;
+                break;
+            case 3:
+                panning = true;
+                zooming = false;
+                placingStone = false;
+        }
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        pointers.removeIndex(pointer);
+        pointers[pointer] = null;
         if (getActivePointersCount() == 0) {
             Gdx.app.log("Oh", "We have no more pointer on screen !");
             if (placingStone) {
@@ -92,6 +131,10 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
                 lastTouch = GuiUtils.worldToIsoTop(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.mapHeight, screen.yOffset);
                 placingStone = false;
                 return true;
+            } else if (panning) { // Make the last move
+
+            } else if (zooming) { // Make the last zoom
+                zoomStartPoints = new Vector2[2];
             }
         }
         return false;
@@ -99,22 +142,25 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     private int getActivePointersCount() {
         int count = 0;
-        for (int i = 0; i < pointers.size; i++) {
-            if (pointers.get(i) != null) count++;
+        for (int i = 0; i < MAX_FINGERS_ON_SCREEN; i++) {
+            if (pointers[i] != null) count++;
         }
         return count;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        pointers.set(pointer, new Vector2(screenX, screenY));
-        if (!placingStone && getActivePointersCount() == 1) {
-            placingStone = true;
-            zooming = false;
-            panning = false;
-        } else if (placingStone && getActivePointersCount() != 1) {
-            placingStone = false;
+        // Update the stored pointer
+        if (pointers[pointer] != null) {
+            pointers[pointer].set(screenX, screenY);
+        } else {
+            pointers[pointer] = new Vector2(screenX, screenY);
         }
+
+        // Determine if we are always doing the same action
+        updateCurrentAction();
+
+        // Update or just do actions
         if (placingStone) {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
             Vector3 worldCoords = screen.getCamera().unproject(tempCoords);
@@ -122,8 +168,36 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
             Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.yOffset);
             showCrossOn(touch);
             return true;
+        } else if (zooming) {
+            Vector2 p1 = null, p2 = null;
+            for (int i = 0; i < pointers.length && (p1 == null || p2 == null); i++) {
+                if (pointers[i] != null) {
+                    if (p1 == null) {
+                        p1 = pointers[i];
+                    } else {
+                        p2 = pointers[i];
+                    }
+                }
+            }
+            if (p1 == null || p2 == null) {
+                return false;
+            }
+            final float finalDist = p1.dst(p2);
+            if (zoomStartPoints[0] == null || zoomStartPoints[1] == null) {
+                zoomStartPoints[0] = p1;
+                zoomStartPoints[1] = p2;
+            } else {
+                final float startDist = zoomStartPoints[0].dst(zoomStartPoints[1]);
+                final float factor = (startDist / finalDist) * 0.5f;
+                float zoom = initialZoom * factor;
+                if (zoom < 0.25f)
+                    zoom = 0.25f;
+                else if (zoom > 1.0f)
+                    zoom = 1.0f;
+                screen.getCamera().zoom = zoom;
+            }
+            return true;
         } else {
-
             return false;
         }
     }
