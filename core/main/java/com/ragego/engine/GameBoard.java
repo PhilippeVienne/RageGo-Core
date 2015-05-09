@@ -25,7 +25,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = true;
+    public static boolean DEBUG_MODE = false;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
