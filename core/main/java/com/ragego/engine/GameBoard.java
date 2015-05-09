@@ -853,7 +853,7 @@ public class GameBoard {
         return currentPlayer;
     }
 
-    public Iterable<? extends Stone> getStones() {
+    public ArrayList<? extends Stone> getStones() {
         return new ArrayList<Stone>(board.values());
     }
 }

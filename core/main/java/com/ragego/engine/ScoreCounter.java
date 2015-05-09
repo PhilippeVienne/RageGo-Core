@@ -26,6 +26,8 @@ public class ScoreCounter implements GameListener {
     protected int territoryBlack;
 
     protected int territoryWhite;
+    InfluenceAlgorithm influence = null;
+    Marker deadMarker;
     /**
      * Board where the score is being counted.
      */
@@ -38,6 +40,8 @@ public class ScoreCounter implements GameListener {
     private Komi komi;
     private Integer capturedBlack = 0;
     private Integer capturedWhite = 0;
+    private ArrayList<Stone> deadStones = new ArrayList<Stone>();
+    private ArrayList<Stone> notDeadStones = new ArrayList<Stone>();
 
     public ScoreCounter(GameBoard board) {
         this.board = board;
@@ -126,6 +130,10 @@ public class ScoreCounter implements GameListener {
         if (allEmpty)
             return;
         clearScore();
+        deadStones.clear();
+        notDeadStones.clear();
+        deadMarker = new Marker(board.getBoardSize(), board);
+        influence = new InfluenceAlgorithm(board);
         ArrayList<Intersection> territory = new ArrayList<Intersection>();
         for (Intersection p : board.getBoardIntersections()) {
             if (!mark.get(p)) {
@@ -143,7 +151,16 @@ public class ScoreCounter implements GameListener {
         }
         String[] lines = new String[score.length];
         for (int i = 0; i < lines.length; i++) {
-            lines[i] = " " + String.valueOf(i) + "  ";
+            final String s = String.valueOf(i);
+            lines[i] = " " + s;
+            switch (s.length()) {
+                case 1:
+                    lines[i] += "  ";
+                    break;
+                case 2:
+                default:
+                    lines[i] += " ";
+            }
         }
         for (Player[] aScore : score) {
             for (int i1 = 0; i1 < aScore.length; i1++) {
@@ -222,18 +239,60 @@ public class ScoreCounter implements GameListener {
     private boolean isTerritory(Marker mark, Intersection p,
                                 ArrayList<Intersection> territory, Player player) {
         Player playerOnIntersection = board.getPlayerOn(p);
-        if (playerOnIntersection == board.getOpponent(player))
-            return false;
+        if (playerOnIntersection == board.getOpponent(player) && mark.get(p)) {
+            final Stone element = board.getElement(p);
+            return deadStones.contains(element);
+        }
         if (playerOnIntersection != null && playerOnIntersection.equals(player))
             return true;
         if (mark.get(p))
             return true;
+        if (playerOnIntersection == board.getOpponent(player)) { // We have to discuss if it's a dead stone
+            return board.getElement(p) != null && isADeadStone(p);
+        }
         mark.set(p);
         territory.add(p);
         for (Intersection adj : p.getNeighboursIntersections())
             if (!isTerritory(mark, adj, territory, player))
                 return false;
         return true;
+    }
+
+    private boolean isADeadStone(Intersection p) {
+        deadMarker.set(p);
+        if (influence == null) return false;
+        final Stone element = board.getElement(p);
+        if (element == null) return false;
+        if (notDeadStones.contains(element)) return false;
+        if (getScoredPlayer(p) == element.getPlayer()) return false;
+        boolean aDeadStone = false;
+        double[][] influences;
+        double[][] opponentInfluences;
+        if (board.getBlackPlayer() == element.getPlayer()) {
+            influences = influence.getBlackStrength();
+            opponentInfluences = influence.getWhiteStrength();
+        } else {
+            influences = influence.getWhiteStrength();
+            opponentInfluences = influence.getBlackStrength();
+        }
+        double influence = influences[p.getColumn()][p.getLine()];
+        for (Intersection neighbour : p.getEightNeighbours()) {
+            final Stone stone = board.getElement(neighbour);
+            if (stone != null && stone.getPlayer() == element.getPlayer() && !deadMarker.get(p)) {
+                aDeadStone = isADeadStone(stone.getPosition());
+                if (aDeadStone) break;
+            }
+            if (opponentInfluences[neighbour.getColumn()][neighbour.getLine()] > influence) {
+                aDeadStone = true;
+                break;
+            }
+        }
+        if (aDeadStone) {
+            deadStones.add(element);
+        } else {
+            notDeadStones.add(element);
+        }
+        return aDeadStone;
     }
 
     private void setScore(Intersection p, Player c) {
