@@ -3,8 +3,11 @@ package com.ragego.engine;
 import com.ragego.utils.DebugUtils;
 import com.ragego.utils.FileUtils;
 import com.ragego.utils.StandardGameFormatIO;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -28,6 +31,11 @@ public class ScoreCounterTest {
         scoreCounter = board.getScoreCounter();
     }
 
+    @After
+    public void reset() {
+        GameBoard.DEBUG_MODE = false;
+    }
+
     @Test
     public void boardShouldReturnAScoreCounter(){
         assertThat(scoreCounter,is(notNullValue()));
@@ -39,6 +47,34 @@ public class ScoreCounterTest {
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-01-19.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
+        DebugUtils.printBoard(game);
+        System.out.println(game.getScoreCounter().formatResult());
+    }
+
+    @Test
+    public void testScoringAnotherDifficult() throws Exception {
+        GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-21-3.sgf"), board).read();
+        game.getScoreCounter().compute();
+        game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
+        DebugUtils.printBoard(game);
+        System.out.println(game.getScoreCounter().formatResult());
+    }
+
+    @Test
+    public void testScoringDifficult() throws Exception {
+        GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-15-16.sgf"), board).read();
+        game.getScoreCounter().compute();
+        game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
+        DebugUtils.printBoard(game);
+        System.out.println(game.getScoreCounter().formatResult());
+    }
+
+    @Test
+    public void testScoring() throws IOException {
+        GameBoard.DEBUG_MODE = true;
+        GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-09-35.sgf"), board).read();
+        game.getScoreCounter().compute();
+        game.getScoreCounter().getScore(new Komi(6.5), ScoreCounter.ScoringMethod.TERRITORY);
         DebugUtils.printBoard(game);
         System.out.println(game.getScoreCounter().formatResult());
     }
