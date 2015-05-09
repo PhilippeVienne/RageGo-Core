@@ -35,11 +35,12 @@ public class ScoreCounterTest {
 
     @Test
     public void givePointToOpponentWhenStoneIsCaptivated() throws Exception {
+        GameBoard.DEBUG_MODE = true;
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-01-19.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
         DebugUtils.printBoard(game);
-        System.out.println("hello");
+        System.out.println(game.getScoreCounter().formatResult());
     }
 
 }

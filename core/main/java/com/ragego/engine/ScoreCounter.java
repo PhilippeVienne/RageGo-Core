@@ -10,8 +10,7 @@ import java.util.ArrayList;
  */
 public class ScoreCounter implements GameListener {
 
-    public final static double KOMI = 5.5;
-
+    public final static double DEFAULT_KOMI = 6.5;
 
     protected int areaBlack;
 
@@ -120,6 +119,7 @@ public class ScoreCounter implements GameListener {
     public void compute() {
         clearScore();
         Marker mark = new Marker(board.getBoardSize(), board);
+        Marker visitedMark = new Marker(board.getBoardSize(), board);
         boolean allEmpty = true;
         for (Intersection p : board.getBoardIntersections()) {
             final Player playerOn = board.getPlayerOn(p);
@@ -136,16 +136,21 @@ public class ScoreCounter implements GameListener {
         influence = new InfluenceAlgorithm(board);
         ArrayList<Intersection> territory = new ArrayList<Intersection>();
         for (Intersection p : board.getBoardIntersections()) {
-            if (!mark.get(p)) {
+            if (!visitedMark.get(p)) {
                 territory.clear();
-                if (isTerritory(mark, p, territory, board.getBlackPlayer()))
-                    setScore(territory, board.getBlackPlayer());
+                mark.clear();
+                if (isTerritory(mark, p, territory, board.getBlackPlayer())) {
+                    setScore(linkedDeadStones(new Marker(board.getBoardSize(), board), territory, board.getBlackPlayer()), board.getBlackPlayer());
+                    visitedMark.set(territory);
+                }
                 else {
-                    mark.clear(territory);
-                    if (isTerritory(mark, p, territory, board.getWhitePlayer()))
-                        setScore(territory, board.getWhitePlayer());
+                    mark.clear();
+                    if (isTerritory(mark, p, territory, board.getWhitePlayer())) {
+                        setScore(linkedDeadStones(new Marker(board.getBoardSize(), board), territory, board.getWhitePlayer()), board.getWhitePlayer());
+                        visitedMark.set(territory);
+                    }
                     else
-                        mark.clear(territory);
+                        mark.clear();
                 }
             }
         }
@@ -172,6 +177,22 @@ public class ScoreCounter implements GameListener {
         for (String line : lines) {
             System.out.println(line);
         }
+    }
+
+    private ArrayList<Intersection> linkedDeadStones(Marker marker, ArrayList<Intersection> territory, Player player) {
+        for (Intersection territoryInt : territory) {
+            for (Intersection borders : territoryInt.getNeighboursIntersections()) {
+                if (territory.contains(borders)) continue;
+                if (marker.get(borders)) continue;
+                marker.set(borders);
+                if (board.getPlayerOn(borders) == board.getOpponent(player) && isADeadStone(borders)) {
+                    territory.add(borders);
+                    deadStones.add(board.getElement(borders));
+                    return linkedDeadStones(marker, territory, player);
+                }
+            }
+        }
+        return territory;
     }
 
     /**
@@ -204,17 +225,12 @@ public class ScoreCounter implements GameListener {
                     --territoryDiff;
                 }
             }
-            // Black player is in a white area so he is captivated
-            if (playerOnIntersection == board.getBlackPlayer() && playerWhoOwnIntersection == board.getWhitePlayer()) {
-                ++capturedBlack;
-                ++territoryWhite;
-                --territoryDiff;
-            }
-            // White player is in a black area so he is captivated
-            if (playerOnIntersection == board.getWhitePlayer() && playerWhoOwnIntersection == board.getBlackPlayer()) {
-                ++capturedWhite;
-                ++territoryBlack;
-                ++territoryDiff;
+            if (board.getElement(p) != null && deadStones.contains(board.getElement(p))) {
+                if (playerWhoOwnIntersection == board.getBlackPlayer()) { // Territory is owned by blacks
+                    ++capturedWhite;
+                } else if (playerWhoOwnIntersection == board.getWhitePlayer()) { // owned by whites
+                    ++capturedBlack;
+                }
             }
         }
         resultArea = areaDiff;
@@ -239,16 +255,23 @@ public class ScoreCounter implements GameListener {
     private boolean isTerritory(Marker mark, Intersection p,
                                 ArrayList<Intersection> territory, Player player) {
         Player playerOnIntersection = board.getPlayerOn(p);
-        if (playerOnIntersection == board.getOpponent(player) && mark.get(p)) {
-            final Stone element = board.getElement(p);
-            return deadStones.contains(element);
-        }
         if (playerOnIntersection != null && playerOnIntersection.equals(player))
             return true;
         if (mark.get(p))
             return true;
         if (playerOnIntersection == board.getOpponent(player)) { // We have to discuss if it's a dead stone
-            return board.getElement(p) != null && isADeadStone(p);
+            if (!(board.getElement(p) != null && isADeadStone(p)))
+                return false;
+            else {
+                for (Intersection intersection : p.getEightNeighbours()) {
+                    if (territory.contains(p)) {
+                        mark.set(p);
+                        territory.add(p);
+                        return true;
+                    }
+                }
+                return true;
+            }
         }
         mark.set(p);
         territory.add(p);
@@ -276,21 +299,26 @@ public class ScoreCounter implements GameListener {
             opponentInfluences = influence.getBlackStrength();
         }
         double influence = influences[p.getColumn()][p.getLine()];
+        final double opponent = opponentInfluences[p.getColumn()][p.getLine()];
+        if (opponent - influence > 400) {
+            return true;
+        } else if (influence - opponent > 2000) {
+            return false;
+        }
         for (Intersection neighbour : p.getEightNeighbours()) {
             final Stone stone = board.getElement(neighbour);
-            if (stone != null && stone.getPlayer() == element.getPlayer() && !deadMarker.get(p)) {
-                aDeadStone = isADeadStone(stone.getPosition());
-                if (aDeadStone) break;
-            }
-            if (opponentInfluences[neighbour.getColumn()][neighbour.getLine()] > influence) {
+            if (opponentInfluences[neighbour.getColumn()][neighbour.getLine()] - influence > 400) {
                 aDeadStone = true;
                 break;
             }
-        }
-        if (aDeadStone) {
-            deadStones.add(element);
-        } else {
-            notDeadStones.add(element);
+            if (board.isEmpty(neighbour)) {
+                for (Intersection otherIntersection : neighbour.getNeighboursIntersections()) {
+                    if (opponentInfluences[otherIntersection.getColumn()][otherIntersection.getLine()] - influence > 400) {
+                        aDeadStone = true;
+                        break;
+                    }
+                }
+            }
         }
         return aDeadStone;
     }
