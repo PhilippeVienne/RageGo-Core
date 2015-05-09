@@ -82,6 +82,10 @@ public class Intersection {
 
     }
 
+    public static String toCoordinates(Intersection intersection) {
+        return String.valueOf((char) ('a' + intersection.column)).concat(String.valueOf((char) ('a' + intersection.line)));
+    }
+
     /**
      * The column associated with this intersection.
      * Columns are numbers from left to right
@@ -170,17 +174,35 @@ public class Intersection {
         return neighbours;
     }
 
+    /**
+     * Get eight neighbours of this intersection.
+     * It's like {@link #getNeighboursIntersections()} but we add intersections on diagonal.
+     *
+     * @return Array of the valid intersections, so on a border, the array size will be less than 8.
+     */
+    public ArrayList<Intersection> getEightNeighbours() {
+        ArrayList<Intersection> neighbours = getNeighboursIntersections();
+        for (Intersection i : new Intersection[]{
+                get(column + 1, line + 1, board),
+                get(column - 1, line - 1, board),
+                get(column + 1, line + 1, board),
+                get(column - 1, line - 1, board),
+        })
+            if (board.isValidIntersection(i)) neighbours.add(i);
+        return neighbours;
+
+    }
+
     @Override
     public int hashCode() {
         return computeUniqueKey(column, line, board);
     }
 
-
     public Intersection forBoard(GameBoard testBoard) {
         return Intersection.get(column, line, testBoard);
     }
 
-    public static String toCoordinates(Intersection intersection) {
-        return String.valueOf((char)('a'+intersection.column)).concat(String.valueOf((char)('a'+intersection.line)));
+    public double distanceTo(Intersection dIntersection) {
+        return Math.sqrt((line - dIntersection.line) * (line - dIntersection.line) + (column - dIntersection.column) * (column - dIntersection.column));
     }
 }
