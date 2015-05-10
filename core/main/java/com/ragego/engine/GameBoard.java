@@ -219,6 +219,12 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Act a node on the board.
+     * This function does what was written for {@link #play(GameNode)} but does not check rules.
+     *
+     * @param node The node to play
+     */
     private void actNode(GameNode node) {
         node.setParent(lastNode);
         if (currentPlayer != null) // We are not in an auto-computing mode.
@@ -547,6 +553,12 @@ public class GameBoard {
         }
     }
 
+    /**
+     * A "simple" code to make a MD5 strings on all Java Systems.
+     * Note if you try another method, please test android because there will be some errors.
+     * @param s The string to hash
+     * @return The MD5 string of the params.
+     */
     public final String md5(final String s) {
         final String MD5 = "MD5";
         try {
@@ -607,7 +619,11 @@ public class GameBoard {
         return getSecondPlayer();
     }
 
-
+    /**
+     * Get the last played node on this board. Notice if this is equal with {@link #getRootNode()}, it means the game
+     * is simply empty.
+     * @return The last node for this board.
+     */
     public GameNode getLastNode() {
         return lastNode;
     }
@@ -648,60 +664,6 @@ public class GameBoard {
         }
 
         return board;
-    }
-
-    /**
-     * Recompute Shapes.
-     * <p>This remove stoneGroups from all stones of board and recompute stoneGroups for all stones on board.</p>
-     * <p>This is a really heavy action and you should never call it on board containing many stones aside.</p>
-     */
-    private void recomputeStoneGroups() {
-
-        for (Stone stone : board.values()) {
-            final StoneGroup stoneGroup = stone.getStoneGroup();
-            if (stoneGroup != null) {
-                stoneGroup.removeStone(stone);
-                stone.setStoneGroup(null);
-            }
-        }
-
-        for (int line = 0; line < boardSize; line++) {
-            for (int column = 0; column < boardSize; column++) {
-                final Intersection intersection = Intersection.get(column, line, this), upper = Intersection.get(column, line - 1, this), left = Intersection.get(column - 1, line, this);
-                Stone currentStone = getElement(intersection),
-                        upperStone = getElement(upper),
-                        leftStone = getElement(left);
-                StoneGroup upStoneGroup = upperStone != null ? upperStone.getStoneGroup() : null,
-                        leftStoneGroup = leftStone != null ? leftStone.getStoneGroup() : null;
-                if (currentStone == null) continue;
-                if (upperStone == null && leftStone == null) {
-                    new StoneGroup(currentStone.getPlayer(), this, currentStone);
-                    continue;
-                }
-                if (upperStone != null) {
-                    if (upperStone.getPlayer() == currentStone.getPlayer() && upStoneGroup != null) {
-                        upStoneGroup.addStone(currentStone);
-                    } else if (upperStone.getPlayer() == currentStone.getPlayer()) {
-                        upStoneGroup = new StoneGroup(upperStone.getPlayer(), this, upperStone, currentStone);
-                    }
-                }
-                if (leftStone != null && leftStone.getPlayer() == currentStone.getPlayer()) {
-                    if (currentStone.getStoneGroup() == upStoneGroup && upStoneGroup != null) {
-                        if (leftStoneGroup != null) {
-                            upStoneGroup.unionWith(leftStoneGroup);
-                        } else {
-                            upStoneGroup.addStone(leftStone);
-                        }
-                    } else {
-                        if (leftStoneGroup != null) {
-                            leftStoneGroup.addStone(currentStone);
-                        } else {
-                            new StoneGroup(leftStone.getPlayer(), this, leftStone, currentStone);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -817,20 +779,40 @@ public class GameBoard {
         return newStone;
     }
 
+    /**
+     * Check if this board has entered in IA mode.
+     * If not, it should throws an exception.
+     * @throws IllegalStateException If we are not in IA mode.
+     */
     private void checkIAMode() {
         if (!ia_functions_enabled)
             throw new IllegalStateException("You can not call IA functions here !");
     }
 
+    /**
+     * Get a stone at given coordinates.
+     * @param column The column between 0 and boardSize - 1
+     * @param line The line between 0 and boardSize - 1
+     * @return The stone on this coordinates or just null if there is not.
+     */
     public Stone getElement(int column, int line) {
         return getElement(Intersection.get(column, line, this));
     }
 
+    /**
+     * Find the player on a given intersection.
+     * @param p The intersection you are looking at.
+     * @return The player on this intersection or null if it's empty.
+     */
     public Player getPlayerOn(Intersection p) {
         final Stone element = getElement(p);
         return element == null ? null : element.getPlayer();
     }
 
+    /**
+     * Generate an array of all intersections of this board.
+     * @return The intersections of this board.
+     */
     public ArrayList<Intersection> getBoardIntersections() {
         ArrayList<Intersection> intersections = new ArrayList<Intersection>(boardSize * boardSize);
         for (int x = 0; x < boardSize; x++)
@@ -840,18 +822,36 @@ public class GameBoard {
         return intersections;
     }
 
+    /**
+     * Get the id used by the game to designate this player.
+     * @param player The player you want to determine the index
+     * @return 1 for first player, 2 for second player and 0 in all other cases.
+     */
     public int getNumberForPlayer(Player player) {
         return player == firstPlayer ? 1 : (player == secondPlayer ? 2 : 0);
     }
 
+    /**
+     * Get the player which is playing.
+     * This function is only valid during the execution of {@link #nextMove()} function (on another thread for sample).
+     * @return The player who must play.
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * Get all stones on this board
+     * @return An array of stones presents on this board.
+     */
     public ArrayList<? extends Stone> getStones() {
         return new ArrayList<Stone>(board.values());
     }
 
+    /**
+     * Remove the last node played on this game.
+     * <p>For that, it remove the stone added, replace dead stones on the board and correct the score</p>
+     */
     public void removeLastNode() {
         GameNode canceledNode = lastNode;
         currentPlayer = null;
@@ -872,10 +872,11 @@ public class GameBoard {
         currentPlayer = lastNode.getPlayer();
     }
 
-    private void reset() {
-        board.clear();
-    }
-
+    /**
+     * Forward in the node tree.
+     * It will remake a node if the current node has a child node.
+     * The game supposed the child is valid for Go Rules.
+     */
     public void remakeNode() {
         if (!lastNode.hasChild()) return;
         currentPlayer = null;
@@ -883,10 +884,19 @@ public class GameBoard {
         currentPlayer = getOpponent(lastNode.getPlayer());
     }
 
+    /**
+     * Get the main node of this game.
+     * @return This node has no parent and marks the start of the game.
+     */
     public GameNode getRootNode() {
         return rootNode;
     }
 
+    /**
+     * Determine if the game is ended.
+     * Go is ended if the two players has passed their turns.
+     * @return true if you should consider this game as ended.
+     */
     public boolean isGameEnded() {
         return gameEnded;
     }

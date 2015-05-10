@@ -18,26 +18,68 @@ import com.ragego.utils.GuiUtils;
  */
 public class GoGameScreenMouseTouchListener implements InputProcessor {
 
+    /**
+     * Max number of fingers we consider on the screen
+     */
     private static final int MAX_FINGERS_ON_SCREEN = 5;
+    /**
+     * Min zoom possible with the camera
+     */
     private static final float MIN_ZOOM = 0.5f;
+    /**
+     * Max zoom possible with the camera
+     */
     private static final float MAX_ZOOM = 1.2f;
+    /**
+     * Flag to determine if we are placing stones on the board.
+     */
     private boolean placingStone = false;
-    private boolean zooming = false;
+    /**
+     * Flag to determine if we are panning the screen.
+     */
     private boolean panning = false;
+    /**
+     * The attahced screen for this listener.
+     * This is useful to grab camera settings and goban information.
+     */
     private GoGameScreen screen;
+    /**
+     * Last point touched which can be considered as a point where the user wants to put a stone.
+     */
     private Vector2 lastTouch = null;
+    /**
+     * Cell which contains the selection cross for the placing stone listener
+     */
     private TiledMapTileLayer.Cell selectionCell;
+    /**
+     * Flag to describe if we can put stones on the board.
+     * This is updated with {@link #setActiveToPutStones(boolean)}
+     */
     private boolean activeToPutStones = true;
+    /**
+     * Last pointers given by the library
+     */
     private Vector2[] pointers = new Vector2[20];
-    private Vector2[] zoomStartPoints = new Vector2[2];
-    private float zoom = 0f;
+    /**
+     * Zoom value when the user start to zoom or zoom out.
+     */
     private float initialZoom = 1f;
-    private float deltaX;
-    private float deltaY;
+    /**
+     * Last position used for panning computing
+     */
     private Vector2 panningLastOrigin;
+    /**
+     * Counter to not place stone just after zoomed or panned
+     */
     private long noPlacingUntil = 0;
-    private long panningLastTimeRefresh = 0;
+    /**
+     * Task used to pan while a key is down
+     */
     private KeyPanning panningTask;
+    /**
+     * Thread used to call the {@link #panningTask}.
+     * This thread should always be running.
+     */
     private final Thread panningThread = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -67,6 +109,11 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         return activeToPutStones;
     }
 
+    /**
+     * Determine if we are able to put stones on the board.
+     *
+     * @param activeToPutStones true if we should listen for stones
+     */
     public void setActiveToPutStones(boolean activeToPutStones) {
         this.activeToPutStones = activeToPutStones;
     }
@@ -156,11 +203,11 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         return false;
     }
 
+    /**
+     * Reset all temp values to defaults
+     */
     private void resetCounters() {
-        zoom = 0f;
         initialZoom = screen.camera.zoom;
-        deltaX = 0f;
-        deltaY = 0f;
     }
 
     /**
@@ -200,6 +247,10 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         return false;
     }
 
+    /**
+     * Count pointer currently stored for this listener.
+     * @return The number of fingers you should consider "on screen"
+     */
     private int getActivePointersCount() {
         int count = 0;
         for (int i = 0; i < MAX_FINGERS_ON_SCREEN; i++) {
@@ -250,6 +301,10 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         }
     }
 
+    /**
+     * Move the screen camera with a given vector.
+     * @param move Move operates by camera.
+     */
     private void panCamera(Vector2 move) {
         if (screen.camera.zoom >= 1.0f) return;
         float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
@@ -318,6 +373,10 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     }
 
+    /**
+     * Task able to pan camera when a key is down.
+     * This class should be run in a thread between key down and key up events.
+     */
     private class KeyPanning extends Timer.Task {
 
         private int keyCode;
@@ -331,8 +390,8 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         @Override
         public void run() {
             long deltaTime = System.currentTimeMillis() - time;
-            int dx = (int) (50 * (deltaTime / 100) * screen.getCamera().zoom);
-            if (dx == 0) return;
+            int dx = (int) (50 * (deltaTime / 100) * screen.getCamera().zoom); // FIXME : Adjust values
+            if (dx == 0) return; // dx is null, wait to be more than 1
             time = System.currentTimeMillis();
             Vector2 move = new Vector2(0, 0);
             switch (keyCode) {

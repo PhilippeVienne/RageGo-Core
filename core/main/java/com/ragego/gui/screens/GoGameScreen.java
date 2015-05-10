@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -35,10 +34,7 @@ import com.ragego.utils.GuiUtils;
  */
 public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
-    private static final float HALF_TAP_SQUARE_SIZE = 20.0f;
-    private static final float TAP_COUNT_INTERVAL = 0.4f;
-    private static final float LONG_PRESS_DURATION = 1.1f;
-    private static final float MAX_FLING_DELAY = 0.15f;
+    private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 100;
     protected final GoGameScreenMouseTouchListener gobanInputProcessor = new GoGameScreenMouseTouchListener(this);
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
     protected AssetManager manager;
@@ -64,7 +60,6 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected Button hudButtonLeft = new Button();
     protected Button hudButtonRight = new Button();
     protected boolean hudVisible = false;
-    private GestureDetector gestureDetector;
 
     @Override
     public final void show() {
@@ -130,12 +125,6 @@ public abstract class GoGameScreen extends ScreenAdapter {
         hudViewport = new ScreenViewport();
         hudStage = new Stage(hudViewport);
         //hudStage.setDebugAll(true);
-
-        gestureDetector = new GestureDetector(HALF_TAP_SQUARE_SIZE,
-                TAP_COUNT_INTERVAL,
-                LONG_PRESS_DURATION,
-                MAX_FLING_DELAY,
-                new ZoomPinchHandler());
         
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
@@ -323,7 +312,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     /**
      * Wait for a user input on Goban
-     *
+     * Notice: this function is thread locking.
      * @return The coordinates
      */
     public Vector2 waitForUserInputOnGoban() {
@@ -331,7 +320,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         synchronized (gobanInputProcessor) {
             while ((coordinates = gobanInputProcessor.popLastTouch()) == null && !goban.passTurn()) {
                 try {
-                    Thread.sleep(0, 500);
+                    Thread.sleep(0, REFRESH_INTERVAL_FOR_USER_INPUT);
                     gobanInputProcessor.wait(5);
                 } catch (InterruptedException e) {
                     Gdx.app.debug("Threads", "GameEngine thread has been closed");
@@ -359,88 +348,4 @@ public abstract class GoGameScreen extends ScreenAdapter {
         return camera;
     }
 
-    //TODO : improve zoom implementation when Hash problem solved
-    public class ZoomPinchHandler implements GestureDetector.GestureListener {
-        final float maxScale = 1; // x1 zoom
-        final float minScale = 0.25f; // x4 zoom
-        float initialScale = 1;
-        float panDeltaX = 0.0f, panDeltaY = 0.0f;
-
-        @Override
-        public boolean touchDown(float x, float y, int pointer, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean tap(float x, float y, int count, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean longPress(float x, float y) {
-            return false;
-        }
-
-        @Override
-        public boolean fling(float velocityX, float velocityY, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean pan(float x, float y, float deltaX, float deltaY) {
-            gobanInputProcessor.setActiveToPutStones(false);
-            panDeltaX += deltaX * 0.5f;
-            panDeltaY += deltaY * 0.5f;
-            return true;
-        }
-
-        @Override
-        public boolean panStop(float x, float y, int pointer, int button) {
-            if (pointer == 1) {
-                camera.translate(panDeltaX, panDeltaY);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            System.err.println("Interrupted Thread");
-                        }
-                        gobanInputProcessor.setActiveToPutStones(true);
-                    }
-                }).start();
-            }
-            panDeltaX = 0.0f;
-            panDeltaY = 0.0f;
-            return true;
-        }
-
-        @Override
-        public boolean zoom(float initialDistance, float distance) {
-            gobanInputProcessor.setActiveToPutStones(false);
-            initialScale = camera.zoom;
-            float wantedScale = initialScale * (initialDistance / distance);
-            if (wantedScale < minScale) wantedScale = minScale;
-            else if (wantedScale > maxScale) wantedScale = maxScale;
-            camera.zoom = wantedScale;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        System.err.println("Interrupted Thread");
-                    }
-                    gobanInputProcessor.setActiveToPutStones(true);
-                }
-            }).start();
-            return true;
-        }
-
-        @Override
-        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-            return false;
-        }
-
-    }
 }
