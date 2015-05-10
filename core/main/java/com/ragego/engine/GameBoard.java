@@ -62,6 +62,7 @@ public class GameBoard {
      */
     private boolean ia_functions_enabled = false;
     private ArrayList<Intersection> boardIntersections;
+    private GameNode rootNode;
 
     /**
      * Create a board with the default size.
@@ -86,6 +87,7 @@ public class GameBoard {
         this.boardSize = boardSize;
         this.board = new HashMap<Intersection, Stone>(this.boardSize * this.boardSize);
         lastNode = new GameNode(this, GameNode.Action.START_GAME);
+        rootNode = lastNode;
         this.scoreCounter = new ScoreCounter(this);
     }
 
@@ -874,5 +876,9 @@ public class GameBoard {
         currentPlayer = null;
         actNode(lastNode.getChild());
         currentPlayer = lastNode.getPlayer();
+    }
+
+    public GameNode getRootNode() {
+        return rootNode;
     }
 }

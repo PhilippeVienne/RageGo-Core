@@ -6,10 +6,7 @@ import com.ragego.engine.GameNode;
 import com.ragego.engine.Intersection;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StreamTokenizer;
+import java.io.*;
 
 /**
  * This class read an SGF file.
@@ -69,16 +66,57 @@ public class StandardGameFormatIO implements FormatIO {
 
     @Override
     public boolean write() throws IOException {
-        return false;
+        return write(file, game);
     }
 
     @Override
     public boolean write(GameBoard game) throws IOException {
-        return false;
+        return write(file, game);
     }
 
     @Override
     public boolean write(File file, GameBoard game) throws IOException {
+        StringBuilder sgfData = new StringBuilder();
+        GameNode node = game.getRootNode();
+        sgfData.append('(');
+        sgfData.append(';');
+        {   // Write headers information
+            sgfData.append("GM[1],");
+            sgfData.append("AP[RageGo],");
+            sgfData.append("SZ[").append(game.getBoardSize()).append("],");
+            sgfData.append("KM[").append(game.getScoreCounter().getKomi()).append("],");
+            sgfData.append("CA[UTF-8]");
+        }
+        sgfData.append(';');
+        while (node.hasChild()) {
+            node = node.getChild();
+            switch (node.getAction()) {
+
+                case START_GAME:
+                    // Hum nothing to do here
+                    break;
+                case PASS:
+                    sgfData.append(game.getLetterForPlayer(node.getPlayer())).append("[]");
+                    break;
+                case PUT_STONE:
+                    sgfData.append(game.getLetterForPlayer(node.getPlayer())).append('[')
+                            .append(Intersection.toCoordinates(node.getIntersection())).append(']');
+                    break;
+                case NOTHING:
+                    break;
+                case IA_SPECIAL_ACTION:
+                    break;
+            }
+            sgfData.append(';');
+        }
+        sgfData.deleteCharAt(sgfData.length() - 1);
+        sgfData.append(')');
+        FileOutputStream outputStream = new FileOutputStream(file);
+        StringReader reader = new StringReader(sgfData.toString());
+        int bit;
+        while ((bit = reader.read()) != -1) {
+            outputStream.write(bit);
+        }
         return false;
     }
 

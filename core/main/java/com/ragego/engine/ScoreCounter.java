@@ -36,7 +36,7 @@ public class ScoreCounter implements GameListener {
      */
     private Player[][] score;
     private ScoringMethod rules;
-    private Komi komi;
+    private Komi komi = new Komi(DEFAULT_KOMI);
     private Integer capturedBlack = 0;
     private Integer capturedWhite = 0;
     private ArrayList<Stone> deadStones = new ArrayList<Stone>();
@@ -356,6 +356,14 @@ public class ScoreCounter implements GameListener {
 
     public void setCountingDeadStones(boolean countingDeadStones) {
         this.countingDeadStones = countingDeadStones;
+    }
+
+    public Komi getKomi() {
+        return komi;
+    }
+
+    public void setKomi(Komi komi) {
+        this.komi = komi;
     }
 
     public enum ScoringMethod {

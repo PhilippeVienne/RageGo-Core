@@ -12,7 +12,10 @@ import com.ragego.engine.Intersection;
 import com.ragego.engine.Stone;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.GuiUtils;
+import com.ragego.utils.StandardGameFormatIO;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,6 +193,17 @@ public class Goban {
         stopGame();
         board.remakeNode();
         startGame();
+    }
+
+    public void save() {
+        try {
+            File tmp = File.createTempFile("RageGoGame", ".sgf");
+            System.out.println("File is " + tmp.getAbsolutePath() + "/" + tmp.getName());
+            StandardGameFormatIO io = new StandardGameFormatIO(tmp, board);
+            io.write();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private class GameRunnable implements Runnable {
