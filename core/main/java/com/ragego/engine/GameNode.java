@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 
 /**
  * State of the game.
- * A node is a description of an action which can have a parent and children. The sum of parents and this node describe
+ * A node is a description of an action which can have a parent and child. The sum of parents and this node describe
  * a state for the game. Each node has a GameBoard attached and an array of integers representing the board on this node.
  * This representation makes easier to understand that Go Game is a sum of action which create a state.
  * This class has useful functions to manipulates the game flow. But for analysis, you should use {@link GameBoard}.
@@ -65,10 +65,10 @@ public class GameNode {
     private GameNode parent = null;
     /**
      * Children state.
-     * From one state, you can make many actions, if we represent that, we have children. Normaly, a node has only
+     * From one state, you can make many actions, if we represent that, we have child. Normaly, a node has only
      * one child when you are playing.
      */
-    private ArrayList<GameNode> children = new ArrayList<GameNode>();
+    private GameNode child = null;
     /**
      * Property for this node.
      * You can set properties to a Game node. This is usefull for the main game node to set information data. This
@@ -297,15 +297,6 @@ public class GameNode {
     }
 
     /**
-     * Remove a child from this node
-     *
-     * @param node The node to remove
-     */
-    public void removeChild(GameNode node) {
-        children.remove(node);
-    }
-
-    /**
      * Retrieve the parent node.
      * If there is not one (null value), consider we are at game start point.
      *
@@ -324,26 +315,10 @@ public class GameNode {
      */
     public void setParent(GameNode gameNode) {
         if (gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
-        if (!gameNode.hasChild(this)) {
-            gameNode.addChild(this);
+        if (!gameNode.isChild(this)) {
+            gameNode.setChild(this);
         }
         parent = gameNode;
-    }
-
-    /**
-     * Add a new child to this node.
-     * When you have an action to add to this state, simply add a child.
-     * After registering gameNode as child, check if this instance is his parent.
-     *
-     * @param gameNode Node to add to this one.
-     */
-    public void addChild(GameNode gameNode) {
-        if (gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
-        //if (gameNode.hasParent() && gameNode.getParent() != this)
-        //    throw new IllegalStateException("This node is already a child of another. Are you making a rape?");
-        children.add(gameNode);
-        if (!gameNode.isParent(this))
-            gameNode.setParent(this);
     }
 
     /**
@@ -362,17 +337,31 @@ public class GameNode {
      * @param gameNode The supposed child
      * @return true if it's a child of this instance.
      */
-    public boolean hasChild(GameNode gameNode) {
-        return children.contains(gameNode);
+    public boolean isChild(GameNode gameNode) {
+        return !(child == null || gameNode == null) && child.equals(gameNode);
     }
 
     /**
-     * Retrieve all children.
+     * Retrieve all child.
      *
-     * @return An array of children of this node.
+     * @return An array of child of this node.
      */
-    public GameNode[] getChildren() {
-        return children.toArray(new GameNode[children.size()]);
+    public GameNode getChild() {
+        return child;
+    }
+
+    /**
+     * Add a new child to this node.
+     * When you have an action to add to this state, simply add a child.
+     * After registering gameNode as child, check if this instance is his parent.
+     *
+     * @param gameNode Node to add to this one.
+     */
+    public void setChild(GameNode gameNode) {
+        if (gameNode == null) throw new IllegalArgumentException("GameNode is null, stopping before we fall all");
+        child = gameNode;
+        if (!gameNode.isParent(this))
+            gameNode.setParent(this);
     }
 
     /**
@@ -468,6 +457,10 @@ public class GameNode {
 
     public ArrayList<Stone> getDeadStones() {
         return deadStones;
+    }
+
+    public boolean hasChild() {
+        return getChild() != null;
     }
 
     /**

@@ -178,7 +178,6 @@ public class GameBoard {
                 isViolatingRule = true;
             }
         }
-        lastNode.removeChild(node);
         // No inspection due to a false inspection result.
         //noinspection ConstantConditions
         if (message != null && isViolatingRule) {
@@ -868,5 +867,12 @@ public class GameBoard {
 
     private void reset() {
         board.clear();
+    }
+
+    public void remakeNode() {
+        if (!lastNode.hasChild()) return;
+        currentPlayer = null;
+        actNode(lastNode.getChild());
+        currentPlayer = lastNode.getPlayer();
     }
 }

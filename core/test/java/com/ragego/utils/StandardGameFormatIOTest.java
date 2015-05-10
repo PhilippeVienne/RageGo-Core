@@ -30,6 +30,7 @@ public class StandardGameFormatIOTest extends RageGoTest {
         humanPlayer1 = new HumanPlayer("Player 1", listener);
         humanPlayer2 = new HumanPlayer("Player 2", listener);
         game = new GameBoard(humanPlayer1, humanPlayer2);
+        GameBoard.DEBUG_MODE = false;
     }
 
     @Test

@@ -182,15 +182,14 @@ public class Goban {
 
     public void cancelLastTurn() {
         stopGame();
-        for (GraphicStone stone : new ArrayList<GraphicStone>(stones)) {
-            removeGraphicStone(stone);
-        }
         board.removeLastNode();
         startGame();
     }
 
     public void remakeTurn() {
-
+        stopGame();
+        board.remakeNode();
+        startGame();
     }
 
     private class GameRunnable implements Runnable {

@@ -171,7 +171,7 @@ public class StandardGameFormatIO implements FormatIO {
         GameNode node = new GameNode(game, parent, GameNode.Action.NOTHING);
         currentNode = node;
         if (parent != null)
-            parent.addChild(node);
+            parent.setChild(node);
         if (is_root) { // Create the root node
             node.setAction(GameNode.Action.START_GAME);
             rootNode = node;
