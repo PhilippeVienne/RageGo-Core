@@ -1,6 +1,7 @@
 package com.ragego.gui.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Timer;
 import com.ragego.gui.ImprovedGestureDetector;
 import com.ragego.utils.GuiUtils;
 
@@ -35,6 +37,25 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     private Vector2 panningLastOrigin;
     private long noPlacingUntil = 0;
     private long panningLastTimeRefresh = 0;
+    private KeyPanning panningTask;
+    private final Thread panningThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (!Thread.interrupted()) {
+                if (panningTask != null)
+                    panningTask.run();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    panningThread.start();
+                }
+            }
+        }
+    }, "PanningThread");
+
+    {
+        panningThread.start();
+    }
 
     public GoGameScreenMouseTouchListener(GoGameScreen screen) {
         if (screen == null)
@@ -75,12 +96,39 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        switch (keycode) {
+            case Input.Keys.RIGHT:
+            case Input.Keys.LEFT:
+            case Input.Keys.UP:
+            case Input.Keys.DOWN:
+                if (panningTask == null) {
+                    panningTask = new KeyPanning(keycode);
+                    return true;
+                } else {
+                    panningTask.keyCode = keycode;
+                    return true;
+                }
+            default:
+                return false;
+        }
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        return false;
+        switch (keycode) {
+            case Input.Keys.RIGHT:
+            case Input.Keys.LEFT:
+            case Input.Keys.UP:
+            case Input.Keys.DOWN:
+                if (panningTask != null) {
+                    if (panningTask.keyCode == keycode) {
+                        panningTask = null;
+                        return true;
+                    }
+                }
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -103,7 +151,6 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
             Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.yOffset);
             showCrossOn(touch);
         } else {
-            System.out.println("Panning3");
             hideCross();
         }
         return false;
@@ -131,7 +178,6 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
                 panning = false;
                 break;
             case 3:
-                System.out.println("Panning2");
                 panning = true;
                 placingStone = false;
         }
@@ -191,11 +237,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
             }
             if (panningLastOrigin != null) {
                 Vector2 delta = panningLastOrigin.add(-screenX, -screenY).scl(-1).scl(screen.camera.zoom);
-                float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
-                        minX = screen.leftTileWorldCoords.x;
-                screen.camera.translate(delta);
-                screen.camera.position.x = MathUtils.clamp(screen.camera.position.x, minX + 0.5f * screen.camera.viewportWidth * screen.camera.zoom, maxX - 0.5f * screen.camera.viewportWidth * screen.camera.zoom);
-                screen.camera.position.y = MathUtils.clamp(screen.camera.position.y, minY + 0.5f * screen.camera.viewportHeight * screen.camera.zoom, maxY - 0.5f * screen.camera.viewportHeight * screen.camera.zoom);
+                panCamera(delta);
                 panningLastOrigin.x = screenX;
                 panningLastOrigin.y = screenY;
             } else {
@@ -208,6 +250,15 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         }
     }
 
+    private void panCamera(Vector2 move) {
+        if (screen.camera.zoom >= 1.0f) return;
+        float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
+                minX = screen.leftTileWorldCoords.x;
+        screen.camera.translate(move);
+        screen.camera.position.x = MathUtils.clamp(screen.camera.position.x, minX + 0.5f * screen.camera.viewportWidth * screen.camera.zoom, maxX - 0.5f * screen.camera.viewportWidth * screen.camera.zoom);
+        screen.camera.position.y = MathUtils.clamp(screen.camera.position.y, minY + 0.5f * screen.camera.viewportHeight * screen.camera.zoom, maxY - 0.5f * screen.camera.viewportHeight * screen.camera.zoom);
+    }
+
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         return false;
@@ -215,20 +266,8 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
+        System.out.println(amount);
         return false;
-    }
-
-    /**
-     * Count number of fingers there is on screen.
-     *
-     * @return Number of fingers >=0 and <=5
-     */
-    private int getFingersOnScreen() {
-        int activeTouch = 0;
-        for (int i = 0; i < MAX_FINGERS_ON_SCREEN; i++) {
-            if (Gdx.input.isTouched(i)) activeTouch++;
-        }
-        return activeTouch;
     }
 
     /**
@@ -238,6 +277,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      */
     private void showCrossOn(final Vector2 position) {
         hideCross();
+        if (screen.goban.getBoard() != null && screen.goban.getBoard().isGameEnded()) return;
         Vector2 positionCopy = position.cpy();
         if (screen.goban.isValidOnGoban(GuiUtils.isoLeftToIsoTop(positionCopy, screen.mapHeight))) {
             selectionCell = new TiledMapTileLayer.Cell();
@@ -276,6 +316,41 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
             return true;
         }
 
+    }
+
+    private class KeyPanning extends Timer.Task {
+
+        private int keyCode;
+        private long time;
+
+        public KeyPanning(int keycode) {
+            keyCode = keycode;
+            time = System.currentTimeMillis();
+        }
+
+        @Override
+        public void run() {
+            long deltaTime = System.currentTimeMillis() - time;
+            int dx = (int) (50 * (deltaTime / 100) * screen.getCamera().zoom);
+            if (dx == 0) return;
+            time = System.currentTimeMillis();
+            Vector2 move = new Vector2(0, 0);
+            switch (keyCode) {
+                case Input.Keys.DOWN:
+                    move.y -= dx;
+                    break;
+                case Input.Keys.UP:
+                    move.y += dx;
+                    break;
+                case Input.Keys.LEFT:
+                    move.x -= dx;
+                    break;
+                case Input.Keys.RIGHT:
+                    move.x += dx;
+                    break;
+            }
+            panCamera(move);
+        }
     }
 
 }

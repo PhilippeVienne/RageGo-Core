@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Stack;
 
 /**
  * Represent a board of Go.
@@ -858,7 +857,6 @@ public class GameBoard {
         currentPlayer = null;
         if (canceledNode.getParent() == null) return; // Not cancelable
         lastNode = canceledNode.getParent();
-        Stack<GameNode> turns = new Stack<GameNode>();
         if (canceledNode.getAction() == GameNode.Action.PUT_STONE) { // We must recompute game
             scoreCounter.setCountingDeadStones(false);
             removeStoneFromBoard(canceledNode.getStone());
