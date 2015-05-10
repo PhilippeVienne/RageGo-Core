@@ -1,5 +1,6 @@
 package com.ragego.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -10,6 +11,7 @@ public class GuiUtils {
     //Constants (useful for screen/map coordinates conversion) for alternate method
     private static final double PI_OVER_SIX = Math.PI/6;
     private static final double PI_OVER_THREE = Math.PI / 3;
+    private static final int MAX_FINGERS_ON_SCREEN = 20;
 
     /**
      * Projects world coordinates into left - right isometric coordinates.
@@ -130,5 +132,18 @@ public class GuiUtils {
         isoCoords.y = (int)(isoCoords.y/mapUnit);
 
         return isoCoords;
+    }
+
+    /**
+     * Count number of fingers there is on screen.
+     *
+     * @return Number of fingers >=0 and <=5
+     */
+    public static int getFingersOnScreen() {
+        int activeTouch = 0;
+        for (int i = 0; i < MAX_FINGERS_ON_SCREEN; i++) {
+            if (Gdx.input.isTouched(i)) activeTouch++;
+        }
+        return activeTouch;
     }
 }
