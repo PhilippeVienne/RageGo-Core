@@ -97,7 +97,8 @@ public class GameBoard {
      */
     public void nextMove() {
         { // Update the player
-            currentPlayer = getOpponent(currentPlayer);
+            if (lastNode == null) currentPlayer = getFirstPlayer();
+            else currentPlayer = getOpponent(lastNode.getPlayer());
             if (currentPlayer == null) currentPlayer = getFirstPlayer();
         }
         { // Spread events that a turn is starting
@@ -875,7 +876,7 @@ public class GameBoard {
         if (!lastNode.hasChild()) return;
         currentPlayer = null;
         actNode(lastNode.getChild());
-        currentPlayer = lastNode.getPlayer();
+        currentPlayer = getOpponent(lastNode.getPlayer());
     }
 
     public GameNode getRootNode() {
