@@ -1,5 +1,7 @@
 package com.ragego.engine;
 
+import com.ragego.utils.DebugUtils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = false;
+    public static boolean DEBUG_MODE = true;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
@@ -144,53 +146,33 @@ public class GameBoard {
 
         // Fake board
         GameBoard testBoard = copyBoard();
-        final HashMap<Intersection, Stone> testBoardMemory = new HashMap<Intersection, Stone>(testBoard.board);
 
         // Result storage
         GoRuleViolation.Type type = null;
         boolean isViolatingRule = false;
         String message = null;
 
-        // Register the node as child of current (temporary)
-        lastNode.addChild(node);
-
         // Retrive useful data from the node
-        Intersection intersection = node.getIntersection();
-        Player player = node.getPlayer();
-        Stone testStone = new Stone(intersection, player);
+        GameNode testNode = node.copy(testBoard);
+
         { // Check we are playing on the current board
-            checkBoardForIntersection(intersection);
+            checkBoardForIntersection(node.getIntersection());
         }
         { // Rule 7 :  Placing a stone of their color on an empty intersection.
-            if (isNotEmpty(intersection)) return false;
+            if (isNotEmpty(node.getIntersection())) return false;
         }
         { // Rule # : You can ot kill you
-            testBoard.placeStoneOnBoard(new Stone(intersection.forBoard(testBoard), player));
-            testBoard.computeDeadStone(getOpponent(player));
-            Stone[] deadStone = testBoard.computeDeadStone(player);
-            if (deadStone.length > 0) {
-                final Intersection stoneIntersectionOnTestBoard = testStone.getPosition().forBoard(testBoard);
-                for (Stone stone : deadStone) {
-                    if (stoneIntersectionOnTestBoard == stone.getPosition()) {
-                        message = "You can not kill yourself";
-                        type = GoRuleViolation.Type.SUICIDE;
-                        isViolatingRule = true;
-                    }
-                }
+            testBoard.actNode(testNode);
+            ArrayList<Stone> deadStones = testNode.getDeadStones();
+            if (deadStones.contains(testNode.getStone())) {
+                message = "You can not kill yourself";
+                type = GoRuleViolation.Type.SUICIDE;
+                isViolatingRule = true;
             }
         }
         if (!isViolatingRule) { // Rule 8 : A play may not recreate a previous position from the game.
-            testBoard.board = new HashMap<Intersection, Stone>(testBoardMemory);
-            GameNode testNode = node.copy(testBoard);
-            final String boardHash = testBoard.getBoardHash();
-            testBoard.placeStoneOnBoard(new Stone(intersection.forBoard(testBoard), player));
-            if (testBoard.getElement(intersection.forBoard(testBoard)) == null)
-                System.out.println("Stone not found");
-            testBoard.computeDeadStone(getOpponent(player));
-            testBoard.computeDeadStone(player);
-            testNode.setParent(testBoard.lastNode);
-            testNode.recomputeHash();
             if (testNode.isMakingKO()) {
+                DebugUtils.printBoard(testBoard);
                 type = GoRuleViolation.Type.KO;
                 message = "You made a position that exists";
                 isViolatingRule = true;
@@ -233,6 +215,7 @@ public class GameBoard {
         if (DEBUG_MODE) {
             System.out.println("Played node: " + node);
             System.out.println("Board hash is = " + getBoardHash());
+            DebugUtils.printBoard(this);
         }
     }
 
@@ -253,8 +236,8 @@ public class GameBoard {
                 break;
             case PUT_STONE:
                 placeStoneOnBoard(node.getStone());
-                computeDeadStone(getOpponent(node.getPlayer()));
-                computeDeadStone(node.getPlayer());
+                node.getDeadStones().addAll(computeDeadStone(getOpponent(node.getPlayer())));
+                node.getDeadStones().addAll(computeDeadStone(node.getPlayer()));
                 break;
             case IA_SPECIAL_ACTION:
                 if (node.getRawData() != null) {
@@ -368,7 +351,7 @@ public class GameBoard {
      * @param player The player who we want to remove stones
      * @return The dead stones
      */
-    public Stone[] computeDeadStone(Player player) {
+    public ArrayList<Stone> computeDeadStone(Player player) {
         ArrayList<Stone> deadStones = new ArrayList<Stone>();
 
         // Look for dead stones.
@@ -376,7 +359,7 @@ public class GameBoard {
         final ArrayList<StoneGroup> stoneGroups = getStoneGroups();
         for (StoneGroup stoneGroup : stoneGroups) {
             if (stoneGroup != null && stoneGroup.getPlayer() == player && !stoneGroup.isAlive()) {
-                for (Stone deadStone : stoneGroup.getStones()) {
+                for (Stone deadStone : new ArrayList<Stone>(stoneGroup.getStones())) {
                     deadStones.add(deadStone);
                     removeStoneFromBoard(deadStone);
                 }
@@ -384,7 +367,7 @@ public class GameBoard {
         }
 
         // Return set of dead stones
-        return deadStones.toArray(new Stone[deadStones.size()]);
+        return deadStones;
     }
 
     /**
@@ -395,6 +378,8 @@ public class GameBoard {
     private void removeStoneFromBoard(Stone stone) {
         stone.setCaptivated();
         board.remove(stone.getPosition());
+        if (stone.getStoneGroup() != null)
+            stone.getStoneGroup().removeStone(stone);
         for (GameListener listener : listeners) {
             listener.stoneRemoved(stone);
         }
@@ -409,6 +394,7 @@ public class GameBoard {
     private void placeStoneOnBoard(Stone stone) {
         final Intersection intersection = stone.getPosition();
         checkBoardForIntersection(intersection);
+        stone.setCaptivated(false);
         StoneGroup stoneGroup = searchForStoneGroupAround(intersection, stone.getPlayer());
         if (stoneGroup == null)
             stoneGroup = new StoneGroup(stone.getPlayer(), this, stone);
@@ -869,15 +855,13 @@ public class GameBoard {
         lastNode = canceledNode.getParent();
         Stack<GameNode> turns = new Stack<GameNode>();
         if (canceledNode.getAction() == GameNode.Action.PUT_STONE) { // We must recompute game
-            GameNode node = lastNode;
-            turns.push(node);
-            while (node.hasParent()) {
-                turns.push(node = node.getParent());
+            scoreCounter.setCountingDeadStones(false);
+            removeStoneFromBoard(canceledNode.getStone());
+            for (Stone s : canceledNode.getDeadStones()) {
+                placeStoneOnBoard(s);
             }
-            reset();
-            while (!turns.empty()) {
-                actNode(turns.pop());
-            }
+            scoreCounter.cancelNode(canceledNode);
+            scoreCounter.setCountingDeadStones(true);
         }
         currentPlayer = lastNode.getPlayer();
     }

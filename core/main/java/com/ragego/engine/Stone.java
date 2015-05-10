@@ -133,4 +133,8 @@ public class Stone {
                 return position.getLine() == board.getBoardSize() - 1;
         }
     }
+
+    public void setCaptivated(boolean b) {
+        capturated = b;
+    }
 }

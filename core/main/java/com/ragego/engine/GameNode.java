@@ -16,12 +16,12 @@ import java.util.StringTokenizer;
  */
 public class GameNode {
 
+    private static final int MAX_KO_CHECK_NODES = 20;
     /**
      * Board attached to this node.
      * Board where this action has been played.
      */
     private GameBoard board;
-
     /**
      * Raw data from board state on this node
      */
@@ -54,6 +54,11 @@ public class GameNode {
      */
     private String boardHash;
     /**
+     * Contains {@link Stone} dead during this node.
+     * This var is used to cancel a node and to not recompute all the game.
+     */
+    private ArrayList<Stone> deadStones = new ArrayList<Stone>(3);
+    /**
      * The parent node.
      * This node contains the previous state. If there is not one (null value), consider we are at game start point.
      */
@@ -70,6 +75,10 @@ public class GameNode {
      * data use code from SGF format.
      */
     private HashMap<String, String> properties = new HashMap<String, String>();
+    /**
+     * Stone that must be put on board.
+     */
+    private Stone stone;
 
     /**
      * Create a node from a given Game board.
@@ -281,7 +290,10 @@ public class GameNode {
 
     public Stone getStone() {
         if (intersection == null) return null;
-        return new Stone(intersection, player);
+        if (stone == null) {
+            stone = new Stone(intersection, player);
+        }
+        return stone;
     }
 
     /**
@@ -371,18 +383,26 @@ public class GameNode {
      */
     public boolean isMakingKO() {
         if (!hasParent()) return false;
+        int checked_node = 0;
         GameNode parent = getParent();
         if (action != Action.PUT_STONE) {
             while (parent.hasParent() && parent.action != Action.PUT_STONE) {
                 parent = parent.getParent();
             }
         }
-        while (parent != null) {
+        while (parent != null && checked_node <= MAX_KO_CHECK_NODES) {
             if (parent.locked) {
                 if (!parent.hasParent() && parent.action != Action.PUT_STONE) // If it's end on PASS node, it's OK
                     return false;
-                if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE)
+                if (boardHash.equals(parent.boardHash) && parent.action == Action.PUT_STONE) {
+                    if (GameBoard.DEBUG_MODE) {
+                        System.err.println("KO with hash : " + parent.boardHash);
+                        System.err.println("Parent node : " + parent);
+                        System.err.println("Current node : " + this);
+                    }
                     return true;
+                }
+                checked_node++;
             }
             parent = parent.getParent();
         }
@@ -444,6 +464,10 @@ public class GameNode {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public ArrayList<Stone> getDeadStones() {
+        return deadStones;
     }
 
     /**

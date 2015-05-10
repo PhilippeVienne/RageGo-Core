@@ -41,6 +41,7 @@ public class ScoreCounter implements GameListener {
     private Integer capturedWhite = 0;
     private ArrayList<Stone> deadStones = new ArrayList<Stone>();
     private ArrayList<Stone> notDeadStones = new ArrayList<Stone>();
+    private boolean countingDeadStones;
 
     public ScoreCounter(GameBoard board) {
         this.board = board;
@@ -75,6 +76,22 @@ public class ScoreCounter implements GameListener {
         }
     }
 
+    /**
+     * Cancel a node on score counting.
+     * Useful to restore the dead stones counts.
+     *
+     * @param node The node to cancel
+     */
+    public void cancelNode(GameNode node) {
+        for (Stone stone : node.getDeadStones()) {
+            if (stone.getPlayer() == board.getBlackPlayer()) {
+                capturedBlack--;
+            } else if (stone.getPlayer() == board.getWhitePlayer()) {
+                capturedWhite--;
+            }
+        }
+    }
+
     @Override
     public void newStoneAdded(Stone stone) {
         // No consequences on score
@@ -82,6 +99,7 @@ public class ScoreCounter implements GameListener {
 
     @Override
     public void stoneRemoved(Stone stone) {
+        if (!isCountingDeadStones()) return;
         if (stone.getPlayer() == board.getBlackPlayer()) {
             capturedBlack++;
         } else if (stone.getPlayer() == board.getWhitePlayer()) {
@@ -330,6 +348,14 @@ public class ScoreCounter implements GameListener {
     private void setScore(ArrayList<Intersection> points, Player c) {
         for (Intersection p : points)
             setScore(p, c);
+    }
+
+    public boolean isCountingDeadStones() {
+        return countingDeadStones;
+    }
+
+    public void setCountingDeadStones(boolean countingDeadStones) {
+        this.countingDeadStones = countingDeadStones;
     }
 
     public enum ScoringMethod {
