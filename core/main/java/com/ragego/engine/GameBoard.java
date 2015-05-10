@@ -37,13 +37,12 @@ public class GameBoard {
      * This data should not be copied between games.
      */
     private final ArrayList<GameListener> listeners = new ArrayList<GameListener>(10);
-
     /**
      * Score counter for the current game.
      * This data should not be copied between games.
      */
     private final ScoreCounter scoreCounter;
-
+    private boolean gameEnded = false;
     /**
      * Register the last validated node in the game.
      */
@@ -235,6 +234,10 @@ public class GameBoard {
                 loadBoardFromArray(node.getRawData());
                 break;
             case PASS:
+                if (node.getParent().getAction() == GameNode.Action.PASS) {
+                    gameEnded = true;
+                    scoreCounter.getScore();
+                }
                 break;
             case PUT_STONE:
                 placeStoneOnBoard(node.getStone());
@@ -863,6 +866,9 @@ public class GameBoard {
                 placeStoneOnBoard(s);
             }
             scoreCounter.cancelNode(canceledNode);
+            if (gameEnded) {
+                gameEnded = false;
+            }
             scoreCounter.setCountingDeadStones(true);
         }
         currentPlayer = lastNode.getPlayer();
@@ -881,5 +887,9 @@ public class GameBoard {
 
     public GameNode getRootNode() {
         return rootNode;
+    }
+
+    public boolean isGameEnded() {
+        return gameEnded;
     }
 }

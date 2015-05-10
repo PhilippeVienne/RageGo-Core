@@ -366,6 +366,11 @@ public class ScoreCounter implements GameListener {
         this.komi = komi;
     }
 
+    public ScoreCounter getScore() {
+        compute();
+        return getScore(getKomi(), ScoringMethod.TERRITORY);
+    }
+
     public enum ScoringMethod {
         AREA, TERRITORY
     }

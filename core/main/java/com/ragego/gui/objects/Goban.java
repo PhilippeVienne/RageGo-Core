@@ -55,8 +55,13 @@ public class Goban {
     }
 
     public void startGame() {
+        if (board == null) return;
+        if (board.isGameEnded()) {
+            Gdx.app.log("Goban", "Game is already ended and score is " + board.getScoreCounter().formatResult());
+            return;
+        }
         gameRunning = true;
-        if (board != null && !engineThread.isAlive())
+        if (!engineThread.isAlive())
             try {
                 engineThread.start();
             } catch (Exception e) {
@@ -209,8 +214,9 @@ public class Goban {
     private class GameRunnable implements Runnable {
         @Override
         public void run() {
-            while (gameRunning)
+            while (gameRunning && !board.isGameEnded())
                 board.nextMove();
+            Gdx.app.log("Goban", "Game is ended and score is " + board.getScoreCounter().formatResult());
         }
     }
 }
