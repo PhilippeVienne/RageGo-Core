@@ -180,6 +180,19 @@ public class Goban {
         passTurn = true;
     }
 
+    public void cancelLastTurn() {
+        stopGame();
+        for (GraphicStone stone : new ArrayList<GraphicStone>(stones)) {
+            removeGraphicStone(stone);
+        }
+        board.removeLastNode();
+        startGame();
+    }
+
+    public void remakeTurn() {
+
+    }
+
     private class GameRunnable implements Runnable {
         @Override
         public void run() {

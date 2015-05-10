@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
 
 /**
  * Represent a board of Go.
@@ -228,6 +229,14 @@ public class GameBoard {
         } catch (GoRuleViolation goRuleViolation) {
             throw new IllegalArgumentException("The wanted action is violating a Go rule", goRuleViolation);
         }
+        actNode(node);
+        if (DEBUG_MODE) {
+            System.out.println("Played node: " + node);
+            System.out.println("Board hash is = " + getBoardHash());
+        }
+    }
+
+    private void actNode(GameNode node) {
         node.setParent(lastNode);
         if (currentPlayer != null) // We are not in an auto-computing mode.
             node.setPlayer(currentPlayer);
@@ -270,10 +279,6 @@ public class GameBoard {
         }
         lastNode.recomputeHash();
         lastNode.lock();
-        if (DEBUG_MODE) {
-            System.out.println("Played node: " + node);
-            System.out.println("Board hash is = " + getBoardHash());
-        }
     }
 
     /**
@@ -855,5 +860,29 @@ public class GameBoard {
 
     public ArrayList<? extends Stone> getStones() {
         return new ArrayList<Stone>(board.values());
+    }
+
+    public void removeLastNode() {
+        GameNode canceledNode = lastNode;
+        currentPlayer = null;
+        if (canceledNode.getParent() == null) return; // Not cancelable
+        lastNode = canceledNode.getParent();
+        Stack<GameNode> turns = new Stack<GameNode>();
+        if (canceledNode.getAction() == GameNode.Action.PUT_STONE) { // We must recompute game
+            GameNode node = lastNode;
+            turns.push(node);
+            while (node.hasParent()) {
+                turns.push(node = node.getParent());
+            }
+            reset();
+            while (!turns.empty()) {
+                actNode(turns.pop());
+            }
+        }
+        currentPlayer = lastNode.getPlayer();
+    }
+
+    private void reset() {
+        board.clear();
     }
 }

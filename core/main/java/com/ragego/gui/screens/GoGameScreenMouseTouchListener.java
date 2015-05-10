@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.ragego.gui.ImprovedGestureDetector;
@@ -16,7 +17,7 @@ import com.ragego.utils.GuiUtils;
 public class GoGameScreenMouseTouchListener implements InputProcessor {
 
     private static final int MAX_FINGERS_ON_SCREEN = 5;
-    private static final float MIN_ZOOM = 0.25f;
+    private static final float MIN_ZOOM = 0.5f;
     private static final float MAX_ZOOM = 1.2f;
     private boolean placingStone = false;
     private boolean zooming = false;
@@ -126,6 +127,10 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
                 panning = false;
                 break;
             case 2:
+                placingStone = false;
+                panning = false;
+                break;
+            case 3:
                 System.out.println("Panning2");
                 panning = true;
                 placingStone = false;
@@ -177,11 +182,20 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
             showCrossOn(touch);
             return true;
         } else if (panning) {
+            if (screen.camera.zoom >= 1.0f) {
+                float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
+                        minX = screen.leftTileWorldCoords.x;
+                screen.camera.position.x = minX + 0.5f * screen.camera.viewportWidth;
+                screen.camera.position.y = minY + 0.5f * screen.camera.viewportHeight;
+                return true;
+            }
             if (panningLastOrigin != null) {
-                Vector2 delta = panningLastOrigin.add(-screenX, -screenY).scl(-1);
-                Vector2 newPos = new Vector2(screen.camera.position.x, screen.camera.position.y).add(delta);
-                if (screen.renderer.getViewBounds().contains(newPos))
-                    screen.camera.translate(delta);
+                Vector2 delta = panningLastOrigin.add(-screenX, -screenY).scl(-1).scl(screen.camera.zoom);
+                float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
+                        minX = screen.leftTileWorldCoords.x;
+                screen.camera.translate(delta);
+                screen.camera.position.x = MathUtils.clamp(screen.camera.position.x, minX + 0.5f * screen.camera.viewportWidth * screen.camera.zoom, maxX - 0.5f * screen.camera.viewportWidth * screen.camera.zoom);
+                screen.camera.position.y = MathUtils.clamp(screen.camera.position.y, minY + 0.5f * screen.camera.viewportHeight * screen.camera.zoom, maxY - 0.5f * screen.camera.viewportHeight * screen.camera.zoom);
                 panningLastOrigin.x = screenX;
                 panningLastOrigin.y = screenY;
             } else {
@@ -247,7 +261,8 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
         @Override
         public boolean zoom(float initialDistance, float distance) {
-            if (initialDistance < 250 && distance < 250) return false;
+            if (initialDistance < screen.viewport.getScreenWidth() * 0.3 && distance < screen.viewport.getScreenWidth() * 0.3)
+                return false;
             noPlacingUntil = System.currentTimeMillis() + 500;
             initialZoom = screen.camera.zoom;
             float ratio = initialDistance / distance;

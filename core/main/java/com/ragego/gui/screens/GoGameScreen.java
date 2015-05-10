@@ -149,6 +149,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         forwardButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                goban.remakeTurn();
             }
         });
 
@@ -158,6 +159,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                goban.cancelLastTurn();
             }
         });
 
