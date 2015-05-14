@@ -34,10 +34,10 @@ import com.ragego.utils.GuiUtils;
  */
 public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
-    private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 100;
+    private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 10;
     protected final GoGameScreenMouseTouchListener gobanInputProcessor = new GoGameScreenMouseTouchListener(this);
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
-    protected AssetManager manager;
+    protected AssetManager manager = RageGoGame.getAssetManager();
     protected TiledMap map;
     protected Goban goban;
     protected float yOffset;
@@ -54,19 +54,27 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected TiledMapTile selectionTile;
         protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
         topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
-    protected Viewport hudViewport;
-    protected Stage hudStage;
-    protected HexaBar hexaBar;
+    protected Viewport hudViewport = new ScreenViewport();
+    protected Stage hudStage = new Stage(hudViewport);
+    protected HexaBar hexaBar = new HexaBar(hudViewport, hudStage);
     protected Button hudButtonLeft = new Button();
     protected Button hudButtonRight = new Button();
     protected boolean hudVisible = false;
 
     @Override
     public final void show() {
-        /*
-            Map setup
-         */
-        manager = RageGoGame.getAssetManager();
+        loadMap();
+        setupMapBoundsAndDimensions();
+        setupCamera();
+        goban = new Goban(this, map);
+        setupGoban(goban);
+        setupInputs();
+        setupMenuButtons();
+        hideHud(true);
+        setupHudShowButton();
+    }
+
+    private void loadMap() {
         manager.load("com/ragego/gui/maps/" + getMapToLoad() + ".tmx", TiledMap.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
@@ -77,9 +85,27 @@ public abstract class GoGameScreen extends ScreenAdapter {
         selection = (TiledMapTileLayer) map.getLayers().get("selection");
         final TiledMapTileSet toolTS = map.getTileSets().getTileSet("toolTS");
         selectionTile = toolTS.getTile(toolTS.getProperties().get("firstgid", Integer.class));
+    }
 
-        tileWidthHalf = map.getProperties().get("tilewidth", Integer.class)*0.5f;
-        tileHeightHalf = map.getProperties().get("tileheight", Integer.class)*0.5f;
+    private void setupInputs() {
+        Gdx.input.setInputProcessor(inputMultiplexer);
+        inputMultiplexer.addProcessor(hudStage);
+        gobanInputProcessor.addToMultiplexer(inputMultiplexer);
+    }
+
+    private void setupCamera() {
+        //Centers camera on map
+        camera.translate(mapPartCenter.x, mapPartCenter.y);
+
+        //Maximizes the map size on screen
+        camera.viewportWidth = mapPartPixWidth;
+        camera.viewportHeight = mapPartPixHeight;
+        viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
+    }
+
+    private void setupMapBoundsAndDimensions() {
+        tileWidthHalf = map.getProperties().get("tilewidth", Integer.class) * 0.5f;
+        tileHeightHalf = map.getProperties().get("tileheight", Integer.class) * 0.5f;
         mapWidth = map.getProperties().get("width", Integer.class);
         mapHeight = map.getProperties().get("height", Integer.class);
 
@@ -102,116 +128,14 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
         //Size of the visible part of the map in world units + a padding of one tile
         mapPartPixWidth = rightTileWorldCoords.x - leftTileWorldCoords.x + tileWidthHalf * 2 + tileWidthHalf * 4;
-        mapPartPixHeight = topTileWorldCoords.y - bottomTileWorldCoords.y  + tileHeightHalf * 4 + tileHeightHalf * 4;
+        mapPartPixHeight = topTileWorldCoords.y - bottomTileWorldCoords.y + tileHeightHalf * 4 + tileHeightHalf * 4;
 
         //Determines the center coordinates of the map's visible part for camera centering
         mapPartCenter = new Vector2((rightTileWorldCoords.x + leftTileWorldCoords.x - 2 * tileWidthHalf) * 0.5f,
-            (topTileWorldCoords.y + bottomTileWorldCoords.y - 4 * tileHeightHalf) * 0.5f);
+                (topTileWorldCoords.y + bottomTileWorldCoords.y - 4 * tileHeightHalf) * 0.5f);
+    }
 
-        //Centers camera on map
-        camera.translate(mapPartCenter.x, mapPartCenter.y);
-
-        //Maximizes the map size on screen
-        camera.viewportWidth = mapPartPixWidth;
-        camera.viewportHeight = mapPartPixHeight;
-        viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
-
-        goban = new Goban(this, map);
-        setupGoban(goban);
-
-        /*
-            Input processors and HUD setup
-        */
-        hudViewport = new ScreenViewport();
-        hudStage = new Stage(hudViewport);
-        //hudStage.setDebugAll(true);
-        
-        Gdx.input.setInputProcessor(inputMultiplexer);
-        inputMultiplexer.addProcessor(hudStage);
-        gobanInputProcessor.addToMultiplexer(inputMultiplexer);
-
-        hexaBar = new HexaBar(hudViewport, hudStage);
-
-        // Forward Button
-        HexaBarButton forwardButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/forward_button_up.png",
-                "com/ragego/gui/hexabar/forward_button_down.png", 1);
-        forwardButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                goban.remakeTurn();
-            }
-        });
-
-        // Back Button
-        HexaBarButton backButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/back_button_up.png",
-                "com/ragego/gui/hexabar/back_button_down.png", 2);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                goban.cancelLastTurn();
-            }
-        });
-
-        // Mark Button
-        HexaBarButton markButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/mark_button_up.png",
-                "com/ragego/gui/hexabar/mark_button_down.png", 3);
-        markButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-            }
-        });
-
-        // Pass Button
-        HexaBarButton passButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/pass_button_up.png",
-                "com/ragego/gui/hexabar/pass_button_down.png", 4);
-        passButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                goban.markTurnAsShouldBePassed();
-            }
-        });
-
-        // Save Button
-        HexaBarButton saveButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/save_button_up.png",
-                "com/ragego/gui/hexabar/save_button_down.png", 5);
-        saveButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                goban.save();
-            }
-        });
-
-        // Inactive Buttons
-        HexaBarButton inactiveButton1 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 6);
-        HexaBarButton inactiveButton2 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 7);
-        HexaBarButton inactiveButton3 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 8);
-        HexaBarButton inactiveButton4 = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 9);
-
-        // Settings Button
-        HexaBarButton settingsButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/settings_button_up.png",
-                "com/ragego/gui/hexabar/settings_button_down.png", 10);
-        settingsButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-            }
-        });
-
-        // Return Button
-        HexaBarButton returnButton = new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/return_button_up.png",
-                "com/ragego/gui/hexabar/return_button_down.png", 11);
-        returnButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                goban.stopGame();
-                RageGoGame.goHome();
-            }
-        });
-        
-        //Default behaviour is to hide the menu
-        for (int i = 0 ; i < hudStage.getActors().size; i++) {
-            hudStage.getActors().get(i).setVisible(false);
-        }
-
+    private void setupHudShowButton() {
         // HUD visibility button
         Button.ButtonStyle hudButtonStyle = new Button.ButtonStyle();
         hudButtonStyle.up = new TextureRegionDrawable(new TextureRegion(
@@ -233,6 +157,77 @@ public abstract class GoGameScreen extends ScreenAdapter {
         hudButtonRight.setPosition(hudViewport.getScreenWidth() - hudButtonRight.getWidth(), 0);
         hudStage.addActor(hudButtonLeft);
         hudStage.addActor(hudButtonRight);
+    }
+
+    /**
+     * Add buttons for the Hexagonal menu on GoGameScreen.
+     */
+    protected void setupMenuButtons() {
+        // Forward Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/forward_button_up.png",
+                "com/ragego/gui/hexabar/forward_button_down.png", 1).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goban.remakeTurn();
+            }
+        });
+
+        // Back Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/back_button_up.png",
+                "com/ragego/gui/hexabar/back_button_down.png", 2).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goban.cancelLastTurn();
+            }
+        });
+
+        // Mark Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/mark_button_up.png",
+                "com/ragego/gui/hexabar/mark_button_down.png", 3).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+
+        // Pass Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/pass_button_up.png",
+                "com/ragego/gui/hexabar/pass_button_down.png", 4).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goban.markTurnAsShouldBePassed();
+            }
+        });
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/save_button_up.png",
+                "com/ragego/gui/hexabar/save_button_down.png", 5).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goban.save();
+            }
+        });
+
+        // Inactive Buttons
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 6);
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 7);
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 8);
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/inactive_button.png", 9);
+
+        // Settings Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/settings_button_up.png",
+                "com/ragego/gui/hexabar/settings_button_down.png", 10).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+
+        // Return Button
+        new HexaBarButton(hexaBar, "com/ragego/gui/hexabar/return_button_up.png",
+                "com/ragego/gui/hexabar/return_button_down.png", 11).addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                goban.stopGame();
+                RageGoGame.goHome();
+            }
+        });
     }
 
 
@@ -313,7 +308,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     /**
      * Wait for a user input on Goban
      * Notice: this function is thread locking.
-     * @return The coordinates
+     * @return The coordinates wanted or null if he want to pass his turn
      */
     public Vector2 waitForUserInputOnGoban() {
         Vector2 coordinates;
@@ -332,8 +327,12 @@ public abstract class GoGameScreen extends ScreenAdapter {
         return coordinates;
     }
 
-    void hideHud() {
-        if (hudVisible) {
+    public void hideHud() {
+        hideHud(false);
+    }
+
+    private void hideHud(boolean force) {
+        if (hudVisible || force) {
             hudVisible = false;
             for (Actor actor : hudStage.getActors()) {
                 if (actor != null)
