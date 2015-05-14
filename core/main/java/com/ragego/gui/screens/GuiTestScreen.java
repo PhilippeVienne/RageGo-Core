@@ -99,7 +99,17 @@ public class GuiTestScreen extends ScreenAdapter {
         //hudStage.addActor(yesNoWindow);
 
         //TEST
-        SpecialDialog messageDialog = new SpecialDialog("", 0, "Bonjour", "Au revoir");
+        SpecialDialog messageDialog = new SpecialDialog("", 0, "Lorem ipsum dolor sit amet, consectetur adipiscing elit." +
+                "\n Donec a diam lectus. Sed sit amet ipsum mauris." +
+                "\n ante hendrerit. Donec et mollis dolor." +
+                "\n Nam tincidunt congue enim, " +
+                "\nultricies a non tortor. " +
+                "\nlorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. " +
+                "\nmagna consequat sagittis. " +
+                "\nimperdiet. Ut convallis libero in urna ultrices accumsan. " +
+                "\nquis quam pulvinar at malesuada arcu rhoncus." +
+                "\n montes, nascetur ridiculus mus. " +
+                "\nsemper ac in est.", "Au revoir");
         messageDialog.setPosition((hudViewport.getWorldWidth() - messageDialog.getWidth()) * 0.5f,
                 (hudViewport.getWorldHeight() - messageDialog.getHeight()) * 0.5f);
 

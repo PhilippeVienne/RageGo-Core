@@ -11,11 +11,11 @@ public class SpecialDialog extends Dialog {
     private static final int CONFIRM = 1;
     private static final int INPUT = 2;
 
-    private static Skin uiSkin;
-
     public SpecialDialog(String title, int dialogType, CharSequence... args) {
         super(title, RageGoGame.getUiSkin());
-        uiSkin = RageGoGame.getUiSkin();
+
+        //As Dialog does not implement a getter for the Skin :
+        Skin uiSkin = RageGoGame.getUiSkin();
 
         if ((dialogType > 2) || (dialogType < 0)) {
             throw new IllegalArgumentException("dialogType must be 0, 1 or 2");
@@ -25,7 +25,7 @@ public class SpecialDialog extends Dialog {
         System.out.println(args.length);
         System.out.println(args[0]);
         for (int i = 0; i < args.length; i++) {
-            labels[i] = new Label("No", uiSkin);
+            labels[i] = new Label(args[i], uiSkin);
             System.out.println(i);
             this.getContentTable().row().colspan(i + 1).center();
             this.getContentTable().add(labels[i]);
@@ -33,7 +33,9 @@ public class SpecialDialog extends Dialog {
 
         switch (dialogType) {
             case 0:
-                TextButton tb1 = new TextButton("Ok", uiSkin);
+                TextButton okButton = new TextButton("Ok", uiSkin);
+                this.row().colspan(args.length + 1);
+                this.button(okButton);
                 break;
             case 1:
 
