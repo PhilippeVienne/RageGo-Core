@@ -98,7 +98,7 @@ public class MenuScreen extends ScreenAdapter{
         parametersButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log(TAG, "Parameters Button clicked");
+                nextScreen = new GuiTestScreen();
             }
         });
     }
