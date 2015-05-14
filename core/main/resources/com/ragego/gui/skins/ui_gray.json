@@ -1,5 +1,5 @@
 {
-com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: nixie_one.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: acme_9_regular.fnt } },
 com.badlogic.gdx.graphics.Color: {
 	white: { a: 1, b: 1, g: 1, r: 1 },
 	black: { a: 1, b: 0, g: 0, r: 0 }

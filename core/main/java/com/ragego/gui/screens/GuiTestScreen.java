@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.elements.SpecialDialog;
 
 /**
  * Screen for debug purposes.
@@ -38,6 +39,8 @@ public class GuiTestScreen extends ScreenAdapter {
 
     public GuiTestScreen() {
         super();
+        manager = RageGoGame.getAssetManager();
+        skin = RageGoGame.getUiSkin();
     }
 
     @Override
@@ -51,8 +54,6 @@ public class GuiTestScreen extends ScreenAdapter {
         backStage = new Stage(backViewport);
         hudStage = new Stage(hudViewport);
 
-        manager = RageGoGame.getAssetManager();
-        manager.load("com/ragego/gui/skins/ui_gray.json", Skin.class);
         manager.load("com/ragego/gui/splash/island_background.png", Texture.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
@@ -91,10 +92,18 @@ public class GuiTestScreen extends ScreenAdapter {
         yesNoWindow.button(tb1);
         yesNoWindow.button(tb2);
         yesNoWindow.setKeepWithinStage(true);
+        yesNoWindow.setResizable(true);
         yesNoWindow.pack();
-        yesNoWindow.setPosition(hudViewport.getWorldWidth() - yesNoWindow.getWidth() * 0.5f,
-                hudViewport.getWorldHeight() - yesNoWindow.getHeight() * 0.5f);
-        hudStage.addActor(yesNoWindow);
+        yesNoWindow.setPosition((hudViewport.getWorldWidth() - yesNoWindow.getWidth()) * 0.5f,
+                (hudViewport.getWorldHeight() - yesNoWindow.getHeight()) * 0.5f);
+        //hudStage.addActor(yesNoWindow);
+
+        //TEST
+        SpecialDialog messageDialog = new SpecialDialog("", 0, "Bonjour", "Au revoir");
+        messageDialog.setPosition((hudViewport.getWorldWidth() - messageDialog.getWidth()) * 0.5f,
+                (hudViewport.getWorldHeight() - messageDialog.getHeight()) * 0.5f);
+
+        hudStage.addActor(messageDialog);
 
         Gdx.input.setInputProcessor(hudStage);
     }
@@ -103,6 +112,8 @@ public class GuiTestScreen extends ScreenAdapter {
     public void resize(int width, int height) {
         backViewport.update(width, height);
         hudViewport.update(width, height, true);
+        yesNoWindow.setPosition((hudViewport.getWorldWidth() - yesNoWindow.getWidth()) * 0.5f,
+                (hudViewport.getWorldHeight() - yesNoWindow.getHeight()) * 0.5f);
     }
 
     @Override

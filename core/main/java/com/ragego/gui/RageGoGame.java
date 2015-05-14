@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ragego.gui.screens.MenuScreen;
 import com.ragego.utils.InternetCheckThread;
 
@@ -11,9 +12,10 @@ import com.ragego.utils.InternetCheckThread;
  * Describes how we start the game.
  */
 public class RageGoGame extends Game {
-
+    private static final String TAG = "RageGoGame";
     private static final RageGoGame instance = new RageGoGame();
     private static final RageGoAssetManager manager = new RageGoAssetManager();
+    private static Skin uiSkin;
     private MenuScreen homeScreen = null;
     private InternetCheckThread checkInternetConnection = new InternetCheckThread();
 
@@ -38,10 +40,20 @@ public class RageGoGame extends Game {
         getInstance().load(getInstance().getHomeScreen());
     }
 
+    public static Skin getUiSkin() {
+        return uiSkin;
+    }
+
     @Override
     public void create() {
         Gdx.input.setCatchBackKey(true);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+        manager.load("com/ragego/gui/skins/ui_gray.json", Skin.class);
+        manager.finishLoading();
+        Gdx.app.log(TAG, "Skin loaded");
+        uiSkin = manager.get("com/ragego/gui/skins/ui_gray.json");
+
         homeScreen = new MenuScreen();
         setScreen(homeScreen);
     }
