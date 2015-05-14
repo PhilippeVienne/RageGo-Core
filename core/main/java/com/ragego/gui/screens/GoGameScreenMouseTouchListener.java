@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Timer;
-import com.ragego.gui.ImprovedGestureDetector;
+import com.ragego.gui.FirewalledGestureDetector;
 import com.ragego.utils.GuiUtils;
 
 /**
@@ -137,7 +137,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      */
     public void addToMultiplexer(InputMultiplexer multiplexer) {
         final int size = multiplexer.getProcessors().size;
-        multiplexer.addProcessor(size, new ImprovedGestureDetector(new GoGameScreenMouseTouchListener.Gestures()));
+        multiplexer.addProcessor(size, new FirewalledGestureDetector(new GoGameScreenMouseTouchListener.Gestures()));
         multiplexer.addProcessor(size + 1, this);
     }
 
