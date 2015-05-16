@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.menu.HexaBar;
 import com.ragego.gui.menu.HexaBarButton;
 import com.ragego.gui.objects.Goban;
@@ -224,10 +225,20 @@ public abstract class GoGameScreen extends ScreenAdapter {
                 "com/ragego/gui/hexabar/return_button_down.png", 11).addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                goban.stopGame();
-                RageGoGame.goHome();
+                final RageGoDialog confirmation = new RageGoDialog("Confirmation", RageGoDialog.CONFIRM, new Runnable() {
+                    @Override
+                    public void run() {
+                        closeScreen();
+                    }
+                }, null, "Es-tu sur de vouloir quitter ta partie ?");
+                confirmation.centerOnViewport(hudViewport).displayOn(hudStage);
             }
         });
+    }
+
+    public void closeScreen() {
+        goban.stopGame();
+        RageGoGame.goHome();
     }
 
 

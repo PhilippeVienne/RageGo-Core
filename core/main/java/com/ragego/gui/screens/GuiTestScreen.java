@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
-import com.ragego.gui.elements.SpecialDialog;
+import com.ragego.gui.elements.RageGoDialog;
 
 /**
  * Screen for debug purposes.
@@ -99,21 +99,14 @@ public class GuiTestScreen extends ScreenAdapter {
         //hudStage.addActor(yesNoWindow);
 
         //TEST
-        SpecialDialog messageDialog = new SpecialDialog("", 0, "Lorem ipsum dolor sit amet, consectetur adipiscing elit." +
-                "\n Donec a diam lectus. Sed sit amet ipsum mauris." +
-                "\n ante hendrerit. Donec et mollis dolor." +
-                "\n Nam tincidunt congue enim, " +
-                "\nultricies a non tortor. " +
-                "\nlorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. " +
-                "\nmagna consequat sagittis. " +
-                "\nimperdiet. Ut convallis libero in urna ultrices accumsan. " +
-                "\nquis quam pulvinar at malesuada arcu rhoncus." +
-                "\n montes, nascetur ridiculus mus. " +
-                "\nsemper ac in est.", "Au revoir");
-        messageDialog.setPosition((hudViewport.getWorldWidth() - messageDialog.getWidth()) * 0.5f,
-                (hudViewport.getWorldHeight() - messageDialog.getHeight()) * 0.5f);
-
-        hudStage.addActor(messageDialog);
+        RageGoDialog messageDialog = new RageGoDialog("Erreur", "On a eu un bug ?", RageGoDialog.MESSAGE, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Je blague");
+                throw new RuntimeException("Ahah ! et si y en a un");
+            }
+        });
+        messageDialog.centerOnViewport(hudViewport).displayOn(hudStage);
 
         Gdx.input.setInputProcessor(hudStage);
     }
