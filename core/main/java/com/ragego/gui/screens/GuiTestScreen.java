@@ -96,6 +96,14 @@ public class GuiTestScreen extends ScreenAdapter {
                 (hudViewport.getWorldHeight() - yesNoWindow.getHeight()) * 0.5f);
         //hudStage.addActor(yesNoWindow);
 
+        WidgetGroup widgetGroup = new WidgetGroup();
+        widgetGroup.addActor(tb1);
+        widgetGroup.addActor(tb2);
+        widgetGroup.pack();
+        widgetGroup.setPosition(0, 0);
+        hudStage.addActor(widgetGroup);
+        widgetGroup.setDebug(true, true);
+
         //TEST
         RageGoDialog messageDialog = new RageGoDialog("Erreur", "On a eu un bug ?", RageGoDialog.MESSAGE, new Runnable() {
             @Override
@@ -104,7 +112,7 @@ public class GuiTestScreen extends ScreenAdapter {
                 throw new RuntimeException("Ahah ! et si y en a un");
             }
         });
-        messageDialog.centerOnViewport(hudViewport).displayOn(hudStage);
+        //messageDialog.centerOnViewport(hudViewport).displayOn(hudStage);
 
         Gdx.input.setInputProcessor(hudStage);
     }

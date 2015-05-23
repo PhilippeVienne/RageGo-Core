@@ -1,52 +1,28 @@
 package com.ragego.gui.menu;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 /**
  * Button for the {@link HexagonalMenu}.
  */
 public class HexagonalButton extends Button {
-
-    /**
-     * Menu where this button is displayed.
-     */
     private final HexagonalMenu menu;
-
-    /**
-     * Position of this button in the menu.
-     */
     private HexagonalMenu.Position position;
-
-    private Texture upTexture;
+    private Skin menuSkin;
 
     /**
      * @param menu           The menu where the button will be
-     * @param resourceToLoad The resource to load
      * @param position       The wanted position
      */
-    public HexagonalButton(HexagonalMenu menu, String resourceToLoad, HexagonalMenu.Position position) {
+    public HexagonalButton(HexagonalMenu menu, HexagonalMenu.Position position, Skin menuSkin, String buttonStyleName) {
         this.menu = menu;
-        loadResource(resourceToLoad);
+        this.menuSkin = menuSkin;
+        this.setStyle(menuSkin.get(buttonStyleName, ButtonStyle.class));
         setSize(getPrefWidth(), getPrefHeight());
         setPosition(position);
         menu.addButton(this);
-    }
-
-    /**
-     * Load textures and update variables.
-     *
-     * @param resourceToLoad URI to give to {@link com.badlogic.gdx.Gdx#files}
-     */
-    private void loadResource(String resourceToLoad) {
-        upTexture = new Texture(Gdx.files.classpath(resourceToLoad));
-        Button.ButtonStyle style = new Button.ButtonStyle();
-        style.up = new TextureRegionDrawable(new TextureRegion(upTexture));
-        setStyle(style);
     }
 
     /**
@@ -68,12 +44,5 @@ public class HexagonalButton extends Button {
         final Vector2 coordinates = menu.getCoordinateFor(position);
         coordinates.add(-1.0f * getWidth() * 0.5f, -1.0f * getHeight() * 0.5f);
         setPosition(coordinates.x, coordinates.y);
-    }
-
-    /**
-     * Dispose texture loaded by this button.
-     */
-    public void dispose() {
-        upTexture.dispose();
     }
 }

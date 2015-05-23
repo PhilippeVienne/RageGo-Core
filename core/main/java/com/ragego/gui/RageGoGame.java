@@ -66,6 +66,7 @@ public class RageGoGame extends Game {
     @Override
     public void dispose() {
         super.dispose();
+        manager.dispose();
     }
 
     @Override

@@ -3,11 +3,14 @@ package com.ragego.gui.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.ragego.gui.RageGoAssetManager;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.menu.HexagonalButton;
 import com.ragego.gui.menu.HexagonalMenu;
@@ -17,13 +20,13 @@ import com.ragego.gui.menu.HexagonalMenu;
  */
 public class MenuScreen extends ScreenAdapter{
     private static final String TAG = "MenuScreen";
-
-    private Viewport viewport;
-
+    public OrthographicCamera backCamera, hudCamera;
+    private ScreenViewport hudViewport;
+    private FillViewport backViewport;
     private Stage stage;
-
     private HexagonalMenu menu;
-
+    private RageGoAssetManager manager;
+    private Skin menuSkin;
     private ScreenAdapter nextScreen = null;
 
     public MenuScreen() {
@@ -32,15 +35,27 @@ public class MenuScreen extends ScreenAdapter{
 
     @Override
     public void show () {
-        viewport = new ScreenViewport();
-        stage = new Stage(viewport);
+        backCamera = new OrthographicCamera();
+        hudCamera = new OrthographicCamera();
+        backViewport = new FillViewport(2048, 1380, backCamera);
+        hudViewport = new ScreenViewport(hudCamera);
+
+        stage = new Stage(hudViewport);
         //stage.setDebugAll(true);
         Gdx.input.setInputProcessor(stage);
 
-        menu = new HexagonalMenu(viewport, stage);
+        manager = RageGoGame.getAssetManager();
+        manager.load("com/ragego/gui/menu/menu.json", Skin.class);
+        manager.finishLoading();
+        Gdx.app.log(TAG, "menuSkin loaded");
+        menuSkin = manager.get("com/ragego/gui/menu/menu.json");
+
+        menu = new HexagonalMenu(menuSkin, "menu_frame");
+        menu.setPosition((hudViewport.getScreenWidth() - menu.getWidth()) * 0.5f, (hudViewport.getScreenHeight() - menu.getHeight()) * 0.5f);
+
 
         // Play Button
-        HexagonalButton playButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_play.png", HexagonalMenu.Position.CENTER);
+        HexagonalButton playButton = new HexagonalButton(menu, HexagonalMenu.Position.CENTER, menuSkin, "play");
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -49,7 +64,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Solo Button
-        HexagonalButton soloButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_solo.png", HexagonalMenu.Position.TOP);
+        HexagonalButton soloButton = new HexagonalButton(menu, HexagonalMenu.Position.TOP, menuSkin, "solo");
         soloButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -58,7 +73,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Online Button
-        HexagonalButton onlineButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_online.png", HexagonalMenu.Position.RIGHT_TOP);
+        HexagonalButton onlineButton = new HexagonalButton(menu, HexagonalMenu.Position.RIGHT_TOP, menuSkin, "online");
         onlineButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -67,7 +82,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Credits Button
-        HexagonalButton creditsButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_credits.png", HexagonalMenu.Position.RIGHT_BOTTOM);
+        HexagonalButton creditsButton = new HexagonalButton(menu, HexagonalMenu.Position.RIGHT_BOTTOM, menuSkin, "credits");
         creditsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -76,7 +91,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Return Button
-        HexagonalButton returnButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_return.png", HexagonalMenu.Position.BOTTOM);
+        HexagonalButton returnButton = new HexagonalButton(menu, HexagonalMenu.Position.BOTTOM, menuSkin, "return");
         returnButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -85,7 +100,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Multiplayer Button
-        HexagonalButton multiPlayerButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_multiplayer.png", HexagonalMenu.Position.LEFT_TOP);
+        HexagonalButton multiPlayerButton = new HexagonalButton(menu, HexagonalMenu.Position.LEFT_TOP, menuSkin, "multiplayer");
         multiPlayerButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -94,13 +109,14 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Parameters Button
-        HexagonalButton parametersButton = new HexagonalButton(menu, "com/ragego/gui/menu/button_parameters.png", HexagonalMenu.Position.LEFT_BOTTOM);
+        HexagonalButton parametersButton = new HexagonalButton(menu, HexagonalMenu.Position.LEFT_BOTTOM, menuSkin, "settings");
         parametersButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 nextScreen = new GuiTestScreen();
             }
         });
+        stage.addActor(menu);
     }
 
     private void play() {
@@ -111,12 +127,12 @@ public class MenuScreen extends ScreenAdapter{
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        hudViewport.update(width, height);
     }
 
     @Override
     public void dispose() {
-        menu.dispose();
+        menuSkin.dispose();
         stage.dispose();
     }
 

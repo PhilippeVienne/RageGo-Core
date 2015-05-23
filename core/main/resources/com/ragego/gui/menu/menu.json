@@ -1,0 +1,11 @@
+{
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+  	play: { down: play_down, up: play_up, over: play_hover },
+  	solo: { down: solo_on, up: solo_off, over: solo_hover },
+  	multiplayer: { down: multiplayer_on, up: multiplayer_off, over: multiplayer_hover },
+  	online: { down: online_on, up: online_off, over: online_hover },
+  	credits: { down: credits_on, up: credits_off, over: credits_hover },
+  	settings: { down: settings_on, up: settings_off, over: settings_hover },
+  	return: { down: return_on, up: return_off, over: return_hover }
+}
+}

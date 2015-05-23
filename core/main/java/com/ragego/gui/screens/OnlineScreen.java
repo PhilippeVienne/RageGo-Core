@@ -89,7 +89,7 @@ public class OnlineScreen extends ScreenAdapter {
         offlineStage = new Stage(viewport);
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, offlineStage));
         loadAssets();
-        BitmapFont font = manager.get("com/ragego/gui/skins/acme_9_regular.fnt");
+        BitmapFont font = manager.get("com/ragego/gui/ui/acme_9_regular.fnt");
 
         int middlepointX = SCENE_WIDTH >> 1;
         int middlepointY = SCENE_HEIGHT >> 1;
@@ -200,7 +200,7 @@ public class OnlineScreen extends ScreenAdapter {
     private void loadAssets() {
         manager = RageGoGame.getAssetManager();
 
-        manager.load("com/ragego/gui/skins/acme_9_regular.fnt", BitmapFont.class);
+        manager.load("com/ragego/gui/ui/acme_9_regular.fnt", BitmapFont.class);
 
         manager.load("com/ragego/gui/temp/tfSelection.png", Texture.class);
         manager.load("com/ragego/gui/temp/tfbackground.png", Texture.class);
