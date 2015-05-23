@@ -49,10 +49,10 @@ public class RageGoGame extends Game {
         Gdx.input.setCatchBackKey(true);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
-        manager.load("com/ragego/gui/skins/ui_gray.json", Skin.class);
+        manager.load("com/ragego/gui/ui/ui.json", Skin.class);
         manager.finishLoading();
         Gdx.app.log(TAG, "Skin loaded");
-        uiSkin = manager.get("com/ragego/gui/skins/ui_gray.json");
+        uiSkin = manager.get("com/ragego/gui/ui/ui.json");
 
         homeScreen = new MenuScreen();
         setScreen(homeScreen);

@@ -58,8 +58,6 @@ public class GuiTestScreen extends ScreenAdapter {
         manager.finishLoading();
         Gdx.app.log(TAG, "Assets loaded");
 
-        skin = manager.get("com/ragego/gui/skins/ui_gray.json");
-
         backTex = manager.get("com/ragego/gui/splash/island_background.png");
         backTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         Table layerBackground = new Table();

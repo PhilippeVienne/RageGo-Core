@@ -1,0 +1,159 @@
+
+menu.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+menu_frame
+  rotate: false
+  xy: 1, 536
+  size: 415, 480
+  orig: 415, 480
+  offset: 0, 0
+  index: -1
+credits_hover
+  rotate: false
+  xy: 1, 386
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+credits_off
+  rotate: false
+  xy: 418, 868
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+credits_on
+  rotate: false
+  xy: 1, 236
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+multiplayer_hover
+  rotate: false
+  xy: 131, 386
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+multiplayer_off
+  rotate: false
+  xy: 418, 718
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+multiplayer_on
+  rotate: false
+  xy: 548, 868
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+online_hover
+  rotate: false
+  xy: 1, 86
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+online_off
+  rotate: false
+  xy: 131, 236
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+online_on
+  rotate: false
+  xy: 261, 386
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+return_hover
+  rotate: false
+  xy: 418, 568
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+return_off
+  rotate: false
+  xy: 548, 718
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+return_on
+  rotate: false
+  xy: 678, 868
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+settings_hover
+  rotate: false
+  xy: 131, 86
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+settings_off
+  rotate: false
+  xy: 261, 236
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+settings_on
+  rotate: false
+  xy: 548, 568
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+solo_hover
+  rotate: false
+  xy: 678, 718
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+solo_off
+  rotate: false
+  xy: 808, 868
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+solo_on
+  rotate: false
+  xy: 261, 86
+  size: 128, 148
+  orig: 128, 148
+  offset: 0, 0
+  index: -1
+play_down
+  rotate: true
+  xy: 1, 1
+  size: 83, 96
+  orig: 83, 96
+  offset: 0, 0
+  index: -1
+play_hover
+  rotate: false
+  xy: 678, 620
+  size: 83, 96
+  orig: 83, 96
+  offset: 0, 0
+  index: -1
+play_up
+  rotate: false
+  xy: 808, 770
+  size: 83, 96
+  orig: 83, 96
+  offset: 0, 0
+  index: -1
