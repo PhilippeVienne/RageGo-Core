@@ -11,20 +11,22 @@ import java.util.HashMap;
  * Manages positions and display for an hexagonal menu.
  */
 public class HexagonalMenu extends WidgetGroup {
+    private static final int BUTTONS_NB = 7;
+    private final static String MENU_FRAME_NAME = "menu_frame";
     private Skin menuSkin;
     private Image menuFrame;
-    private HashMap<Position, HexagonalButton> buttons = new HashMap<Position, HexagonalButton>(7);
+    private HashMap<Position, HexagonalMenuButton> buttons = new HashMap<Position, HexagonalMenuButton>(BUTTONS_NB);
 
-    public HexagonalMenu(Skin menuSkin, String menuFrameName) {
+    public HexagonalMenu(Skin menuSkin) {
         super();
         this.menuSkin = menuSkin;
-        menuFrame = new Image(menuSkin.getRegion(menuFrameName));
+        menuFrame = new Image(menuSkin.getRegion(MENU_FRAME_NAME));
         this.setWidth(menuFrame.getWidth());
         this.setHeight(menuFrame.getHeight());
         this.addActor(menuFrame);
     }
 
-    public void addButton(HexagonalButton button) {
+    public void addButton(HexagonalMenuButton button) {
         buttons.put(button.getPosition(), button);
         this.addActor(button);
     }
@@ -62,6 +64,10 @@ public class HexagonalMenu extends WidgetGroup {
                 break;
         }
         return coordinates;
+    }
+
+    public Skin getMenuSkin() {
+        return menuSkin;
     }
 
     /**

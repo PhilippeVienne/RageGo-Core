@@ -2,13 +2,12 @@ package com.ragego.gui.elements;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
@@ -22,7 +21,6 @@ public class RageGoDialog extends Dialog {
 
     public RageGoDialog(String title, int dialogType, final Runnable actionOnOk, final Runnable actionOnCancel, CharSequence... args) {
         super(title, RageGoGame.getUiSkin());
-
         //As Dialog does not implement a getter for the Skin :
         Skin uiSkin = RageGoGame.getUiSkin();
 
@@ -35,31 +33,34 @@ public class RageGoDialog extends Dialog {
         System.out.println(args[0]);
         for (int i = 0; i < args.length; i++) {
             labels[i] = new Label(args[i], uiSkin);
-            System.out.println(i);
-            this.getContentTable().row().center();
-            this.getContentTable().add(labels[i]);
+            labels[i].setAlignment(Align.center);
+            labels[i].setWrap(true);
+            labels[i].setFontScale(0.8f);
+            this.getContentTable().add(labels[i]).width(500).center().row();
         }
+
+        this.getButtonTable().padTop(50);
 
         switch (dialogType) {
             case MESSAGE:
-                this.row();
-                center();
                 okButton.addListener(new ButtonChangeListener(actionOnOk));
                 cancelButton.addListener(new ButtonChangeListener(actionOnCancel));
-                add(okButton).width(500);
+                this.getButtonTable().add(okButton).width(500);
                 break;
             case CONFIRM:
-                this.row();
-                center();
                 okButton.addListener(new ButtonChangeListener(actionOnOk));
                 cancelButton.addListener(new ButtonChangeListener(actionOnCancel));
-                add(okButton).prefWidth(400);
-                add(cancelButton).prefWidth(400);
+                this.getButtonTable().add(okButton).width(400);
+                this.getButtonTable().add(cancelButton).width(400);
                 break;
             case INPUT:
                 break;
         }
         this.setKeepWithinStage(true);
+    }
+
+    public RageGoDialog(String title, String message, int dialogType, Runnable actionOnOk) {
+        this(title, dialogType, actionOnOk, null, message);
     }
 
     public TextButton getOkButton() {
@@ -68,10 +69,6 @@ public class RageGoDialog extends Dialog {
 
     public TextButton getCancelButton() {
         return cancelButton;
-    }
-
-    public RageGoDialog(String title, String message, int dialogType, Runnable actionOnOk) {
-        this(title, dialogType, actionOnOk, null, message);
     }
 
     public RageGoDialog centerOnViewport(Viewport viewport){

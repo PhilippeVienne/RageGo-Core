@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 /**
  * Button for the {@link HexagonalMenu}.
  */
-public class HexagonalButton extends Button {
+public class HexagonalMenuButton extends Button {
     private final HexagonalMenu menu;
     private HexagonalMenu.Position position;
     private Skin menuSkin;
@@ -16,9 +16,9 @@ public class HexagonalButton extends Button {
      * @param menu           The menu where the button will be
      * @param position       The wanted position
      */
-    public HexagonalButton(HexagonalMenu menu, HexagonalMenu.Position position, Skin menuSkin, String buttonStyleName) {
+    public HexagonalMenuButton(HexagonalMenu menu, HexagonalMenu.Position position, String buttonStyleName) {
         this.menu = menu;
-        this.menuSkin = menuSkin;
+        this.menuSkin = menu.getMenuSkin();
         this.setStyle(menuSkin.get(buttonStyleName, ButtonStyle.class));
         setSize(getPrefWidth(), getPrefHeight());
         setPosition(position);

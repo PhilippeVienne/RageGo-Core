@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.ragego.gui.RageGoAssetManager;
 import com.ragego.gui.RageGoGame;
-import com.ragego.gui.elements.HexagonalButton;
 import com.ragego.gui.elements.HexagonalMenu;
+import com.ragego.gui.elements.HexagonalMenuButton;
 
 import java.util.HashMap;
 
@@ -66,12 +66,12 @@ public class MenuScreen extends ScreenAdapter{
         backGroundImg = new Image(backTex);
         backStage.addActor(backGroundImg);
 
-        menu = new HexagonalMenu(menuSkin, "menu_frame");
+        menu = new HexagonalMenu(menuSkin);
         menu.setPosition((hudViewport.getScreenWidth() - menu.getWidth()) * 0.5f,
                 (hudViewport.getScreenHeight() - menu.getHeight()) * 0.5f);
 
         // Play Button
-        final HexagonalButton playButton = new HexagonalButton(menu, HexagonalMenu.Position.CENTER, menuSkin, "play");
+        final HexagonalMenuButton playButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.CENTER, "play");
         buttons.put(0, playButton);
         playButton.setDisabled(true);
         playButton.addListener(new ClickListener() {
@@ -83,7 +83,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Return Button
-        final HexagonalButton returnButton = new HexagonalButton(menu, HexagonalMenu.Position.BOTTOM, menuSkin, "return");
+        final HexagonalMenuButton returnButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.BOTTOM, "return");
         buttons.put(1, returnButton);
         returnButton.addListener(new ClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Solo Button
-        final HexagonalButton soloButton = new HexagonalButton(menu, HexagonalMenu.Position.TOP, menuSkin, "solo");
+        final HexagonalMenuButton soloButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.TOP, "solo");
         buttons.put(2, soloButton);
         soloButton.setDisabled(true);
         soloButton.addListener(new ClickListener() {
@@ -111,7 +111,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Online Button
-        final HexagonalButton onlineButton = new HexagonalButton(menu, HexagonalMenu.Position.RIGHT_TOP, menuSkin, "online");
+        final HexagonalMenuButton onlineButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.RIGHT_TOP, "online");
         buttons.put(3, onlineButton);
         onlineButton.addListener(new ClickListener() {
             @Override
@@ -126,7 +126,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Credits Button
-        final HexagonalButton creditsButton = new HexagonalButton(menu, HexagonalMenu.Position.RIGHT_BOTTOM, menuSkin, "credits");
+        final HexagonalMenuButton creditsButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.RIGHT_BOTTOM, "credits");
         buttons.put(4, creditsButton);
         creditsButton.setDisabled(true);
         creditsButton.addListener(new ClickListener() {
@@ -142,7 +142,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Multiplayer Button
-        final HexagonalButton multiPlayerButton = new HexagonalButton(menu, HexagonalMenu.Position.LEFT_TOP, menuSkin, "multiplayer");
+        final HexagonalMenuButton multiPlayerButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.LEFT_TOP, "multiplayer");
         buttons.put(5, multiPlayerButton);
         multiPlayerButton.addListener(new ClickListener() {
             @Override
@@ -157,7 +157,7 @@ public class MenuScreen extends ScreenAdapter{
         });
 
         //Parameters Button
-        final HexagonalButton parametersButton = new HexagonalButton(menu, HexagonalMenu.Position.LEFT_BOTTOM, menuSkin, "settings");
+        final HexagonalMenuButton parametersButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.LEFT_BOTTOM, "settings");
         buttons.put(6, parametersButton);
         parametersButton.addListener(new ClickListener() {
             @Override
