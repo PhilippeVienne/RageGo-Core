@@ -24,9 +24,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.elements.HexaBar;
+import com.ragego.gui.elements.HexaBarButton;
 import com.ragego.gui.elements.RageGoDialog;
-import com.ragego.gui.menu.HexaBar;
-import com.ragego.gui.menu.HexaBarButton;
 import com.ragego.gui.objects.Goban;
 import com.ragego.utils.GuiUtils;
 
@@ -353,9 +353,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
             hudButtonRight.setVisible(true);
         }
     }
-
     public OrthographicCamera getCamera() {
         return camera;
     }
-
 }

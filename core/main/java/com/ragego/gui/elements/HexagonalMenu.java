@@ -1,4 +1,4 @@
-package com.ragego.gui.menu;
+package com.ragego.gui.elements;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;

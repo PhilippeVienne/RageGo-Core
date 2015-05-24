@@ -1,4 +1,4 @@
-package com.ragego.gui.menu;
+package com.ragego.gui.elements;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -35,7 +35,7 @@ public class HexagonalButton extends Button {
     }
 
     /**
-     * Update the position of button on a given {@link com.ragego.gui.menu.HexagonalMenu.Position}.
+     * Update the position of button on a given {@link HexagonalMenu.Position}.
      *
      * @param position The wanted position for this button
      */

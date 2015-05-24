@@ -1,4 +1,4 @@
-package com.ragego.gui.menu;
+package com.ragego.gui.elements;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
