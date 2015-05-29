@@ -23,11 +23,11 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      */
     private static final int MAX_FINGERS_ON_SCREEN = 5;
     /**
-     * Min zoom possible with the camera
+     * Min zoom possible with the worldCamera
      */
     private static final float MIN_ZOOM = 0.5f;
     /**
-     * Max zoom possible with the camera
+     * Max zoom possible with the worldCamera
      */
     private static final float MAX_ZOOM = 1.2f;
     /**
@@ -40,7 +40,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     private boolean panning = false;
     /**
      * The attahced screen for this listener.
-     * This is useful to grab camera settings and goban information.
+     * This is useful to grab worldCamera settings and goban information.
      */
     private GoGameScreen screen;
     /**
@@ -194,7 +194,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         resetCounters();
         if (placingStone) {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-            Vector3 worldCoords = screen.getCamera().unproject(tempCoords);
+            Vector3 worldCoords = screen.getWorldCamera().unproject(tempCoords);
             Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.yOffset);
             showCrossOn(touch);
         } else {
@@ -207,7 +207,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      * Reset all temp values to defaults
      */
     private void resetCounters() {
-        initialZoom = screen.camera.zoom;
+        initialZoom = screen.worldCamera.zoom;
     }
 
     /**
@@ -235,7 +235,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         pointers[pointer] = null;
         if (getActivePointersCount() == 0) {
             if (placingStone && noPlacingUntil < System.currentTimeMillis()) {
-                Vector3 worldCoords = screen.getCamera().unproject(new Vector3(screenX, screenY, 0));
+                Vector3 worldCoords = screen.getWorldCamera().unproject(new Vector3(screenX, screenY, 0));
                 hideCross();
                 lastTouch = GuiUtils.worldToIsoTop(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.mapHeight, screen.yOffset);
                 placingStone = false;
@@ -273,21 +273,21 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         // Update or just do actions
         if (placingStone && noPlacingUntil < System.currentTimeMillis()) {
             Vector3 tempCoords = new Vector3(screenX, screenY, 0);
-            Vector3 worldCoords = screen.getCamera().unproject(tempCoords);
+            Vector3 worldCoords = screen.getWorldCamera().unproject(tempCoords);
 
             Vector2 touch = GuiUtils.worldToIsoLeft(worldCoords, screen.tileWidthHalf, screen.tileHeightHalf, screen.yOffset);
             showCrossOn(touch);
             return true;
         } else if (panning) {
-            if (screen.camera.zoom >= 1.0f) {
+            if (screen.worldCamera.zoom >= 1.0f) {
                 float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
                         minX = screen.leftTileWorldCoords.x;
-                screen.camera.position.x = minX + 0.5f * screen.camera.viewportWidth;
-                screen.camera.position.y = minY + 0.5f * screen.camera.viewportHeight;
+                screen.worldCamera.position.x = minX + 0.5f * screen.worldCamera.viewportWidth;
+                screen.worldCamera.position.y = minY + 0.5f * screen.worldCamera.viewportHeight;
                 return true;
             }
             if (panningLastOrigin != null) {
-                Vector2 delta = panningLastOrigin.add(-screenX, -screenY).scl(-1).scl(screen.camera.zoom);
+                Vector2 delta = panningLastOrigin.add(-screenX, -screenY).scl(-1).scl(screen.worldCamera.zoom);
                 panCamera(delta);
                 panningLastOrigin.x = screenX;
                 panningLastOrigin.y = screenY;
@@ -302,16 +302,16 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     }
 
     /**
-     * Move the screen camera with a given vector.
-     * @param move Move operates by camera.
+     * Move the screen worldCamera with a given vector.
+     * @param move Move operates by worldCamera.
      */
     private void panCamera(Vector2 move) {
-        if (screen.camera.zoom >= 1.0f) return;
+        if (screen.worldCamera.zoom >= 1.0f) return;
         float maxY = screen.topTileWorldCoords.y, minY = screen.bottomTileWorldCoords.y, maxX = screen.rightTileWorldCoords.x,
                 minX = screen.leftTileWorldCoords.x;
-        screen.camera.translate(move);
-        screen.camera.position.x = MathUtils.clamp(screen.camera.position.x, minX + 0.5f * screen.camera.viewportWidth * screen.camera.zoom, maxX - 0.5f * screen.camera.viewportWidth * screen.camera.zoom);
-        screen.camera.position.y = MathUtils.clamp(screen.camera.position.y, minY + 0.5f * screen.camera.viewportHeight * screen.camera.zoom, maxY - 0.5f * screen.camera.viewportHeight * screen.camera.zoom);
+        screen.worldCamera.translate(move);
+        screen.worldCamera.position.x = MathUtils.clamp(screen.worldCamera.position.x, minX + 0.5f * screen.worldCamera.viewportWidth * screen.worldCamera.zoom, maxX - 0.5f * screen.worldCamera.viewportWidth * screen.worldCamera.zoom);
+        screen.worldCamera.position.y = MathUtils.clamp(screen.worldCamera.position.y, minY + 0.5f * screen.worldCamera.viewportHeight * screen.worldCamera.zoom, maxY - 0.5f * screen.worldCamera.viewportHeight * screen.worldCamera.zoom);
     }
 
     @Override
@@ -356,17 +356,17 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
 
         @Override
         public boolean zoom(float initialDistance, float distance) {
-            if (initialDistance < screen.viewport.getScreenWidth() * 0.3 && distance < screen.viewport.getScreenWidth() * 0.3)
+            if (initialDistance < screen.worldViewport.getScreenWidth() * 0.3 && distance < screen.worldViewport.getScreenWidth() * 0.3)
                 return false;
             noPlacingUntil = System.currentTimeMillis() + 500;
-            initialZoom = screen.camera.zoom;
+            initialZoom = screen.worldCamera.zoom;
             float ratio = initialDistance / distance;
             if (initialZoom * ratio < MIN_ZOOM) {
-                screen.camera.zoom = MIN_ZOOM;
+                screen.worldCamera.zoom = MIN_ZOOM;
             } else if (initialZoom * ratio > MAX_ZOOM) {
-                screen.camera.zoom = MAX_ZOOM;
+                screen.worldCamera.zoom = MAX_ZOOM;
             } else {
-                screen.camera.zoom = initialZoom * ratio;
+                screen.worldCamera.zoom = initialZoom * ratio;
             }
             return true;
         }
@@ -374,7 +374,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     }
 
     /**
-     * Task able to pan camera when a key is down.
+     * Task able to pan worldCamera when a key is down.
      * This class should be run in a thread between key down and key up events.
      */
     private class KeyPanning extends Timer.Task {
@@ -390,7 +390,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
         @Override
         public void run() {
             long deltaTime = System.currentTimeMillis() - time;
-            int dx = (int) (50 * (deltaTime / 100) * screen.getCamera().zoom); // FIXME : Adjust values
+            int dx = (int) (50 * (deltaTime / 100) * screen.getWorldCamera().zoom); // FIXME : Adjust values
             if (dx == 0) return; // dx is null, wait to be more than 1
             time = System.currentTimeMillis();
             Vector2 move = new Vector2(0, 0);

@@ -77,9 +77,9 @@ public class RageGoDialog extends Dialog {
     }
 
     /**
-     * Centers the dialog box in the given viewport
+     * Centers the dialog box in the given worldViewport
      *
-     * @param viewport The viewport of the stage on which the dialog is displayed
+     * @param viewport The worldViewport of the stage on which the dialog is displayed
      * @return The dialog box.
      */
     public RageGoDialog centerOnViewport(Viewport viewport){

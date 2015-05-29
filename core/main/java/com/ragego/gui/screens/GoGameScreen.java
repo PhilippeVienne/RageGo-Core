@@ -20,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.elements.HexaFrameBottom;
 import com.ragego.gui.elements.HexaFrameBottomButton;
@@ -35,33 +34,33 @@ import com.ragego.utils.GuiUtils;
 public abstract class GoGameScreen extends ScreenAdapter {
     private static final String TAG = "GoGameScreen";
     private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 10;
+
     protected final GoGameScreenMouseTouchListener gobanInputProcessor = new GoGameScreenMouseTouchListener(this);
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
+
     protected AssetManager manager = RageGoGame.getAssetManager();
+
     protected TiledMap map;
     protected Goban goban;
-    protected float yOffset;
-    protected float tileWidthHalf;
-    protected float tileHeightHalf;
-    protected float mapPartPixWidth;
-    protected float mapPartPixHeight;
-    protected int mapWidth, mapHeight;
     protected IsometricTiledMapRenderer renderer;
-    protected OrthographicCamera camera;
-    protected ExtendViewport viewport;
+    protected OrthographicCamera worldCamera;
+    protected ExtendViewport worldViewport;
     protected TiledMapTileLayer gridLayer;
     protected TiledMapTileLayer selection;
     protected TiledMapTile selectionTile;
-        protected Vector2 topTileCoords, bottomTileCoords, leftTileCoords, rightTileCoords,
-        topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords, rightTileWorldCoords, mapPartCenter;
-    protected Viewport hudViewport = new ScreenViewport();
+    protected float mapPartPixWidth, mapPartPixHeight, tileWidthHalf, tileHeightHalf, yOffset;
+    protected int mapHeight, mapWidth;
+    protected Vector2 mapPartCenter, topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords,
+            rightTileWorldCoords;
+
+    protected ScreenViewport hudViewport = new ScreenViewport();
     protected Stage hudStage = new Stage(hudViewport);
     protected Skin hudSkin;
     protected HexaFrameBottom hexaFrameBottom;
     protected Button frameBottomHiddenButton = new Button();
     protected Button frameTopHiddenButton = new Button();
     protected boolean hudVisible = false;
-    private HexaFrameTop hexaFrameTop;
+    protected HexaFrameTop hexaFrameTop;
 
     /*
         Overridden libgdx methods
@@ -84,9 +83,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        camera.update();
+        worldCamera.update();
 
-        renderer.setView(camera);
+        renderer.setView(worldCamera);
         renderer.render();
 
         hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
@@ -95,12 +94,13 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     @Override
     public final void resize(int width, int height) {
-        viewport.update(width, height);
-        camera.update();
-        renderer.setView(camera);
+        worldViewport.update(width, height);
+        worldCamera.update();
+        renderer.setView(worldCamera);
         renderer.render();
         hudViewport.update(width, height, true);
 
+        //As Libgdx default behaviour for repositioning is not the one desired
         hexaFrameBottom.setPosition((hudViewport.getScreenWidth() - hexaFrameBottom.getWidth()) * 0.5f, 0);
         hexaFrameTop.setPosition((hudViewport.getScreenWidth() - hexaFrameTop.getWidth()) * 0.5f,
                 hudViewport.getScreenHeight() - hexaFrameTop.getHeight());
@@ -128,10 +128,15 @@ public abstract class GoGameScreen extends ScreenAdapter {
     public void dispose() {
         renderer.dispose();
         hudStage.dispose();
+        hudSkin.dispose();
     }
 
     /*
         Setup methods
+     */
+
+    /**
+     * Loads the map and sets up its display parameters
      */
     private void setupMap() {
         manager.load("com/ragego/gui/maps/" + getMapToLoad() + ".tmx", TiledMap.class);
@@ -139,13 +144,17 @@ public abstract class GoGameScreen extends ScreenAdapter {
         Gdx.app.log(TAG, "Map loaded");
         map = manager.get("com/ragego/gui/maps/" + getMapToLoad() + ".tmx");
         renderer = new IsometricTiledMapRenderer(map);
-        camera = new OrthographicCamera();
+        worldCamera = new OrthographicCamera();
         gridLayer = (TiledMapTileLayer) map.getLayers().get("grid");
         selection = (TiledMapTileLayer) map.getLayers().get("selection");
         final TiledMapTileSet toolTS = map.getTileSets().getTileSet("toolTS");
         selectionTile = toolTS.getTile(toolTS.getProperties().get("firstgid", Integer.class));
     }
 
+    /**
+     * Computes the world viewport's size and the position of the camera in order to only to display a particular zone
+     * of the map, where the assets are.
+     */
     private void setupMapBoundsAndDimensions() {
         tileWidthHalf = map.getProperties().get("tilewidth", Integer.class) * 0.5f;
         tileHeightHalf = map.getProperties().get("tileheight", Integer.class) * 0.5f;
@@ -156,16 +165,16 @@ public abstract class GoGameScreen extends ScreenAdapter {
         yOffset = tileHeightHalf;
 
         //Getting the coordinates of extremum tiles for screen sizing and centering
-        topTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxTopX", String.class)),
+        Vector2 topTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxTopX", String.class)),
                 Float.parseFloat(map.getProperties().get("maxTopY", String.class)));
         topTileWorldCoords = GuiUtils.isoToWorld(topTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-        bottomTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxBottomX", String.class)),
+        Vector2 bottomTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxBottomX", String.class)),
                 Float.parseFloat(map.getProperties().get("maxBottomY", String.class)));
         bottomTileWorldCoords = GuiUtils.isoToWorld(bottomTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-        leftTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxLeftX", String.class)),
+        Vector2 leftTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxLeftX", String.class)),
                 Float.parseFloat(map.getProperties().get("maxLeftY", String.class)));
         leftTileWorldCoords = GuiUtils.isoToWorld(leftTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
-        rightTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxRightX", String.class)),
+        Vector2 rightTileCoords = new Vector2(Float.parseFloat(map.getProperties().get("maxRightX", String.class)),
                 Float.parseFloat(map.getProperties().get("maxRightY", String.class)));
         rightTileWorldCoords = GuiUtils.isoToWorld(rightTileCoords, tileWidthHalf, tileHeightHalf, mapHeight, yOffset);
 
@@ -173,19 +182,22 @@ public abstract class GoGameScreen extends ScreenAdapter {
         mapPartPixWidth = rightTileWorldCoords.x - leftTileWorldCoords.x + tileWidthHalf * 2 + tileWidthHalf * 4;
         mapPartPixHeight = topTileWorldCoords.y - bottomTileWorldCoords.y + tileHeightHalf * 4 + tileHeightHalf * 4;
 
-        //Determines the center coordinates of the map's visible part for camera centering
+        //Determines the center coordinates of the map's visible part for worldCamera centering
         mapPartCenter = new Vector2((rightTileWorldCoords.x + leftTileWorldCoords.x - 2 * tileWidthHalf) * 0.5f,
                 (topTileWorldCoords.y + bottomTileWorldCoords.y - 4 * tileHeightHalf) * 0.5f);
     }
 
+    /**
+     * Sets up the world camera according to the data computed in setupMapBoundsAndDimensions() method
+     */
     private void setupCamera() {
-        //Centers camera on map
-        camera.translate(mapPartCenter.x, mapPartCenter.y);
+        //Centers worldCamera on map
+        worldCamera.translate(mapPartCenter.x, mapPartCenter.y);
 
         //Maximizes the map size on screen
-        camera.viewportWidth = mapPartPixWidth;
-        camera.viewportHeight = mapPartPixHeight;
-        viewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, camera);
+        worldCamera.viewportWidth = mapPartPixWidth;
+        worldCamera.viewportHeight = mapPartPixHeight;
+        worldViewport = new ExtendViewport(mapPartPixWidth, mapPartPixHeight, worldCamera);
     }
 
     /**
@@ -193,17 +205,17 @@ public abstract class GoGameScreen extends ScreenAdapter {
      * In this function you should setup {@link com.ragego.engine.GameBoard} and {@link com.ragego.engine.Player}s for
      * this GoGame screen.
      *
-     * @param goban The goban to setup.
+     * @param goban The goban to be set up.
      */
     protected abstract void setupGoban(Goban goban);
 
     /**
-     * Setups the hud on GoGameScreen.
+     * Sets up the HUD and its buttons
      */
     protected void setupHud() {
         manager.load("com/ragego/gui/hud/hud.json", Skin.class);
         manager.finishLoading();
-        Gdx.app.log(TAG, "Hud loaded");
+        Gdx.app.log(TAG, "Hud assets loaded");
         hudSkin = manager.get("com/ragego/gui/hud/hud.json");
 
         hexaFrameTop = new HexaFrameTop(hudSkin, RageGoGame.getUiSkin());
@@ -282,6 +294,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
         });
     }
 
+    /**
+     * Sets up the hidden state buttons of the HUD
+     */
     private void setupHudShowButton() {
         frameBottomHiddenButton = new Button(hudSkin, "frame_bottom_hidden");
         frameTopHiddenButton = new Button(hudSkin, "frame_top_hidden");
@@ -304,6 +319,9 @@ public abstract class GoGameScreen extends ScreenAdapter {
         hudStage.addActor(frameTopHiddenButton);
     }
 
+    /**
+     * Sets up the objects that define how to manage inputs
+     */
     private void setupInputs() {
         Gdx.input.setInputProcessor(inputMultiplexer);
         inputMultiplexer.addProcessor(hudStage);
@@ -312,6 +330,10 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     /*
         Visibility settings
+     */
+
+    /**
+     * Displays the HUD and hides the hidden state buttons
      */
     void showHud() {
         if (hudVisible) {
@@ -323,10 +345,18 @@ public abstract class GoGameScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * Default method called to hide the HUD
+     */
     public void hideHud() {
         hideHud(false);
     }
 
+    /**
+     * Hides the HUD and displays the hidden state buttons
+     *
+     * @param force If true, forces the program to hide the HUD
+     */
     private void hideHud(boolean force) {
         if (hudVisible || force) {
             hudVisible = false;
@@ -342,21 +372,25 @@ public abstract class GoGameScreen extends ScreenAdapter {
     /*
         Miscellaneous methods
      */
+
+    /**
+     * Function called to close the current game and return to the home screen
+     */
     public void closeScreen() {
         goban.stopGame();
         RageGoGame.goHome();
     }
 
     /**
-     * Wait for a user input on Goban
+     * Awaits for any user input on the Goban
      * Notice: this function is thread locking.
      *
-     * @return The coordinates wanted or null if he want to pass his turn
+     * @return The goban coordinates or null if he want to pass his turn
      */
     public Vector2 waitForUserInputOnGoban() {
-        Vector2 coordinates;
+        Vector2 gobanCoordinates;
         synchronized (gobanInputProcessor) {
-            while ((coordinates = gobanInputProcessor.popLastTouch()) == null && !goban.passTurn()) {
+            while ((gobanCoordinates = gobanInputProcessor.popLastTouch()) == null && !goban.passTurn()) {
                 try {
                     Thread.sleep(0, REFRESH_INTERVAL_FOR_USER_INPUT);
                     gobanInputProcessor.wait(5);
@@ -367,21 +401,33 @@ public abstract class GoGameScreen extends ScreenAdapter {
         }
         if (goban.passTurn()) // if returns Null, means the user passes his turn
             return null;
-        return coordinates;
+        return gobanCoordinates;
     }
 
     /**
-     * Specify the map to load for this GoGame screen.
+     * Specify the map to be loaded for this Go Game screen.
      */
     protected abstract String getMapToLoad();
 
     /*
         Getters and Setters
      */
-    public OrthographicCamera getCamera() {
-        return camera;
+
+    /**
+     * Gets the worldCamera associated the Go Game Screen.
+     *
+     * @return The worldCamera
+     */
+    public OrthographicCamera getWorldCamera() {
+        return worldCamera;
     }
 
+
+    /**
+     * Gets the map associated the Go Game Screen.
+     *
+     * @return The map
+     */
     public TiledMap getMap() {
         return map;
     }

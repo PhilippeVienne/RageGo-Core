@@ -9,7 +9,7 @@ import com.ragego.gui.screens.MenuScreen;
 import com.ragego.utils.InternetCheckThread;
 
 /**
- * Describes how we start the game.
+ * General entry point for all devices. Describes how to start the game.
  */
 public class RageGoGame extends Game {
     private static final String TAG = "RageGoGame";
@@ -84,6 +84,11 @@ public class RageGoGame extends Game {
         super.resize(width, height);
     }
 
+    /**
+     * Loads the screen to be displayed
+     *
+     * @param nextScreen The screen to be displayed
+     */
     public void load(ScreenAdapter nextScreen) {
         if (nextScreen != null) {
             setScreen(nextScreen);
@@ -91,10 +96,20 @@ public class RageGoGame extends Game {
         }
     }
 
+    /**
+     * Gets the home screen.
+     *
+     * @return The home Screen
+     */
     public MenuScreen getHomeScreen() {
         return homeScreen;
     }
 
+    /**
+     * Checks for the internet connection status
+     *
+     * @return Whether the game has or hasn't access to the internet
+     */
     public boolean isConnected() {
         return checkInternetConnection.isConnected();
     }
