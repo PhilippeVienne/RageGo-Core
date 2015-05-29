@@ -12,10 +12,6 @@ public class HexagonalMenuButton extends Button {
     private HexagonalMenu.Position position;
     private Skin menuSkin;
 
-    /**
-     * @param menu           The menu where the button will be
-     * @param position       The wanted position
-     */
     public HexagonalMenuButton(HexagonalMenu menu, HexagonalMenu.Position position, String buttonStyleName) {
         this.menu = menu;
         this.menuSkin = menu.getMenuSkin();
@@ -26,7 +22,7 @@ public class HexagonalMenuButton extends Button {
     }
 
     /**
-     * Get the used position for this button.
+     * Gets the position for this button.
      *
      * @return The position
      */
@@ -35,9 +31,9 @@ public class HexagonalMenuButton extends Button {
     }
 
     /**
-     * Update the position of button on a given {@link HexagonalMenu.Position}.
+     * Updates the position of a button for a given position
      *
-     * @param position The wanted position for this button
+     * @param position The given position for this button
      */
     public void setPosition(HexagonalMenu.Position position) {
         this.position = position;

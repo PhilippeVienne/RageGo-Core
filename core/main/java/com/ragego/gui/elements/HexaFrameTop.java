@@ -5,7 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.ragego.gui.screens.GoGameScreen;
 
+/**
+ * Defines the infobar at the top of the HUD in the {@link GoGameScreen}
+ */
 public class HexaFrameTop extends WidgetGroup {
     private static final int BUTTONS_NB = 11;
     private final static String HEXA_FRAME_NAME = "frame_top";
@@ -25,6 +29,10 @@ public class HexaFrameTop extends WidgetGroup {
         this.addLabels();
     }
 
+    /**
+     * Adds the various labels containing informations of the current go game : the number of stones captured
+     * by each player and the time remaining for the player's turn
+     */
     public void addLabels() {
         capturedBlackStonesNumberLabel = new Label("0", uiSkin);
         capturedWhiteStonesNumberLabel = new Label("0", uiSkin);
@@ -49,20 +57,33 @@ public class HexaFrameTop extends WidgetGroup {
         timeLabel.setPosition(hexaFrameTop.getWidth() * 0.5f - timeLabel.getWidth() * 0.5f + 5,
                 hexaFrameTop.getHeight() * 0.5f - timeLabel.getHeight() * 0.5f);
 
-        this.addActor(capturedBlackStonesNumberLabel);
-        this.addActor(capturedWhiteStonesNumberLabel);
-        this.addActor(timeLabel);
+        addActor(capturedBlackStonesNumberLabel);
+        addActor(capturedWhiteStonesNumberLabel);
+        addActor(timeLabel);
     }
 
+    /**
+     * Updates the displayed time
+     *
+     * @param time The time value (in seconds) of the remaining time
+     */
     public void updateTime(int time) {
-        this.timeLabel.setText(String.valueOf(time));
+        timeLabel.setText(String.valueOf(time));
     }
 
+    /**
+     * Updates the displayed number of captured black stones
+     * @param capturedBlackStonesNumber The number of captured black stones
+     */
     public void updateCapturedBlackStones(int capturedBlackStonesNumber) {
-        this.timeLabel.setText(String.valueOf(capturedBlackStonesNumber));
+        timeLabel.setText(String.valueOf(capturedBlackStonesNumber));
     }
 
+    /**
+     * Updates the displayed number of captured white stones
+     * @param capturedWhiteStonesNumber The number of captured white stones
+     */
     public void updateCapturedWhiteStones(int capturedWhiteStonesNumber) {
-        this.timeLabel.setText(String.valueOf(capturedWhiteStonesNumber));
+        timeLabel.setText(String.valueOf(capturedWhiteStonesNumber));
     }
 }

@@ -4,11 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.ragego.gui.screens.MenuScreen;
 
 import java.util.HashMap;
 
 /**
- * Manages positions and display for an hexagonal menu.
+ *  Defines the hexagonal menu in the {@link MenuScreen}
+ *  The position of a button is described by an keyword.
  */
 public class HexagonalMenu extends WidgetGroup {
     private static final int BUTTONS_NB = 7;
@@ -26,6 +28,11 @@ public class HexagonalMenu extends WidgetGroup {
         this.addActor(menuFrame);
     }
 
+    /**
+     * Adds the given button to the menu after getting its position
+     *
+     * @param button Button that is to be added to the hexa frame
+     */
     public void addButton(HexagonalMenuButton button) {
         buttons.put(button.getPosition(), button);
         this.addActor(button);
@@ -33,10 +40,10 @@ public class HexagonalMenu extends WidgetGroup {
 
     /**
      * Gets the coordinates for a given position
-     * Gives the centered position for a position. You should center your object after.
+     * Puts the bottom-left corner of the button at the computed coordinates. The button is centered in its own class.
      *
-     * @param position The position you want
-     * @return The coordinate corresponding to the position
+     * @param position The position of the button
+     * @return The world coordinates of the corresponding position
      */
     public Vector2 getCoordinateFor(Position position) {
         Vector2 coordinates = new Vector2(0, 0);
@@ -66,12 +73,17 @@ public class HexagonalMenu extends WidgetGroup {
         return coordinates;
     }
 
+    /**
+     * Gets the menuSkin associated with the menu.
+     *
+     * @return The menuSkin
+     */
     public Skin getMenuSkin() {
         return menuSkin;
     }
 
     /**
-     * Declares the corner positions of an hexagon.
+     * Declares the seven acceptable positions in the hexagon menu.
      */
     public enum Position {
         TOP,

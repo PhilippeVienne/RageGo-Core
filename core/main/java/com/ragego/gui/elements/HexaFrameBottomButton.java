@@ -12,20 +12,17 @@ public class HexaFrameBottomButton extends Button {
     private int position;
     private Skin hudSkin;
 
-    /**
-     * @param position The wanted position in the hex coordinates system
-     */
     public HexaFrameBottomButton(HexaFrameBottom hexaFrameBottom, int position, String buttonStyleName) {
         this.hexaFrameBottom = hexaFrameBottom;
-        this.hudSkin = hexaFrameBottom.getHudSkin();
-        this.setStyle(hudSkin.get(buttonStyleName, ButtonStyle.class));
+        hudSkin = hexaFrameBottom.getHudSkin();
+        setStyle(hudSkin.get(buttonStyleName, ButtonStyle.class));
         setSize(getPrefWidth(), getPrefHeight());
         setPosition(position);
         hexaFrameBottom.addButton(this);
     }
 
     /**
-     * Get the used position for this button.
+     * Gets the position for this button.
      *
      * @return The position
      */
@@ -34,9 +31,9 @@ public class HexaFrameBottomButton extends Button {
     }
 
     /**
-     * Update the position of button on a given position
+     * Updates the position of a button for a given position
      *
-     * @param position The wanted position for this button
+     * @param position The given position for this button
      */
     public void setPosition(int position) {
         this.position = position;
