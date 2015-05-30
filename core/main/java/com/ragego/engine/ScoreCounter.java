@@ -41,7 +41,7 @@ public class ScoreCounter implements GameListener {
     private Integer capturedWhite = 0;
     private ArrayList<Stone> deadStones = new ArrayList<Stone>();
     private ArrayList<Stone> notDeadStones = new ArrayList<Stone>();
-    private boolean countingDeadStones;
+    private boolean countingDeadStones = true;
     private int captivatedStonesByBlack =0;
     private int captivatedStonesByWhite =0;
 

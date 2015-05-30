@@ -168,6 +168,7 @@ public class Goban {
         if (!stones.contains(graphicStone)) return;
         stones.remove(graphicStone);
         getStoneCell(graphicStone.getIntersection()).setTile(null);
+        refreshUserScore();
     }
 
     public void animate(GameNode node) {
@@ -232,6 +233,8 @@ public class Goban {
     public void refreshUserScore() {
         ScoreCounter scoreCounter = board.getScoreCounter();
         screen.getHexaFrameTop().updateCapturedBlackStones(scoreCounter.getCaptivatedStonesByBlack());
+        System.out.println("Black score "+scoreCounter.getCaptivatedStonesByBlack());
         screen.getHexaFrameTop().updateCapturedWhiteStones(scoreCounter.getCaptivatedStonesByWhite());
+        System.out.println("White score "+scoreCounter.getCaptivatedStonesByWhite());
     }
 }
