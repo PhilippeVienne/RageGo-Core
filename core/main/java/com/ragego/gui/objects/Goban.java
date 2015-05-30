@@ -232,9 +232,9 @@ public class Goban {
 
     public void refreshUserScore() {
         ScoreCounter scoreCounter = board.getScoreCounter();
-        screen.getHexaFrameTop().updateCapturedBlackStones(scoreCounter.getCaptivatedStonesByBlack());
+        screen.getHexaFrameTop().updateCapturedWhiteStones(scoreCounter.getCaptivatedStonesByBlack());
         System.out.println("Black score "+scoreCounter.getCaptivatedStonesByBlack());
-        screen.getHexaFrameTop().updateCapturedWhiteStones(scoreCounter.getCaptivatedStonesByWhite());
+        screen.getHexaFrameTop().updateCapturedBlackStones(scoreCounter.getCaptivatedStonesByWhite());
         System.out.println("White score "+scoreCounter.getCaptivatedStonesByWhite());
     }
 }
