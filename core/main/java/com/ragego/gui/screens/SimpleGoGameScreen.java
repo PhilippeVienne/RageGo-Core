@@ -16,7 +16,6 @@ public class SimpleGoGameScreen extends GoGameScreen {
         TurnListener listener = new GraphicTurnListener(this, goban);
         goban.setGameBoard(new GameBoard(new HumanPlayer("Player 1", listener), new HumanPlayer("Player 2", listener), goban.getSize()));
         goban.startGame();
-
     }
 
     @Override

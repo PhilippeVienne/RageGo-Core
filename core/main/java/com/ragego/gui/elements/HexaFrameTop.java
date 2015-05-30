@@ -76,7 +76,7 @@ public class HexaFrameTop extends WidgetGroup {
      * @param capturedBlackStonesNumber The number of captured black stones
      */
     public void updateCapturedBlackStones(int capturedBlackStonesNumber) {
-        timeLabel.setText(String.valueOf(capturedBlackStonesNumber));
+        capturedBlackStonesNumberLabel.setText(String.valueOf(capturedBlackStonesNumber));
     }
 
     /**
@@ -84,6 +84,6 @@ public class HexaFrameTop extends WidgetGroup {
      * @param capturedWhiteStonesNumber The number of captured white stones
      */
     public void updateCapturedWhiteStones(int capturedWhiteStonesNumber) {
-        timeLabel.setText(String.valueOf(capturedWhiteStonesNumber));
+        capturedWhiteStonesNumberLabel.setText(String.valueOf(capturedWhiteStonesNumber));
     }
 }
