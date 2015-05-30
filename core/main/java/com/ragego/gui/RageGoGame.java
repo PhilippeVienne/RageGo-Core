@@ -3,6 +3,7 @@ package com.ragego.gui;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ragego.gui.screens.MenuScreen;
+import com.ragego.gui.screens.MusicalScreen;
 import com.ragego.utils.InternetCheckThread;
 
 /**
@@ -53,7 +54,7 @@ public class RageGoGame extends Game {
         uiSkin = manager.get("com/ragego/gui/ui/ui.json");
 
         homeScreen = new MenuScreen();
-        setScreen(homeScreen);
+        loadScreen(homeScreen);
     }
 
     @Override
@@ -89,6 +90,9 @@ public class RageGoGame extends Game {
      */
     public void load(ScreenAdapter nextScreen) {
         if (nextScreen != null) {
+            if(screen!=null)
+                if(screen instanceof MusicalScreen) ((MusicalScreen) screen).stopMusic();
+            if(nextScreen instanceof MusicalScreen) ((MusicalScreen) nextScreen).playMusic();
             setScreen(nextScreen);
             screen.resume();
         }

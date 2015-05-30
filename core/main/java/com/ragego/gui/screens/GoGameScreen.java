@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -31,7 +32,7 @@ import com.ragego.utils.GuiUtils;
 /**
  * Manages the display of a generic Go Game Screen.
  */
-public abstract class GoGameScreen extends ScreenAdapter {
+public abstract class GoGameScreen extends ScreenAdapter implements MusicalScreen {
     private static final String TAG = "GoGameScreen";
     private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 10;
 
@@ -61,6 +62,7 @@ public abstract class GoGameScreen extends ScreenAdapter {
     protected Button frameTopHiddenButton = new Button();
     protected boolean hudVisible = false;
     protected HexaFrameTop hexaFrameTop;
+    private Music backgroundMusic;
 
     /*
         Overridden libgdx methods
@@ -434,5 +436,52 @@ public abstract class GoGameScreen extends ScreenAdapter {
 
     public HexaFrameTop getHexaFrameTop() {
         return hexaFrameTop;
+    }
+
+    @Override
+    public Music getBackgroundMusic() {
+        return backgroundMusic;
+    }
+
+    @Override
+    public void playMusic() {
+        if(backgroundMusic == null){
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.classpath("com/ragego/gui/music/Celestial_Aeon_Project_-_Uplifting.mp3"));
+        }
+        backgroundMusic.setVolume(0f);
+        new Thread("UpMySound"){
+            @Override
+            public void run() {
+                while (backgroundMusic.getVolume()<0.2f){
+                    backgroundMusic.setVolume(backgroundMusic.getVolume()+0.02f);
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        backgroundMusic.setVolume(0.2f);
+                    }
+                }
+            }
+        }.start();
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
+    }
+
+    @Override
+    public void stopMusic() {
+        if(backgroundMusic!=null)
+            new Thread("UpMySound"){
+                @Override
+                public void run() {
+                    while (backgroundMusic.getVolume()<0f){
+                        backgroundMusic.setVolume(backgroundMusic.getVolume()-0.02f);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            backgroundMusic.setVolume(0f);
+                        }
+                    }
+                    backgroundMusic.stop();
+                }
+            }.start();
     }
 }

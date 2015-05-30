@@ -2,6 +2,7 @@ package com.ragego.gui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 /**
  * Manages the display of the Main Menu Screen.
  */
-public class MenuScreen extends ScreenAdapter{
+public class MenuScreen extends ScreenAdapter implements MusicalScreen{
     private static final String TAG = "MenuScreen";
     private static final int BUTTONS_NB = 7;
     private HashMap<Integer, Button> buttons = new HashMap<Integer, Button>(BUTTONS_NB);
@@ -38,6 +39,7 @@ public class MenuScreen extends ScreenAdapter{
     private ScreenAdapter nextScreen = null;
     private Texture backTex;
     private Image backGroundImg;
+    private Music backgroundMusic;
 
     public MenuScreen() {
         super();
@@ -238,5 +240,52 @@ public class MenuScreen extends ScreenAdapter{
     public void resume() {
         super.resume();
         this.nextScreen = null;
+    }
+
+    @Override
+    public Music getBackgroundMusic() {
+        return backgroundMusic;
+    }
+
+    @Override
+    public void playMusic() {
+        if(backgroundMusic == null){
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.classpath("com/ragego/gui/music/Celestial_Aeon_Project_-_Inspiring.mp3"));
+        }
+        backgroundMusic.setVolume(0f);
+        new Thread("UpMySound"){
+            @Override
+            public void run() {
+                while (backgroundMusic.getVolume()<0.2f){
+                    backgroundMusic.setVolume(backgroundMusic.getVolume()+0.02f);
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        backgroundMusic.setVolume(0.2f);
+                    }
+                }
+            }
+        }.start();
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
+    }
+
+    @Override
+    public void stopMusic() {
+        if(backgroundMusic!=null)
+            new Thread("UpMySound"){
+                @Override
+                public void run() {
+                    while (backgroundMusic.getVolume()<0f){
+                        backgroundMusic.setVolume(backgroundMusic.getVolume()-0.02f);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            backgroundMusic.setVolume(0f);
+                        }
+                    }
+                    backgroundMusic.stop();
+                }
+            }.start();
     }
 }
