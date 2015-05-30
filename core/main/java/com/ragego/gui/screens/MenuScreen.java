@@ -17,6 +17,7 @@ import com.ragego.gui.RageGoAssetManager;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.elements.HexagonalMenu;
 import com.ragego.gui.elements.HexagonalMenuButton;
+import com.ragego.gui.elements.RageGoDialog;
 
 import java.util.HashMap;
 
@@ -90,7 +91,17 @@ public class MenuScreen extends ScreenAdapter{
             public void clicked(InputEvent event, float x, float y) {
                 uncheckOtherButtons(1);
                 buttons.get(0).setDisabled(true);
-                Gdx.app.exit();
+                new RageGoDialog("Exit", RageGoDialog.CONFIRM, new Runnable() {
+                    @Override
+                    public void run() {
+                        Gdx.app.exit();
+                    }
+                }, new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                },"You are quitting RageGo","Are you sure ?").centerOnViewport(hudViewport).displayOn(hudStage);
             }
         });
 
