@@ -152,8 +152,10 @@ public class OnlineScreen extends ScreenAdapter {
                         RageGoServer.stopWaitingForGame();
                         RageGoGame.loadScreen(screen);
                     } catch (RageGoServerException exception) {
-                        new RageGoDialog("Error","The user "+temp+" is not availaible !");
+                        new RageGoDialog("Error","The user "+temp+" is not availaible !").centerOnViewport(viewport).displayOn(stage);
                     }
+                } else if(temp.equals(yourCode)){
+                    new RageGoDialog("Error","You can not join a game with yourself").centerOnViewport(viewport).displayOn(stage);
                 }
             }
         });

@@ -34,6 +34,7 @@ public class RageGoDialog extends Dialog {
 
     //As Dialog does not implement a getter for the Skin :
     private Skin uiSkin = RageGoGame.getUiSkin();
+    private ChangeListener closeDialogListener;
 
     public RageGoDialog(String title, int dialogType, final Runnable actionOnOk, final Runnable actionOnCancel, CharSequence... args) {
         super(title, RageGoGame.getUiSkin());
@@ -53,17 +54,25 @@ public class RageGoDialog extends Dialog {
             getContentTable().add(labels[i]).width(500).center().row();
         }
 
+        closeDialogListener = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                remove();
+            }
+        };
+
         switch (dialogType) {
             case MESSAGE:
                 okButton.addListener(new ButtonChangeListener(actionOnOk));
-
+                okButton.addListener(closeDialogListener);
                 okButton.getLabel().setFontScale(0.8f);
-
                 this.getButtonTable().add(okButton).width(200);
                 break;
             case CONFIRM:
                 okButton.addListener(new ButtonChangeListener(actionOnOk));
+                okButton.addListener(closeDialogListener);
                 cancelButton.addListener(new ButtonChangeListener(actionOnCancel));
+                cancelButton.addListener(closeDialogListener);
 
                 okButton.getLabel().setFontScale(0.7f);
                 cancelButton.getLabel().setFontScale(0.7f);
