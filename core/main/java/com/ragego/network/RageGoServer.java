@@ -19,7 +19,11 @@ import java.util.*;
 @SuppressWarnings("UseSparseArrays")
 public class RageGoServer extends Resty {
 
-    private static final String RAGEGO_SERVER = "http://ragego-server.herokuapp.com";
+    public RageGoServer(Option... someOptions) {
+        super(someOptions);
+    }
+
+    private static final String RAGEGO_SERVER = "http://game.ragego.com";
     private static final List<NewGameListener> newGameListeners = Collections.synchronizedList(new ArrayList<NewGameListener>(1));
     private static RageGoServer instance;
     private static Map<Integer, OnlineGame> games = Collections.synchronizedMap(new HashMap<Integer, OnlineGame>());
@@ -27,39 +31,11 @@ public class RageGoServer extends Resty {
     private static Map<Integer, OnlineNode> nodes = Collections.synchronizedMap(new HashMap<Integer, OnlineNode>());
     private static OnlinePlayer localPlayer;
     private static boolean listeningNewGameThread = false;
-    private static Thread listenNewGameThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (listeningNewGameThread) {
-                while (!RageGoGame.getInstance().isConnected()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        listeningNewGameThread = false;
-                    }
-                }
-                try {
-                    JSONArray games = getInstance().json(RAGEGO_SERVER + "/games/for/" + String.valueOf(RageGoServer.getLocalPlayerID()) + ".json").array();
-                    for (int i = 0; i < games.length(); i++) {
-                        final OnlineGame game = OnlineGame.loadFromJSON(games.getJSONObject(i));
-                        for (NewGameListener listener : newGameListeners) {
-                            listener.newGame(game);
-                        }
-                    }
-                } catch (IOException e) {
-                    if (RageGoGame.getInstance().isConnected())
-                        throw handleException(e);
-                } catch (JSONException e) {
-                    throw handleException(e);
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    listeningNewGameThread = false;
-                }
-            }
-        }
-    }, "NewGameThread");
+    private static Thread listenNewGameThread = generateNewGameThread();
+
+    private static Thread generateNewGameThread() {
+        return new Thread(new NewGameRunnable(), "NewGameThread");
+    }
 
     public static RageGoServer getInstance(){
         if(instance == null)
@@ -249,6 +225,7 @@ public class RageGoServer extends Resty {
     public static void startWaitingForGame() {
         if (listeningNewGameThread) return;
         listeningNewGameThread = true;
+        listenNewGameThread = generateNewGameThread();
         listenNewGameThread.start();
     }
 
@@ -272,5 +249,39 @@ public class RageGoServer extends Resty {
 
     public interface NewGameListener {
         void newGame(OnlineGame game);
+    }
+
+    private static class NewGameRunnable implements Runnable {
+        @Override
+        public void run() {
+            while (listeningNewGameThread) {
+                while (!RageGoGame.getInstance().isConnected()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        listeningNewGameThread = false;
+                    }
+                }
+                try {
+                    JSONArray games = getInstance().json(RAGEGO_SERVER + "/games/for/" + String.valueOf(RageGoServer.getLocalPlayerID()) + ".json").array();
+                    for (int i = 0; i < games.length(); i++) {
+                        final OnlineGame game = OnlineGame.loadFromJSON(games.getJSONObject(i));
+                        for (NewGameListener listener : newGameListeners) {
+                            listener.newGame(game);
+                        }
+                    }
+                } catch (IOException e) {
+                    if (RageGoGame.getInstance().isConnected())
+                        throw handleException(e);
+                } catch (JSONException e) {
+                    throw handleException(e);
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    listeningNewGameThread = false;
+                }
+            }
+        }
     }
 }

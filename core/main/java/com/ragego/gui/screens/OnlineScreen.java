@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ragego.engine.HumanPlayer;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.network.OnlineGame;
 import com.ragego.network.OnlinePlayer;
 import com.ragego.network.RageGoServer;
@@ -67,10 +68,10 @@ public class OnlineScreen extends ScreenAdapter {
                                 @Override
                                 public void run() {
                                     RageGoGame.getInstance().setScreen(new OnlineGoGameScreen(game));
-                                    RageGoServer.join(game);
-                                    RageGoServer.removeListener(listener);
                                 }
                             });
+                            RageGoServer.join(game);
+                            RageGoServer.removeListener(listener);
                         }
                     });
                     RageGoServer.startWaitingForGame();
@@ -151,7 +152,7 @@ public class OnlineScreen extends ScreenAdapter {
                         RageGoServer.stopWaitingForGame();
                         RageGoGame.loadScreen(screen);
                     } catch (RageGoServerException exception) {
-                        System.out.println("No player for code: " + temp);
+                        new RageGoDialog("Error","The user "+temp+" is not availaible !");
                     }
                 }
             }

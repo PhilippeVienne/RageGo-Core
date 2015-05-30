@@ -1,9 +1,6 @@
 package com.ragego.gui;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ragego.gui.screens.MenuScreen;
 import com.ragego.utils.InternetCheckThread;
@@ -15,6 +12,7 @@ public class RageGoGame extends Game {
     private static final String TAG = "RageGoGame";
     private static final RageGoGame instance = new RageGoGame();
     private static final RageGoAssetManager manager = new RageGoAssetManager();
+    private static final Preferences preferences = null;
     private static Skin uiSkin;
     private MenuScreen homeScreen = null;
     private InternetCheckThread checkInternetConnection = new InternetCheckThread();

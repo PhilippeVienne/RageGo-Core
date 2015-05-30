@@ -23,6 +23,12 @@ public class RageGoDialog extends Dialog {
     public static final int MESSAGE = 0;
     public static final int CONFIRM = 1;
     private static final int INPUT = 2;
+    protected static final Runnable EMPTY_RUNNABLE = new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    };
     private TextButton okButton = new TextButton("Ok", RageGoGame.getUiSkin());
     private TextButton cancelButton = new TextButton("Cancel", RageGoGame.getUiSkin());
 
@@ -74,6 +80,10 @@ public class RageGoDialog extends Dialog {
 
     public RageGoDialog(String title, String message, int dialogType, Runnable actionOnOk) {
         this(title, dialogType, actionOnOk, null, message);
+    }
+
+    public RageGoDialog(String title, String message) {
+        this(title, message, RageGoDialog.MESSAGE, EMPTY_RUNNABLE);
     }
 
     /**
