@@ -6,10 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
-import com.ragego.engine.GameBoard;
-import com.ragego.engine.GameNode;
-import com.ragego.engine.Intersection;
-import com.ragego.engine.Stone;
+import com.ragego.engine.*;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.GuiUtils;
 import com.ragego.utils.StandardGameFormatIO;
@@ -132,6 +129,7 @@ public class Goban {
         this.listener = new GobanGameBoardListener(this);
         gameBoard.addGameListener(listener);
         this.board = gameBoard;
+        clearBoard();
     }
 
     public TiledMapTile getBlackStoneTile() {
@@ -218,5 +216,22 @@ public class Goban {
                 board.nextMove();
             Gdx.app.log("Goban", "Game is ended and score is " + board.getScoreCounter().formatResult());
         }
+    }
+
+    /**
+     * Clean the board from all stones on it.
+     */
+    public void clearBoard(){
+        for (int i = 0; i < getBoard().getBoardSize(); i++) {
+            for (int j = 0; j < getBoard().getBoardSize(); j++) {
+                getStoneCell(Intersection.get(i,j,getBoard())).setTile(null);
+            }
+        }
+    }
+
+    public void refreshUserScore() {
+        ScoreCounter scoreCounter = board.getScoreCounter();
+        screen.getHexaFrameTop().updateCapturedBlackStones(scoreCounter.getCaptivatedStonesByBlack());
+        screen.getHexaFrameTop().updateCapturedWhiteStones(scoreCounter.getCaptivatedStonesByWhite());
     }
 }

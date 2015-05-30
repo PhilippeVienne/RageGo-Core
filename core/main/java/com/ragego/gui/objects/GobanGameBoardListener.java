@@ -37,6 +37,7 @@ public class GobanGameBoardListener implements GameListener {
     @Override
     public void endOfTurn(GameBoard board, Player player, Player nextPlayer) {
         goban.updateCurrentPlayer();
+        goban.refreshUserScore();
     }
 
     @Override

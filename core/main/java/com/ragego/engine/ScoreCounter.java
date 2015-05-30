@@ -42,6 +42,8 @@ public class ScoreCounter implements GameListener {
     private ArrayList<Stone> deadStones = new ArrayList<Stone>();
     private ArrayList<Stone> notDeadStones = new ArrayList<Stone>();
     private boolean countingDeadStones;
+    private int captivatedStonesByBlack =0;
+    private int captivatedStonesByWhite =0;
 
     public ScoreCounter(GameBoard board) {
         this.board = board;
@@ -369,6 +371,14 @@ public class ScoreCounter implements GameListener {
     public ScoreCounter getScore() {
         compute();
         return getScore(getKomi(), ScoringMethod.TERRITORY);
+    }
+
+    public int getCaptivatedStonesByBlack() {
+        return capturedWhite;
+    }
+
+    public int getCaptivatedStonesByWhite() {
+        return capturedBlack;
     }
 
     public enum ScoringMethod {

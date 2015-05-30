@@ -431,4 +431,8 @@ public abstract class GoGameScreen extends ScreenAdapter {
     public TiledMap getMap() {
         return map;
     }
+
+    public HexaFrameTop getHexaFrameTop() {
+        return hexaFrameTop;
+    }
 }
