@@ -15,7 +15,7 @@ public class RageGoAssetManager extends AssetManager {
     protected static final FileHandleResolver fileHandleResolver = new FileHandleResolver() {
         @Override
         public FileHandle resolve(String fileName) {
-            return Gdx.files.classpath(fileName);
+            return Gdx.files.internal(fileName);
         }
     };
 

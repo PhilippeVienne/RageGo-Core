@@ -250,7 +250,7 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
     @Override
     public void playMusic() {
         if(backgroundMusic == null){
-            backgroundMusic = Gdx.audio.newMusic(Gdx.files.classpath("com/ragego/gui/music/Celestial_Aeon_Project_-_Inspiring.mp3"));
+            backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("com/ragego/gui/music/Celestial_Aeon_Project_-_Inspiring.mp3"));
         }
         backgroundMusic.setVolume(0f);
         new Thread("UpMySound"){
