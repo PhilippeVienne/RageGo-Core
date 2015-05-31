@@ -33,6 +33,12 @@ public class GraphicTurnListener implements TurnListener {
         this.goban = goban;
     }
 
+    /**
+     * Launch a new turn on a graphic screen.
+     *
+     * @param board  The board on which we are playing
+     * @param player The player who have to play
+     */
     @Override
     public void newTurn(GameBoard board, Player player) {
         Intersection intersection = Intersection.get(-1, -1, board);
@@ -64,10 +70,16 @@ public class GraphicTurnListener implements TurnListener {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void endOfTurn(GameBoard board, Player player, Player nextPlayer) {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void startOfTurn(GameBoard board, Player player, Player previousPlayer) {
 

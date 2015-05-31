@@ -12,6 +12,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
  */
 public class RageGoAssetManager extends AssetManager {
 
+    /**
+     * File resolver that should be used for all assets.
+     */
     protected static final FileHandleResolver fileHandleResolver = new FileHandleResolver() {
         @Override
         public FileHandle resolve(String fileName) {
@@ -19,6 +22,9 @@ public class RageGoAssetManager extends AssetManager {
         }
     };
 
+    /**
+     * Create an asset manager with the file handle resolver from RageGo.
+     */
     public RageGoAssetManager() {
         super(RageGoAssetManager.fileHandleResolver);
         setLoader(TiledMap.class, "tmx", new TmxMapLoader(fileHandleResolver));

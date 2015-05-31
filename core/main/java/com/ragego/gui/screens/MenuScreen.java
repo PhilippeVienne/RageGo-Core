@@ -26,19 +26,13 @@ import java.util.HashMap;
  * Manages the display of the Main Menu Screen.
  */
 public class MenuScreen extends ScreenAdapter implements MusicalScreen{
-    private static final String TAG = "MenuScreen";
-    private static final int BUTTONS_NB = 7;
-    private HashMap<Integer, Button> buttons = new HashMap<Integer, Button>(BUTTONS_NB);
-    private OrthographicCamera backCamera, hudCamera;
+    private HashMap<Integer, Button> buttons = new HashMap<Integer, Button>();
     private ScreenViewport hudViewport;
     private FillViewport backViewport;
     private Stage backStage, hudStage;
     private HexagonalMenu menu;
-    private RageGoAssetManager manager;
     private Skin menuSkin;
     private ScreenAdapter nextScreen = null;
-    private Texture backTex;
-    private Image backGroundImg;
     private Music backgroundMusic;
 
     public MenuScreen() {
@@ -47,8 +41,8 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
 
     @Override
     public void show () {
-        backCamera = new OrthographicCamera();
-        hudCamera = new OrthographicCamera();
+        OrthographicCamera backCamera = new OrthographicCamera();
+        OrthographicCamera hudCamera = new OrthographicCamera();
         backViewport = new FillViewport(2048, 1380, backCamera);
         hudViewport = new ScreenViewport(hudCamera);
 
@@ -57,16 +51,16 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
         //hudStage.setDebugAll(true);
         Gdx.input.setInputProcessor(hudStage);
 
-        manager = RageGoGame.getAssetManager();
+        RageGoAssetManager manager = RageGoGame.getAssetManager();
         manager.load("com/ragego/gui/menu/menu.json", Skin.class);
         manager.load("com/ragego/gui/splash/island_background.png", Texture.class);
         manager.finishLoading();
-        Gdx.app.log(TAG, "Assets loaded");
+        Gdx.app.log(MenuScreen.class.getCanonicalName(), "Assets loaded");
         menuSkin = manager.get("com/ragego/gui/menu/menu.json");
 
-        backTex = manager.get("com/ragego/gui/splash/island_background.png");
+        Texture backTex = manager.get("com/ragego/gui/splash/island_background.png");
         backTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        backGroundImg = new Image(backTex);
+        Image backGroundImg = new Image(backTex);
         backStage.addActor(backGroundImg);
 
         menu = new HexagonalMenu(menuSkin);
@@ -117,7 +111,7 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
                 if (soloButton.isChecked()) {
                     uncheckOtherButtons(2);
                     buttons.get(0).setDisabled(false);
-                    Gdx.app.log(TAG, "Solo Button clicked");
+                    Gdx.app.log(MenuScreen.class.getCanonicalName(), "Solo Button clicked");
                 } else
                     buttons.get(0).setDisabled(true);
             }
@@ -148,7 +142,7 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
                 if (creditsButton.isChecked()) {
                     uncheckOtherButtons(4);
                     buttons.get(0).setDisabled(false);
-                    Gdx.app.log(TAG, "Credits Button clicked");
+                    Gdx.app.log(MenuScreen.class.getCanonicalName(), "Credits Button clicked");
                 } else
                     buttons.get(0).setDisabled(true);
             }

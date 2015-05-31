@@ -21,6 +21,10 @@ public class OnlineGoGameScreen extends GoGameScreen {
      */
     private OnlineGame onlineGame;
 
+    /**
+     * Create a new game screen for an online game.
+     * @param game The game which should be played on this screen.
+     */
     public OnlineGoGameScreen(OnlineGame game) {
         super();
         onlineGame = game;
@@ -51,10 +55,21 @@ public class OnlineGoGameScreen extends GoGameScreen {
         return "Goban_world_test";
     }
 
+    /**
+     * Firewall class to start and stop timer for the player.
+     * Each functions are mapped to the listener given to the constructor.
+     */
     private class OnlineTimerOut implements TurnListener {
 
+        /**
+         * Listener which is called for function mapping
+         */
         private final TurnListener listener;
 
+        /**
+         * Create a new timeout
+         * @param listener Listener which is called for function mapping
+         */
         public OnlineTimerOut(TurnListener listener){
             this.listener = listener;
         }
@@ -77,12 +92,23 @@ public class OnlineGoGameScreen extends GoGameScreen {
         }
     }
 
+    /**
+     * Stop the timer when a player has played.
+     * @param player The player who has played.
+     */
     private void stopTimer(Player player) {
         timer.stopTimer();
     }
 
+    /**
+     * Timer to timeout the game.
+     */
     private PlayerTimer timer;
 
+    /**
+     * Start a new turn timer for a given player.
+     * @param player The player which is playing.
+     */
     private void startTimer(Player player) {
         if(timer!=null)
             timer.stopTimer();
@@ -90,11 +116,23 @@ public class OnlineGoGameScreen extends GoGameScreen {
         timer.start();
     }
 
+    /**
+     * Timer used to exit if the player wait more than 90 seconds to play.
+     */
     private class PlayerTimer extends Thread{
 
+        /**
+         * Time left to play in seconds.
+         */
         private int time = 90;
+        /**
+         * Define if this thread should continue to run.
+         */
         private boolean shouldRun = true;
 
+        /**
+         * Stop this timer. You call this function when player has played.
+         */
         public void stopTimer(){
             shouldRun = false;
         }
@@ -121,13 +159,5 @@ public class OnlineGoGameScreen extends GoGameScreen {
             }
         }
 
-    }
-
-    public OnlineGame getOnlineGame() {
-        return onlineGame;
-    }
-
-    public void setOnlineGame(OnlineGame onlineGame) {
-        this.onlineGame = onlineGame;
     }
 }
