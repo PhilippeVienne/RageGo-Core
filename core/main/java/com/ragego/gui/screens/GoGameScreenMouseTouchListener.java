@@ -39,7 +39,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      */
     private boolean panning = false;
     /**
-     * The attahced screen for this listener.
+     * The attached screen for this listener.
      * This is useful to grab worldCamera settings and goban information.
      */
     private GoGameScreen screen;
@@ -76,6 +76,7 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
      * Task used to pan while a key is down
      */
     private KeyPanning panningTask;
+
     /**
      * Thread used to call the {@link #panningTask}.
      * This thread should always be running.
@@ -96,17 +97,17 @@ public class GoGameScreenMouseTouchListener implements InputProcessor {
     }, "PanningThread");
 
     {
-        panningThread.start();
+        panningThread.start(); // Start a creepy thread
     }
 
+    /**
+     * Create a mouse/touch listener for a given go game screen
+     * @param screen The screen used to give touch and mouse events.
+     */
     public GoGameScreenMouseTouchListener(GoGameScreen screen) {
         if (screen == null)
             throw new NullPointerException("Screen is null");
         this.screen = screen;
-    }
-
-    public boolean isActiveToPutStones() {
-        return activeToPutStones;
     }
 
     /**

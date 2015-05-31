@@ -8,6 +8,7 @@ import com.ragego.engine.Stone;
  * Represents a {@link Stone} on the Goban.
  */
 public class GraphicStone {
+
     private final Stone stone;
     private final Goban goban;
     private final TiledMapTile stoneTile;

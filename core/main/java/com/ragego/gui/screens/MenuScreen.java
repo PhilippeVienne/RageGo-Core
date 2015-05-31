@@ -26,13 +26,34 @@ import java.util.HashMap;
  * Manages the display of the Main Menu Screen.
  */
 public class MenuScreen extends ScreenAdapter implements MusicalScreen{
+    /**
+     * List buttons shown on this screen. This is used to mask or show good buttons.
+     */
     private HashMap<Integer, Button> buttons = new HashMap<Integer, Button>();
+    /**
+     * Viewport to display the menu buttons and message dialogs.
+     */
     private ScreenViewport hudViewport;
+    /**
+     * Viewport to display a simple background image.
+     */
     private FillViewport backViewport;
     private Stage backStage, hudStage;
+    /**
+     * Menu instance used to create buttons and manage them.
+     */
     private HexagonalMenu menu;
+    /**
+     * Skin used for this menu.
+     */
     private Skin menuSkin;
+    /**
+     * When the play button is pressed, this screen will be displayed. If it's null, then the screen is not changed.
+     */
     private ScreenAdapter nextScreen = null;
+    /**
+     * Life is better with music.
+     */
     private Music backgroundMusic;
 
     public MenuScreen() {
@@ -180,12 +201,19 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
         hudStage.addActor(menu);
     }
 
+    /**
+     * Act user has pressed on play button.
+     */
     private void play() {
         if (nextScreen != null) {
             RageGoGame.getInstance().load(nextScreen);
         }
     }
 
+    /**
+     * Unchecked all buttons (go to their white version)
+     * @param buttonValue Button to leave checked.
+     */
     private void uncheckOtherButtons(int buttonValue) {
         for (int i = 2; i < buttons.size(); i++) {
             if (i != buttonValue)
@@ -193,6 +221,10 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
         }
     }
 
+    /**
+     * Find if one or more button are checked.
+     * @return true if there is one (or more) button checked, false otherwise.
+     */
     private boolean isAButtonChecked() {
         for (int i = 2; i < buttons.size(); i++) {
             if (buttons.get(i).isChecked()) {

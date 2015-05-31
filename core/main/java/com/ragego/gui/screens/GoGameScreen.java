@@ -33,12 +33,26 @@ import com.ragego.utils.GuiUtils;
  * Manages the display of a generic Go Game Screen.
  */
 public abstract class GoGameScreen extends ScreenAdapter implements MusicalScreen {
-    private static final String TAG = "GoGameScreen";
+
+    /**
+     * Time in milliseconds to wait until check a new user input.
+     */
     private static final int REFRESH_INTERVAL_FOR_USER_INPUT = 10;
 
+    /**
+     * Main input processor for this screen.
+     */
     protected final GoGameScreenMouseTouchListener gobanInputProcessor = new GoGameScreenMouseTouchListener(this);
+
+    /**
+     * Multiplexer for inputs to add more inputs ways.
+     */
     protected final InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
+    /**
+     * Assets manager used to load the map.
+     * @see RageGoGame#getAssetManager() This is the value of this var.
+     */
     protected AssetManager manager = RageGoGame.getAssetManager();
 
     protected TiledMap map;
@@ -49,10 +63,15 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
     protected TiledMapTileLayer gridLayer;
     protected TiledMapTileLayer selection;
     protected TiledMapTile selectionTile;
+
+    // =======================================================================================
+    // A lot of properties from the map
     protected float mapPartPixWidth, mapPartPixHeight, tileWidthHalf, tileHeightHalf, yOffset;
     protected int mapHeight, mapWidth;
     protected Vector2 mapPartCenter, topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords,
             rightTileWorldCoords;
+    // End of a lot of properties
+    // =======================================================================================
 
     protected ScreenViewport hudViewport = new ScreenViewport();
     protected Stage hudStage = new Stage(hudViewport);
@@ -143,7 +162,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
     private void setupMap() {
         manager.load("com/ragego/gui/maps/" + getMapToLoad() + ".tmx", TiledMap.class);
         manager.finishLoading();
-        Gdx.app.log(TAG, "Map loaded");
+        Gdx.app.log(getClass().getCanonicalName(), "Map loaded");
         map = manager.get("com/ragego/gui/maps/" + getMapToLoad() + ".tmx");
         renderer = new IsometricTiledMapRenderer(map);
         worldCamera = new OrthographicCamera();
@@ -217,7 +236,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
     protected void setupHud() {
         manager.load("com/ragego/gui/hud/hud.json", Skin.class);
         manager.finishLoading();
-        Gdx.app.log(TAG, "Hud assets loaded");
+        Gdx.app.log(getClass().getCanonicalName(), "Hud assets loaded");
         hudSkin = manager.get("com/ragego/gui/hud/hud.json");
 
         hexaFrameTop = new HexaFrameTop(hudSkin, RageGoGame.getUiSkin());
@@ -330,7 +349,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
         gobanInputProcessor.addToMultiplexer(inputMultiplexer);
     }
 
-    /*
+    /* ============================================================================================
         Visibility settings
      */
 
@@ -371,7 +390,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
         }
     }
 
-    /*
+    /* ==================================================================================
         Miscellaneous methods
      */
 
