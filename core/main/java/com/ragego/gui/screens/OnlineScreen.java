@@ -209,15 +209,12 @@ public class OnlineScreen extends ScreenAdapter {
 
         hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
         hudStage.draw();
-        System.out.println(RageGoGame.getInstance().isConnected());
         if (RageGoGame.getInstance().isConnected()) {
-            System.out.println("connected");
             if (codeLoaded)
                 yourCodeLabel.setText("Your code is : " + yourCode);
             onlineInputDialog.setVisible(true);
             errorDialog.setVisible(false);
         } else {
-            System.out.println("not connected");
             onlineInputDialog.setVisible(false);
             errorDialog.setVisible(true);
         }

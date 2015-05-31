@@ -237,10 +237,10 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
     @Override
     public void resize(int width, int height) {
         backViewport.update(width, height);
-        hudViewport.update(width, height);
-        menu.setPosition((hudViewport.getScreenWidth() - menu.getWidth()) * 0.5f,
-                (hudViewport.getScreenHeight() - menu.getHeight()) * 0.5f);
+        hudViewport.update(width, height, true);
 
+        menu.setPosition((hudViewport.getWorldWidth() - menu.getWidth()) * 0.5f,
+                (hudViewport.getWorldHeight() - menu.getHeight()) * 0.5f);
     }
 
     @Override
