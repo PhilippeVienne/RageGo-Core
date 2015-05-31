@@ -31,12 +31,12 @@ public class HexaFrameTop extends WidgetGroup {
         setHeight(hexaFrameTop.getHeight());
 
         frameTopHiddenButton = new Button(hudSkin, "frame_top_hidden");
-        frameTopHiddenButton.addListener(new ClickListener() {
+        /*frameTopHiddenButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 hide(false);
             }
-        });
+        });*/
         //frameTopHiddenButton.setSize(getPrefWidth(), getPrefHeight());
         frameTopHiddenButton.setPosition(0, hexaFrameTop.getHeight() - frameTopHiddenButton.getHeight());
 
@@ -164,5 +164,9 @@ public class HexaFrameTop extends WidgetGroup {
             frameTopVisibleGroup.setVisible(true);
             frameTopHiddenButton.setVisible(false);
         }
+    }
+
+    public Button getHiddenButton() {
+        return frameTopHiddenButton;
     }
 }
