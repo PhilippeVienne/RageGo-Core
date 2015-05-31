@@ -105,7 +105,7 @@ public class GuiTestScreen extends ScreenAdapter {
         widgetGroup.setDebug(true, true);
 
         //TEST
-        RageGoDialog messageDialog = new RageGoDialog("Erreur", "On a eu un bug ?", RageGoDialog.MESSAGE, new Runnable() {
+        RageGoDialog textInput = new RageGoDialog("Your code : ", "Your partner's code : ", RageGoDialog.MESSAGE, new Runnable() {
             @Override
             public void run() {
                 System.out.println("Je blague");
