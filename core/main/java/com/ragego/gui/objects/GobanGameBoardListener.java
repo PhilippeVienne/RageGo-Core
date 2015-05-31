@@ -4,7 +4,8 @@ import com.ragego.engine.*;
 
 /**
  * Listener for GameBoard for a given Goban.
- * All graphics stuff should be done here.
+ * All graphics stuff (add or remove stones) should be done here.
+ * This also refresh the score for users.
  */
 public class GobanGameBoardListener implements GameListener {
 
