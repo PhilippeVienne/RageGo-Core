@@ -12,7 +12,7 @@ public class Marker {
 
     /**
      * Constructor.
-     *
+     * @param board The board where this marker will be used
      * @param size Size of the board.
      */
     public Marker(int size, GameBoard board) {

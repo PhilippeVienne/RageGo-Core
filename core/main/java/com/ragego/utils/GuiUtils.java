@@ -137,7 +137,7 @@ public class GuiUtils {
     /**
      * Count number of fingers there is on screen.
      *
-     * @return Number of fingers >=0 and <=5
+     * @return Number of fingers &gt;=0 and &lt;=5
      */
     public static int getFingersOnScreen() {
         int activeTouch = 0;

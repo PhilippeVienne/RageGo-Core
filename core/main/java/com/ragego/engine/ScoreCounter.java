@@ -220,6 +220,7 @@ public class ScoreCounter implements GameListener {
      *
      * @param komi  The komi.
      * @param rules The scoring method
+     * @return This instance of ScoreCounter
      */
     public ScoreCounter getScore(Komi komi, ScoringMethod rules) {
         this.rules = rules;

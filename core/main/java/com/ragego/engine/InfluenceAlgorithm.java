@@ -4,7 +4,7 @@ package com.ragego.engine;
  * The class compute data by the influence algorithm.
  * This is not that : :!!!!!
  * <h2>The Influence Algorithm</h2>
- * <p/>
+ *
  * <p>Let (m, n) be the coordinates of the influence source and (i, j) the coordinates of a an intersection being
  * visited during propagation, using the same notation as in the accumulate_influence() function. Influence is now
  * propagated to its eight closest neighbors, including the diagonal ones, according to the follow scheme:</p>

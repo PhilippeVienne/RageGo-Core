@@ -23,6 +23,7 @@ public class OnlinePlayer extends HumanPlayer{
      * @param object Server data for this Player
      * @throws JSONException if server data is incorrect
      * @throws IOException if server data is incorrect
+     * @return The player corresponding
      */
     public static OnlinePlayer loadFromJSON(JSONObject object) throws IOException, JSONException {
         if (object == null) return null;
