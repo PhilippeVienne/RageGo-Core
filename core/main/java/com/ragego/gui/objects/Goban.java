@@ -318,11 +318,46 @@ public class Goban {
      */
     public void save() {
         if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            new Thread("SaveThread"){
+                @Override
+                public void run() {
+                    File file = null;
+                    do {
+                        javax.swing.JFileChooser chooser = new javax.swing.JFileChooser();
+                        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                            @Override
+                            public boolean accept(File f) {
+                                return !f.isDirectory();
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return null;
+                            }
+                        });
+                        int returnVal = chooser.showOpenDialog(null);
+
+                        if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
+                            file = chooser.getSelectedFile();
+                            if(file.isDirectory()){
+                                file = null;
+                                continue;
+                            }
+                            if (!file.getName().endsWith(".sgf"))
+                                file = new File(file.getAbsolutePath() + File.pathSeparator + file.getName() + ".sgf");
+                            System.out.println("File is " + file.toString());
+                            StandardGameFormatIO io = new StandardGameFormatIO(file, board);
+                            try {
+                                io.write();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } while (file == null);
+                }
+            }.start();
             try {
                 File tmp = File.createTempFile("RageGoGame", ".sgf");
-                System.out.println("File is " + tmp.getAbsolutePath() + "/" + tmp.getName());
-                StandardGameFormatIO io = new StandardGameFormatIO(tmp, board);
-                io.write();
             } catch (IOException e) {
                 e.printStackTrace();
             }
