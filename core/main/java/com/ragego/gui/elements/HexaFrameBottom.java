@@ -24,6 +24,7 @@ public class HexaFrameBottom extends WidgetGroup {
     private Image hexaFrameImage;
     private WidgetGroup frameVisibleGroup = new WidgetGroup();
     private Button frameHiddenButton;
+
     private HashMap<Integer, HexaFrameBottomButton> buttons = new HashMap<Integer, HexaFrameBottomButton>(BUTTONS_NB);
 
     public HexaFrameBottom(Skin hudSkin) {
@@ -96,5 +97,9 @@ public class HexaFrameBottom extends WidgetGroup {
 
     public Button getHiddenButton() {
         return frameHiddenButton;
+    }
+
+    public HashMap<Integer, HexaFrameBottomButton> getButtons() {
+        return buttons;
     }
 }

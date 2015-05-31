@@ -1,6 +1,7 @@
 package com.ragego.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -145,5 +146,20 @@ public class GuiUtils {
             if (Gdx.input.isTouched(i)) activeTouch++;
         }
         return activeTouch;
+    }
+
+    /**
+     * Transforms the given color hex string into a {@link Color}
+     *
+     * @param hexString The color as a "#RRGGBB" chain
+     * @return The color as a {@link Color}
+     */
+    public static Color colorFromHexString(String hexString) {
+        hexString = hexString.substring(1);
+        long hex = Long.parseLong(hexString, 16);
+        float r = (hex & 0xFF0000L) >> 16;
+        float g = (hex & 0xFF00L) >> 8;
+        float b = (hex & 0xFFL);
+        return new Color(r / 255f, g / 255f, b / 255f, 1);
     }
 }

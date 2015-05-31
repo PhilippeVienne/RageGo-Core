@@ -2,12 +2,12 @@
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
   	frame_bottom_hidden: { down: frame_bottom_hidden_down, up: frame_bottom_hidden_up, over: frame_bottom_hidden_hover },
   	frame_top_hidden: { down: frame_top_hidden_down, up: frame_top_hidden_up, over: frame_top_hidden_hover },
-  	back: { down: back_down, up: back_up, over: back_hover },
-  	forward: { down: forward_down, up: forward_up, over: forward_hover },
+  	back: { down: back_down, up: back_up, over: back_hover, disabled: back_up },
+  	forward: { down: forward_down, up: forward_up, over: forward_hover, disabled: back_up },
   	mark: { up: mark_up },
   	pass: { down: pass_down, up: pass_up, over: pass_hover },
   	return: { down: return_down, up: return_up, over: return_hover },
-  	save: { down: save_down, up: save_up, over: save_hover },
+  	save: { down: save_down, up: save_up, over: save_hover, disabled: save_up },
   	settings: { up: settings_up },
   	inactive: { up: inactive_up }
 }
