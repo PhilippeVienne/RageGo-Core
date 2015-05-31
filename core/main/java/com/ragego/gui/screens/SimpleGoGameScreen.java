@@ -19,6 +19,6 @@ public class SimpleGoGameScreen extends GoGameScreen {
 
     @Override
     protected final String getMapToLoad() {
-        return "Goban_9_world_test";
+        return "goban_9_summer_01";
     }
 }

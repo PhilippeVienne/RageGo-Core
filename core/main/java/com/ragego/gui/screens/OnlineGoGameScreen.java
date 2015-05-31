@@ -5,6 +5,7 @@ import com.ragego.engine.Player;
 import com.ragego.engine.TurnListener;
 import com.ragego.gui.GraphicTurnListener;
 import com.ragego.gui.RageGoGame;
+import com.ragego.gui.elements.HexaFrameBottomButton;
 import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.objects.Goban;
 import com.ragego.network.OnlineGame;
@@ -20,6 +21,10 @@ public class OnlineGoGameScreen extends GoGameScreen {
      * Game displayed by this screen.
      */
     private OnlineGame onlineGame;
+    /**
+     * Timer to timeout the game.
+     */
+    private PlayerTimer timer;
 
     /**
      * Create a new game screen for an online game.
@@ -51,8 +56,40 @@ public class OnlineGoGameScreen extends GoGameScreen {
     }
 
     @Override
+    protected void setupHud() {
+        super.setupHud();
+
+        /* Disables the back and forward buttons and changes them into inactive ones.
+        *  This will be kept so until a proper strategy is implemented on the server side in order to allow them.
+         */
+        this.hexaFrameBottom.getButtons().get(1).remove();
+        new HexaFrameBottomButton(hexaFrameBottom, 1, "inactive");
+        this.hexaFrameBottom.getButtons().get(2).remove();
+        new HexaFrameBottomButton(hexaFrameBottom, 2, "inactive");
+    }
+
+    @Override
     protected String getMapToLoad() {
-        return "Goban_world_test";
+        return "Goban_19_summer_01";
+    }
+
+    /**
+     * Stop the timer when a player has played.
+     * @param player The player who has played.
+     */
+    private void stopTimer(Player player) {
+        timer.stopTimer();
+    }
+
+    /**
+     * Start a new turn timer for a given player.
+     * @param player The player which is playing.
+     */
+    private void startTimer(Player player) {
+        if (timer != null)
+            timer.stopTimer();
+        timer = new PlayerTimer();
+        timer.start();
     }
 
     /**
@@ -68,9 +105,10 @@ public class OnlineGoGameScreen extends GoGameScreen {
 
         /**
          * Create a new timeout
+         *
          * @param listener Listener which is called for function mapping
          */
-        public OnlineTimerOut(TurnListener listener){
+        public OnlineTimerOut(TurnListener listener) {
             this.listener = listener;
         }
 

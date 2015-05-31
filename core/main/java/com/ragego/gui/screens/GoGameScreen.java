@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -65,6 +66,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
 
     // =======================================================================================
     // A lot of properties from the map
+    protected Color backgroundColor;
     protected float mapPartPixWidth, mapPartPixHeight, tileWidthHalf, tileHeightHalf, yOffset;
     protected int mapHeight, mapWidth;
     protected Vector2 mapPartCenter, topTileWorldCoords, bottomTileWorldCoords, leftTileWorldCoords,
@@ -100,7 +102,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
 
     @Override
     public final void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         worldCamera.update();
@@ -169,6 +171,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
         selection = (TiledMapTileLayer) map.getLayers().get("selection");
         final TiledMapTileSet toolTS = map.getTileSets().getTileSet("toolTS");
         selectionTile = toolTS.getTile(toolTS.getProperties().get("firstgid", Integer.class));
+        backgroundColor = new Color(GuiUtils.colorFromHexString(map.getProperties().get("backgroundcolor", String.class)));
     }
 
     /**
