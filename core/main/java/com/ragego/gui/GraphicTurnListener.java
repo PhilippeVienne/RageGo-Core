@@ -2,6 +2,7 @@ package com.ragego.gui;
 
 import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.*;
+import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.objects.Goban;
 import com.ragego.gui.screens.GoGameScreen;
 
@@ -57,8 +58,12 @@ public class GraphicTurnListener implements TurnListener {
             }
             try {
                 canPlay = goban.getBoard().canPlay(node);
+                if(!canPlay)
+                    screen.displayDialog(new RageGoDialog("Rule Violation","You have tried to play on "+Intersection.toCoordinates(intersection)+", you can not play on this intersection"));
+
             } catch (GoRuleViolation goRuleViolation) {
                 System.out.print("Rule violation : " + goRuleViolation.getMessage());
+                screen.displayDialog(new RageGoDialog("Rule Violation","You have tried to play on "+Intersection.toCoordinates(intersection)+", the rule violation is : "+goRuleViolation.getMessage()));
                 canPlay = false;
             }
         }

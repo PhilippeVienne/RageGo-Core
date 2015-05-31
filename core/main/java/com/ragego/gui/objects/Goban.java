@@ -324,18 +324,7 @@ public class Goban {
                     File file = null;
                     do {
                         javax.swing.JFileChooser chooser = new javax.swing.JFileChooser();
-                        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-                            @Override
-                            public boolean accept(File f) {
-                                return !f.isDirectory();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return null;
-                            }
-                        });
-                        int returnVal = chooser.showOpenDialog(null);
+                        int returnVal = chooser.showSaveDialog(null);
 
                         if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
                             file = chooser.getSelectedFile();
