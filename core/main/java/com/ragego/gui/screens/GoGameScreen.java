@@ -492,4 +492,12 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
                 }
             }.start();
     }
+
+    /**
+     * Display a dialog on the game screen.
+     * @param dialog The dialog to display.
+     */
+    public void displayDialog(RageGoDialog dialog) {
+        dialog.centerOnViewport(hudViewport).displayOn(hudStage);
+    }
 }

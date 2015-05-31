@@ -1,5 +1,6 @@
 package com.ragego.gui.objects;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.*;
+import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.GuiUtils;
 import com.ragego.utils.StandardGameFormatIO;
@@ -315,13 +317,17 @@ public class Goban {
      * Save the game in the temp directory.
      */
     public void save() {
-        try {
-            File tmp = File.createTempFile("RageGoGame", ".sgf");
-            System.out.println("File is " + tmp.getAbsolutePath() + "/" + tmp.getName());
-            StandardGameFormatIO io = new StandardGameFormatIO(tmp, board);
-            io.write();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            try {
+                File tmp = File.createTempFile("RageGoGame", ".sgf");
+                System.out.println("File is " + tmp.getAbsolutePath() + "/" + tmp.getName());
+                StandardGameFormatIO io = new StandardGameFormatIO(tmp, board);
+                io.write();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            screen.displayDialog(new RageGoDialog("Sorry","We can not save a game on Android !"));
         }
     }
 
