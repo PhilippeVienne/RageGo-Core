@@ -81,7 +81,6 @@ public class OnlineGoGameScreen extends GoGameScreen {
 
         @Override
         public void endOfTurn(GameBoard board, Player player, Player nextPlayer) {
-            stopTimer(player);
             listener.endOfTurn(board, player, nextPlayer);
         }
 
@@ -90,14 +89,6 @@ public class OnlineGoGameScreen extends GoGameScreen {
             startTimer(player);
             listener.startOfTurn(board, player, previousPlayer);
         }
-    }
-
-    /**
-     * Stop the timer when a player has played.
-     * @param player The player who has played.
-     */
-    private void stopTimer(Player player) {
-        timer.stopTimer();
     }
 
     /**
@@ -112,7 +103,7 @@ public class OnlineGoGameScreen extends GoGameScreen {
     private void startTimer(Player player) {
         if(timer!=null)
             timer.stopTimer();
-        timer = new PlayerTimer();
+        timer = new PlayerTimer(player);
         timer.start();
     }
 
@@ -121,6 +112,7 @@ public class OnlineGoGameScreen extends GoGameScreen {
      */
     private class PlayerTimer extends Thread{
 
+        private final Player player;
         /**
          * Time left to play in seconds.
          */
@@ -129,6 +121,19 @@ public class OnlineGoGameScreen extends GoGameScreen {
          * Define if this thread should continue to run.
          */
         private boolean shouldRun = true;
+
+        /**
+         * Create a timer for the given player
+         * @param player The player acting on this timer
+         */
+        public PlayerTimer(Player player) {
+            this.player = player;
+            if(player != RageGoServer.getLocalPlayer()){
+                time = 120;
+            } else {
+                time = 90;
+            }
+        }
 
         /**
          * Stop this timer. You call this function when player has played.
@@ -142,17 +147,23 @@ public class OnlineGoGameScreen extends GoGameScreen {
             while (shouldRun){
                 if(time<=0){
                     shouldRun = false;
-                    new RageGoDialog("Timeout", "The 90 seconds allowed for a turn are gone. The game is canceled", RageGoDialog.MESSAGE, new Runnable() {
-                        @Override
-                        public void run() {
-                            RageGoGame.goHome();
-                        }
-                    }).centerOnViewport(hudViewport).displayOn(hudStage);
+                    if(player == RageGoServer.getLocalPlayer())
+                        displayDialog(new RageGoDialog("Timeout", "The 90 seconds allowed for a turn are gone. The game is canceled", RageGoDialog.MESSAGE, new Runnable() {
+                            @Override
+                            public void run() {
+                                RageGoGame.goHome();
+                            }
+                        }));
+                    else
+                        displayDialog(new RageGoDialog("Timeout", "The other player has gone !"));
                 }
                 try {
                     Thread.sleep(1000);
                     time--;
-                    hexaFrameTop.updateTime(time);
+                    if(player == RageGoServer.getLocalPlayer())
+                        hexaFrameTop.updateTime(time);
+                    else
+                        hexaFrameTop.clearTime();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

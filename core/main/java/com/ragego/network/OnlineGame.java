@@ -68,7 +68,7 @@ public class OnlineGame {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         } while (node == null);

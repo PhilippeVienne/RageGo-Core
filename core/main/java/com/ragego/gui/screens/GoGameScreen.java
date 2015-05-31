@@ -395,6 +395,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
     public Vector2 waitForUserInputOnGoban() {
         Vector2 gobanCoordinates;
         synchronized (gobanInputProcessor) {
+            gobanInputProcessor.popLastTouch(); // Forget a fantom touch
             while ((gobanCoordinates = gobanInputProcessor.popLastTouch()) == null && !goban.passTurn()) {
                 try {
                     Thread.sleep(0, REFRESH_INTERVAL_FOR_USER_INPUT);

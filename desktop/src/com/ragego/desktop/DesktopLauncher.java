@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.ragego.gui.RageGoGame;
 
 public class DesktopLauncher {
-	private static boolean IS_PRODUCTION = true;
+	private static boolean IS_PRODUCTION = false;
 
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

@@ -133,6 +133,14 @@ public class HexaFrameTop extends WidgetGroup {
     }
 
     /**
+     * Clear the time label
+     */
+    public void clearTime(){
+        timeValueHiddenLabel.setText("");
+        timeValueLabel.setText("");
+    }
+
+    /**
      * Updates the displayed time
      *
      * @param time The time value (in seconds) of the remaining time
