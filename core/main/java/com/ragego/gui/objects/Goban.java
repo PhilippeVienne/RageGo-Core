@@ -326,18 +326,6 @@ public class Goban {
     }
 
     /**
-     * Runnable to make an infinite loop for playing game.
-     */
-    private class GameRunnable implements Runnable {
-        @Override
-        public void run() {
-            while (gameRunning && !board.isGameEnded())
-                board.nextMove();
-            Gdx.app.log("Goban", "Game is ended and score is " + board.getScoreCounter().formatResult());
-        }
-    }
-
-    /**
      * Clean the board from all stones on it.
      */
     public void clearBoard(){
@@ -353,9 +341,21 @@ public class Goban {
      */
     public void refreshUserScore() {
         ScoreCounter scoreCounter = board.getScoreCounter();
-        screen.getHexaFrameTop().updateCapturedWhiteStones(scoreCounter.getCaptivatedStonesByBlack());
+        screen.getHexaFrameTop().updateWhitePrisoners(scoreCounter.getCaptivatedStonesByBlack());
         System.out.println("Black score "+scoreCounter.getCaptivatedStonesByBlack());
-        screen.getHexaFrameTop().updateCapturedBlackStones(scoreCounter.getCaptivatedStonesByWhite());
+        screen.getHexaFrameTop().updateBlackPrisoners(scoreCounter.getCaptivatedStonesByWhite());
         System.out.println("White score "+scoreCounter.getCaptivatedStonesByWhite());
+    }
+
+    /**
+     * Runnable to make an infinite loop for playing game.
+     */
+    private class GameRunnable implements Runnable {
+        @Override
+        public void run() {
+            while (gameRunning && !board.isGameEnded())
+                board.nextMove();
+            Gdx.app.log("Goban", "Game is ended and score is " + board.getScoreCounter().formatResult());
+        }
     }
 }

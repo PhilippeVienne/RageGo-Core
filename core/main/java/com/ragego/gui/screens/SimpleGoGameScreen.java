@@ -10,7 +10,6 @@ import com.ragego.gui.objects.Goban;
  * Implements a simple Go Screen to play in local.
  */
 public class SimpleGoGameScreen extends GoGameScreen {
-
     @Override
     protected void setupGoban(Goban goban) {
         TurnListener listener = new GraphicTurnListener(this, goban);

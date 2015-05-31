@@ -13,7 +13,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -320,7 +319,6 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
      */
     private void setupHudShowButton() {
         frameBottomHiddenButton = new Button(hudSkin, "frame_bottom_hidden");
-        frameTopHiddenButton = new Button(hudSkin, "frame_top_hidden");
 
         ClickListener hudButtonClickListener = new ClickListener() {
             @Override
@@ -330,14 +328,10 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
             }
         };
         frameBottomHiddenButton.addListener(hudButtonClickListener);
-        frameTopHiddenButton.addListener(hudButtonClickListener);
 
         frameBottomHiddenButton.setPosition((hudViewport.getScreenWidth() - frameBottomHiddenButton.getWidth()) * 0.5f, 0);
-        frameTopHiddenButton.setPosition((hudViewport.getScreenWidth() - frameTopHiddenButton.getWidth()) * 0.5f,
-                hudViewport.getScreenHeight() - frameTopHiddenButton.getHeight());
 
         hudStage.addActor(frameBottomHiddenButton);
-        hudStage.addActor(frameTopHiddenButton);
     }
 
     /**
@@ -358,11 +352,7 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
      */
     void showHud() {
         if (hudVisible) {
-            for (Actor actor : hudStage.getActors())
-                if (actor != null)
-                    actor.setVisible(true);
-            frameBottomHiddenButton.setVisible(false);
-            frameTopHiddenButton.setVisible(false);
+            hexaFrameTop.hide(false);
         }
     }
 
@@ -379,14 +369,9 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
      * @param force If true, forces the program to hide the HUD
      */
     private void hideHud(boolean force) {
-        if (hudVisible || force) {
+        if (!hudVisible || force) {
             hudVisible = false;
-            for (Actor actor : hudStage.getActors()) {
-                if (actor != null)
-                    actor.setVisible(false);
-            }
-            frameBottomHiddenButton.setVisible(true);
-            frameTopHiddenButton.setVisible(true);
+            hexaFrameTop.hide(true);
         }
     }
 
