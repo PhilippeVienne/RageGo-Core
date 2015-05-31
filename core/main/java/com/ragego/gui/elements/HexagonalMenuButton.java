@@ -10,11 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class HexagonalMenuButton extends Button {
     private final HexagonalMenu menu;
     private HexagonalMenu.Position position;
-    private Skin menuSkin;
 
+    /**
+     * Create a new Hexagonal Menu button
+     * @param menu The {@link HexagonalMenu} linked to this button
+     * @param position The position on the screen, see {@link com.ragego.gui.elements.HexagonalMenu.Position}
+     * @param buttonStyleName The button style name.
+     */
     public HexagonalMenuButton(HexagonalMenu menu, HexagonalMenu.Position position, String buttonStyleName) {
         this.menu = menu;
-        this.menuSkin = menu.getMenuSkin();
+        Skin menuSkin = menu.getMenuSkin();
         this.setStyle(menuSkin.get(buttonStyleName, ButtonStyle.class));
         setSize(getPrefWidth(), getPrefHeight());
         setPosition(position);
