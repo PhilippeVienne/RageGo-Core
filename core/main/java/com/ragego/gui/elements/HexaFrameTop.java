@@ -1,9 +1,7 @@
 package com.ragego.gui.elements;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ragego.gui.screens.GoGameScreen;
 
 /**
@@ -15,9 +13,9 @@ public class HexaFrameTop extends WidgetGroup {
 
     private boolean isHidden = true;
     private Skin hudSkin, uiSkin;
-    private Image hexaFrameTop;
-    private WidgetGroup frameTopVisibleGroup = new WidgetGroup();
-    private Button frameTopHiddenButton;
+    private Image hexaFrameImage;
+    private WidgetGroup frameVisibleGroup = new WidgetGroup();
+    private Button frameHiddenButton;
     private Label blackPrisonersNumberLabel, whitePrisonersNumberLabel, timeValueLabel,
             blackPrisonersNumberHiddenLabel, whitePrisonersNumberHiddenLabel, timeValueHiddenLabel,
             blackPrisonersHiddenLabel, whitePrisonersHiddenLabel, timeHiddenLabel;
@@ -26,24 +24,17 @@ public class HexaFrameTop extends WidgetGroup {
         super();
         this.hudSkin = hudSkin;
         this.uiSkin = uiSkin;
-        hexaFrameTop = new Image(hudSkin.getRegion(HEXA_FRAME_NAME));
-        setWidth(hexaFrameTop.getWidth());
-        setHeight(hexaFrameTop.getHeight());
+        hexaFrameImage = new Image(hudSkin.getRegion(HEXA_FRAME_NAME));
+        setWidth(hexaFrameImage.getWidth());
+        setHeight(hexaFrameImage.getHeight());
 
-        frameTopHiddenButton = new Button(hudSkin, "frame_top_hidden");
-        /*frameTopHiddenButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                hide(false);
-            }
-        });*/
-        //frameTopHiddenButton.setSize(getPrefWidth(), getPrefHeight());
-        frameTopHiddenButton.setPosition(0, hexaFrameTop.getHeight() - frameTopHiddenButton.getHeight());
+        frameHiddenButton = new Button(hudSkin, "frame_top_hidden");
+        frameHiddenButton.setPosition(0, hexaFrameImage.getHeight() - frameHiddenButton.getHeight());
 
-        frameTopVisibleGroup.addActor(hexaFrameTop);
+        frameVisibleGroup.addActor(hexaFrameImage);
         addLabels();
-        addActor(frameTopVisibleGroup);
-        addActor(frameTopHiddenButton);
+        addActor(frameVisibleGroup);
+        addActor(frameHiddenButton);
     }
 
     /**
@@ -62,27 +53,27 @@ public class HexaFrameTop extends WidgetGroup {
         whitePrisonersHiddenLabel = new Label("White prisoners", uiSkin);
         timeHiddenLabel = new Label("Time", uiSkin);
 
-        blackPrisonersNumberLabel.setWidth(hexaFrameTop.getWidth() * 4 / 64);
-        whitePrisonersNumberLabel.setWidth(hexaFrameTop.getWidth() * 4 / 64);
-        timeValueLabel.setWidth(hexaFrameTop.getWidth() * 10 / 64);
+        blackPrisonersNumberLabel.setWidth(hexaFrameImage.getWidth() * 4 / 64);
+        whitePrisonersNumberLabel.setWidth(hexaFrameImage.getWidth() * 4 / 64);
+        timeValueLabel.setWidth(hexaFrameImage.getWidth() * 10 / 64);
 
-        blackPrisonersNumberHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 2.5f / 64);
-        whitePrisonersNumberHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 2.5f / 64);
-        timeValueHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 2.5f / 64);
-        blackPrisonersHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 6.5f / 64);
-        whitePrisonersHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 6.5f / 64);
-        timeHiddenLabel.setWidth(frameTopHiddenButton.getWidth() * 6.5f / 64);
+        blackPrisonersNumberHiddenLabel.setWidth(frameHiddenButton.getWidth() * 2.5f / 64);
+        whitePrisonersNumberHiddenLabel.setWidth(frameHiddenButton.getWidth() * 2.5f / 64);
+        timeValueHiddenLabel.setWidth(frameHiddenButton.getWidth() * 2.5f / 64);
+        blackPrisonersHiddenLabel.setWidth(frameHiddenButton.getWidth() * 6.5f / 64);
+        whitePrisonersHiddenLabel.setWidth(frameHiddenButton.getWidth() * 6.5f / 64);
+        timeHiddenLabel.setWidth(frameHiddenButton.getWidth() * 6.5f / 64);
 
         blackPrisonersNumberLabel.setFontScale(0.5f);
         whitePrisonersNumberLabel.setFontScale(0.5f);
         timeValueLabel.setFontScale(1.3f);
 
-        blackPrisonersNumberHiddenLabel.setFontScale(0.2f);
-        whitePrisonersNumberHiddenLabel.setFontScale(0.2f);
-        timeValueHiddenLabel.setFontScale(0.2f);
-        blackPrisonersHiddenLabel.setFontScale(0.2f);
-        whitePrisonersHiddenLabel.setFontScale(0.2f);
-        timeHiddenLabel.setFontScale(0.2f);
+        blackPrisonersNumberHiddenLabel.setFontScale(0.32f);
+        whitePrisonersNumberHiddenLabel.setFontScale(0.32f);
+        timeValueHiddenLabel.setFontScale(0.32f);
+        blackPrisonersHiddenLabel.setFontScale(0.32f);
+        whitePrisonersHiddenLabel.setFontScale(0.32f);
+        timeHiddenLabel.setFontScale(0.32f);
 
         blackPrisonersNumberLabel.setAlignment(Align.center, Align.center);
         whitePrisonersNumberLabel.setAlignment(Align.center, Align.center);
@@ -95,36 +86,36 @@ public class HexaFrameTop extends WidgetGroup {
         whitePrisonersHiddenLabel.setAlignment(Align.center, Align.center);
         timeHiddenLabel.setAlignment(Align.center, Align.center);
 
-        blackPrisonersNumberLabel.setPosition(hexaFrameTop.getWidth() * 20 / 64 - blackPrisonersNumberLabel.getWidth() * 0.5f + 4,
-                hexaFrameTop.getHeight() * 10 / 14 - blackPrisonersNumberLabel.getHeight() * 0.5f);
-        whitePrisonersNumberLabel.setPosition(hexaFrameTop.getWidth() * 44 / 64 - whitePrisonersNumberLabel.getWidth() * 0.5f + 4,
-                hexaFrameTop.getHeight() * 10 / 14 - whitePrisonersNumberLabel.getHeight() * 0.5f);
-        timeValueLabel.setPosition(hexaFrameTop.getWidth() * 0.5f - timeValueLabel.getWidth() * 0.5f + 5,
-                hexaFrameTop.getHeight() * 0.5f - timeValueLabel.getHeight() * 0.5f);
+        blackPrisonersNumberLabel.setPosition(hexaFrameImage.getWidth() * 20 / 64 - blackPrisonersNumberLabel.getWidth() * 0.5f + 4,
+                hexaFrameImage.getHeight() * 10 / 14 - blackPrisonersNumberLabel.getHeight() * 0.5f);
+        whitePrisonersNumberLabel.setPosition(hexaFrameImage.getWidth() * 44 / 64 - whitePrisonersNumberLabel.getWidth() * 0.5f + 4,
+                hexaFrameImage.getHeight() * 10 / 14 - whitePrisonersNumberLabel.getHeight() * 0.5f);
+        timeValueLabel.setPosition(hexaFrameImage.getWidth() * 0.5f - timeValueLabel.getWidth() * 0.5f + 5,
+                hexaFrameImage.getHeight() * 0.5f - timeValueLabel.getHeight() * 0.5f);
 
-        blackPrisonersNumberHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 15.25f / 64 - blackPrisonersNumberHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - blackPrisonersNumberHiddenLabel.getHeight() * 0.5f);
-        whitePrisonersNumberHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 27.25f / 64 - whitePrisonersNumberHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - whitePrisonersNumberHiddenLabel.getHeight() * 0.5f);
-        timeValueHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 51.25f / 64 - timeValueHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - timeValueHiddenLabel.getHeight() * 0.5f);
-        blackPrisonersHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 10.75f / 64 - blackPrisonersHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - blackPrisonersHiddenLabel.getHeight() * 0.5f);
-        whitePrisonersHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 22.75f / 64 - whitePrisonersHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - whitePrisonersHiddenLabel.getHeight() * 0.5f);
-        timeHiddenLabel.setPosition(frameTopHiddenButton.getWidth() * 46.75f / 64 - timeHiddenLabel.getWidth() * 0.5f,
-                frameTopHiddenButton.getHeight() * 0.5f - timeHiddenLabel.getHeight() * 0.5f);
+        blackPrisonersNumberHiddenLabel.setPosition(frameHiddenButton.getWidth() * 27.625f / 64 - blackPrisonersNumberHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - blackPrisonersNumberHiddenLabel.getHeight() * 0.5f + 2);
+        whitePrisonersNumberHiddenLabel.setPosition(frameHiddenButton.getWidth() * 36.375f / 64 - whitePrisonersNumberHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - whitePrisonersNumberHiddenLabel.getHeight() * 0.5f + 2);
+        timeValueHiddenLabel.setPosition(frameHiddenButton.getWidth() * 57.625f / 64 - timeValueHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - timeValueHiddenLabel.getHeight() * 0.5f + 2);
+        blackPrisonersHiddenLabel.setPosition(frameHiddenButton.getWidth() * 16 / 64 - blackPrisonersHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - blackPrisonersHiddenLabel.getHeight() * 0.5f + 2);
+        whitePrisonersHiddenLabel.setPosition(frameHiddenButton.getWidth() * 43 / 64 - whitePrisonersHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - whitePrisonersHiddenLabel.getHeight() * 0.5f + 2);
+        timeHiddenLabel.setPosition(frameHiddenButton.getWidth() * 53 / 64 - timeHiddenLabel.getWidth() * 0.5f,
+                frameHiddenButton.getHeight() * 0.5f - timeHiddenLabel.getHeight() * 0.5f + 2);
 
-        frameTopVisibleGroup.addActor(blackPrisonersNumberLabel);
-        frameTopVisibleGroup.addActor(whitePrisonersNumberLabel);
-        frameTopVisibleGroup.addActor(timeValueLabel);
+        frameVisibleGroup.addActor(blackPrisonersNumberLabel);
+        frameVisibleGroup.addActor(whitePrisonersNumberLabel);
+        frameVisibleGroup.addActor(timeValueLabel);
 
-        frameTopHiddenButton.addActor(blackPrisonersNumberHiddenLabel);
-        frameTopHiddenButton.addActor(whitePrisonersNumberHiddenLabel);
-        frameTopHiddenButton.addActor(timeValueHiddenLabel);
-        frameTopHiddenButton.addActor(blackPrisonersHiddenLabel);
-        frameTopHiddenButton.addActor(whitePrisonersHiddenLabel);
-        frameTopHiddenButton.addActor(timeHiddenLabel);
+        frameHiddenButton.addActor(blackPrisonersNumberHiddenLabel);
+        frameHiddenButton.addActor(whitePrisonersNumberHiddenLabel);
+        frameHiddenButton.addActor(timeValueHiddenLabel);
+        frameHiddenButton.addActor(blackPrisonersHiddenLabel);
+        frameHiddenButton.addActor(whitePrisonersHiddenLabel);
+        frameHiddenButton.addActor(timeHiddenLabel);
     }
 
     /**
@@ -158,15 +149,15 @@ public class HexaFrameTop extends WidgetGroup {
     public void hide(boolean state) {
         isHidden = state;
         if (isHidden) {
-            frameTopVisibleGroup.setVisible(false);
-            frameTopHiddenButton.setVisible(true);
+            frameVisibleGroup.setVisible(false);
+            frameHiddenButton.setVisible(true);
         } else {
-            frameTopVisibleGroup.setVisible(true);
-            frameTopHiddenButton.setVisible(false);
+            frameVisibleGroup.setVisible(true);
+            frameHiddenButton.setVisible(false);
         }
     }
 
     public Button getHiddenButton() {
-        return frameTopHiddenButton;
+        return frameHiddenButton;
     }
 }
