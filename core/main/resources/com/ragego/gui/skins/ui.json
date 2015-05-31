@@ -1,0 +1,172 @@
+{
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  graphics
+  .
+  g2d
+  .
+  BitmapFont: {
+    default
+    -
+    font: {
+      file: acme_9_regular
+      .
+      fnt
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  graphics
+  .
+  Color: {
+    white: {
+      a: 1,
+      b: 1,
+      g: 1,
+      r: 1
+    },
+    black: {
+      a: 1,
+      b: 0,
+      g: 0,
+      r: 0
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  Button$ButtonStyle: {
+    default: {
+      down: octo_button_down,
+      up: octo_button_up,
+      over: octo_button_hover
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  TextButton$TextButtonStyle: {
+    default: {
+      down: octo_button_down,
+      up: octo_button_up,
+      over: octo_button_hover,
+      font: default
+      -
+      font,
+      fontColor: black
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  Window$WindowStyle: {
+    default: {
+      titleFont: default
+      -
+      font,
+      background: window_background,
+      titleFontColor: white
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  Label$LabelStyle: {
+    default: {
+      font: default
+      -
+      font,
+      fontColor: white
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  TextField$TextFieldStyle: {
+    default: {
+      selection: text_selection,
+      background: octo_background,
+      font: default
+      -
+      font,
+      fontColor: white,
+      cursor: text_cursor
+    }
+  },
+  com
+  .
+  badlogic
+  .
+  gdx
+  .
+  scenes
+  .
+  scene2d
+  .
+  ui
+  .
+  CheckBox$CheckBoxStyle: {
+    default: {
+      checkboxOn: checkbox_on,
+      checkboxOff: checkbox_off,
+      over: checkbox_hover,
+      font: default
+      -
+      font,
+      fontColor: white
+    }
+  }
+}
