@@ -74,21 +74,13 @@ public class OnlineGoGameScreen extends GoGameScreen {
     }
 
     /**
-     * Stop the timer when a player has played.
-     * @param player The player who has played.
-     */
-    private void stopTimer(Player player) {
-        timer.stopTimer();
-    }
-
-    /**
      * Start a new turn timer for a given player.
      * @param player The player which is playing.
      */
     private void startTimer(Player player) {
         if (timer != null)
             timer.stopTimer();
-        timer = new PlayerTimer();
+        timer = new PlayerTimer(player);
         timer.start();
     }
 
@@ -127,22 +119,6 @@ public class OnlineGoGameScreen extends GoGameScreen {
             startTimer(player);
             listener.startOfTurn(board, player, previousPlayer);
         }
-    }
-
-    /**
-     * Timer to timeout the game.
-     */
-    private PlayerTimer timer;
-
-    /**
-     * Start a new turn timer for a given player.
-     * @param player The player which is playing.
-     */
-    private void startTimer(Player player) {
-        if(timer!=null)
-            timer.stopTimer();
-        timer = new PlayerTimer(player);
-        timer.start();
     }
 
     /**
