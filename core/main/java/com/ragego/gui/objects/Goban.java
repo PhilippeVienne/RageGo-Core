@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.ragego.engine.*;
+import com.ragego.gui.RageGoGame;
 import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.screens.GoGameScreen;
 import com.ragego.utils.GuiUtils;
@@ -39,8 +40,9 @@ public class Goban {
 
     /**
      * Create a new Goban
+     *
      * @param screen Screen where this Goban lives.
-     * @param map The map to load for this Goban
+     * @param map    The map to load for this Goban
      */
     public Goban(GoGameScreen screen, TiledMap map) {
         this.screen = screen;
@@ -57,6 +59,7 @@ public class Goban {
 
     /**
      * Accessor for the stone layer
+     *
      * @return Layer where the stones are
      */
     public TiledMapTileLayer getStoneLayer() {
@@ -95,6 +98,7 @@ public class Goban {
 
     /**
      * Create a thread for the Game engine
+     *
      * @return A thread to run to compute a game.
      */
     private Thread generateGameThread() {
@@ -111,10 +115,11 @@ public class Goban {
 
     /**
      * Convert iso top coordinates to goban coordinates
+     *
      * @param isoCoords Coordinates to convert
      * @return Coordinates on Goban (this function do not check that the coordinates are valid)
      */
-    public Vector2 isoToGoban (Vector2 isoCoords){
+    public Vector2 isoToGoban(Vector2 isoCoords) {
         isoCoords.add(-gobanOriginCoords.x, -gobanOriginCoords.y);
         return isoCoords;
     }
@@ -122,6 +127,7 @@ public class Goban {
 
     /**
      * Convert goban coordinates to iso top coordinates
+     *
      * @param isoCoords Coordinates to convert
      * @return Coordinates on iso top (this function do not check that the coordinates are valid)
      */
@@ -132,6 +138,7 @@ public class Goban {
 
     /**
      * Getter for the {@link GameBoard} used by this class
+     *
      * @return the board used in this class
      */
     public GameBoard getBoard() {
@@ -140,6 +147,7 @@ public class Goban {
 
     /**
      * Wait until the user has entered a new entry on the Goban.
+     *
      * @return The coordinate where we can play or null if the user pass.
      */
     public Vector2 waitForUserInputOnGoban() {
@@ -150,6 +158,7 @@ public class Goban {
 
     /**
      * Getter for stone position.
+     *
      * @param intersection The intersection of the stone
      * @return The vector in iso left for the given intersection.
      */
@@ -159,9 +168,10 @@ public class Goban {
 
     /**
      * Convert iso left to iso top coordinates for this board.
+     *
      * @param vector2 See {@link GuiUtils#isoTopToIsoLeft(Vector2, int)}
-     * @see GuiUtils#isoTopToIsoLeft(Vector2, int)
      * @return Vector in isoTop coordinates
+     * @see GuiUtils#isoTopToIsoLeft(Vector2, int)
      */
     private Vector2 getVectorIsoTopToIsoRight(Vector2 vector2) {
         return GuiUtils.isoTopToIsoLeft(vector2, map.getProperties().get("height", Integer.class));
@@ -169,10 +179,11 @@ public class Goban {
 
     /**
      * Check if given coordinates are valid on this goban
+     *
      * @param vector2 Coordinates in isoTop
+     * @return true if this position is valid on this Goban.
      * @see GuiUtils#isoLeftToIsoTop(Vector2, int)
      * @see #isoToGoban(Vector2)
-     * @return true if this position is valid on this Goban.
      */
     public boolean isValidOnGoban(Vector2 vector2) {
         vector2 = isoToGoban(vector2);
@@ -181,6 +192,7 @@ public class Goban {
 
     /**
      * Getter for board size.
+     *
      * @return The size for the graphic board.
      */
     public int getSize() {
@@ -189,6 +201,7 @@ public class Goban {
 
     /**
      * Set the GameBoard to run with this graphic Goban.
+     *
      * @param gameBoard The board which we are supposed to work with.
      */
     public void setGameBoard(GameBoard gameBoard) {
@@ -202,6 +215,7 @@ public class Goban {
 
     /**
      * Getter for {@link #blackStone}
+     *
      * @return Tile used for black stone.
      */
     public TiledMapTile getBlackStoneTile() {
@@ -210,6 +224,7 @@ public class Goban {
 
     /**
      * Getter for {@link #whiteStone}
+     *
      * @return Tile used for white stones.
      */
     public TiledMapTile getWhiteStoneTile() {
@@ -218,6 +233,7 @@ public class Goban {
 
     /**
      * Add a new graphic stone to this Goban
+     *
      * @param graphicStone The stone to add to this Goban.
      */
     public void addGraphicStone(GraphicStone graphicStone) {
@@ -228,6 +244,7 @@ public class Goban {
 
     /**
      * Retrieve a cell for placing a stone.
+     *
      * @param intersection The intersection that should match for this stone.
      * @return The cell corresponding to intersection or throw an error.
      */
@@ -243,6 +260,7 @@ public class Goban {
 
     /**
      * Retrieve a graphic stone from the engine stone which correspond.
+     *
      * @param stone The stone from engine to find.
      * @return The graphic stone on the board or null if not found on this Goban
      */
@@ -256,6 +274,7 @@ public class Goban {
 
     /**
      * Remove a stone from the graphical board. It does not remove it from the engine.
+     *
      * @param graphicStone The stone to remove from the board.
      */
     public void removeGraphicStone(GraphicStone graphicStone) {
@@ -267,6 +286,7 @@ public class Goban {
 
     /**
      * Act an animation on a node
+     *
      * @param node The node to animate
      */
     public void animate(GameNode node) {
@@ -282,6 +302,7 @@ public class Goban {
 
     /**
      * Determine if the current turn should be passed.
+     *
      * @return true if we should pass the turn.
      */
     public boolean passTurn() {
@@ -317,8 +338,8 @@ public class Goban {
      * Save the game in the temp directory.
      */
     public void save() {
-        if(Gdx.app.getType() == Application.ApplicationType.Desktop) {
-            new Thread("SaveThread"){
+        if (Gdx.app.getType() == Application.ApplicationType.Desktop) {
+            new Thread("SaveThread") {
                 @Override
                 public void run() {
                     File file = null;
@@ -328,7 +349,7 @@ public class Goban {
 
                         if (returnVal == javax.swing.JFileChooser.APPROVE_OPTION) {
                             file = chooser.getSelectedFile();
-                            if(file.isDirectory()){
+                            if (file.isDirectory()) {
                                 file = null;
                                 continue;
                             }
@@ -341,27 +362,24 @@ public class Goban {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                        } else if (returnVal == javax.swing.JFileChooser.CANCEL_OPTION) {
+                            file = new File("/sdkjsldk");
                         }
                     } while (file == null);
                 }
             }.start();
-            try {
-                File tmp = File.createTempFile("RageGoGame", ".sgf");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         } else {
-            screen.displayDialog(new RageGoDialog("Sorry","We can not save a game on Android !"));
+            screen.displayDialog(new RageGoDialog("Sorry", "We can not save a game on Android !"));
         }
     }
 
     /**
      * Clean the board from all stones on it.
      */
-    public void clearBoard(){
+    public void clearBoard() {
         for (int i = 0; i < getBoard().getBoardSize(); i++) {
             for (int j = 0; j < getBoard().getBoardSize(); j++) {
-                getStoneCell(Intersection.get(i,j,getBoard())).setTile(null);
+                getStoneCell(Intersection.get(i, j, getBoard())).setTile(null);
             }
         }
     }
@@ -372,9 +390,26 @@ public class Goban {
     public void refreshUserScore() {
         ScoreCounter scoreCounter = board.getScoreCounter();
         screen.getHexaFrameTop().updateWhitePrisoners(scoreCounter.getCaptivatedStonesByBlack());
-        System.out.println("Black score "+scoreCounter.getCaptivatedStonesByBlack());
+        System.out.println("Black score " + scoreCounter.getCaptivatedStonesByBlack());
         screen.getHexaFrameTop().updateBlackPrisoners(scoreCounter.getCaptivatedStonesByWhite());
-        System.out.println("White score "+scoreCounter.getCaptivatedStonesByWhite());
+        System.out.println("White score " + scoreCounter.getCaptivatedStonesByWhite());
+    }
+
+    /**
+     * End a Game.
+     */
+    public void endGame() {
+        stopGame();
+        ScoreCounter counter = board.getScoreCounter();
+        counter.compute();
+        String result = counter.formatResult();
+        screen.displayDialog(new RageGoDialog("End of game", "The final score is " + result
+                + ".\nThe winner is "+(result.contains("W")?"whites":"blacks")+".", RageGoDialog.MESSAGE, new Runnable() {
+            @Override
+            public void run() {
+                RageGoGame.goHome();
+            }
+        }));
     }
 
     /**
@@ -385,7 +420,7 @@ public class Goban {
         public void run() {
             while (gameRunning && !board.isGameEnded())
                 board.nextMove();
-            Gdx.app.log("Goban", "Game is ended and score is " + board.getScoreCounter().formatResult());
+            endGame();
         }
     }
 }

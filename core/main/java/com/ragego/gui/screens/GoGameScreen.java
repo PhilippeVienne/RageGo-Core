@@ -309,7 +309,11 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
                 final RageGoDialog confirmation = new RageGoDialog("Confirmation", RageGoDialog.CONFIRM, new Runnable() {
                     @Override
                     public void run() {
-                        closeScreen();
+                        try{
+                            goban.endGame();
+                        } catch (Exception e){
+                            RageGoGame.goHome();
+                        }
                     }
                 }, null, "Do you really want to exit the game ?");
                 confirmation.centerOnViewport(hudViewport).displayOn(hudStage);
