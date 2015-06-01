@@ -10,6 +10,12 @@ import com.ragego.gui.objects.Goban;
  * Implements a simple Go Screen to play in local.
  */
 public class SimpleGoGameScreen extends GoGameScreen {
+    String mapToLoad = "";
+
+    public SimpleGoGameScreen(String map) {
+        mapToLoad = map;
+    }
+
     @Override
     protected void setupGoban(Goban goban) {
         TurnListener listener = new GraphicTurnListener(this, goban);
@@ -19,6 +25,6 @@ public class SimpleGoGameScreen extends GoGameScreen {
 
     @Override
     protected final String getMapToLoad() {
-        return "goban_9_summer_01";
+        return mapToLoad;
     }
 }

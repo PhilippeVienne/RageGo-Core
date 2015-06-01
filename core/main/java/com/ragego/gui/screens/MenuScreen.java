@@ -178,7 +178,7 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
                 if (multiPlayerButton.isChecked()) {
                     uncheckOtherButtons(5);
                     buttons.get(0).setDisabled(false);
-                    nextScreen = new SimpleGoGameScreen();
+                    nextScreen = new MultiplayerScreen();
                 } else
                     buttons.get(0).setDisabled(true);
             }

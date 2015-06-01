@@ -413,11 +413,6 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
         return gobanCoordinates;
     }
 
-    /**
-     * Specify the map to be loaded for this Go Game screen.
-     */
-    protected abstract String getMapToLoad();
-
     /*
         Getters and Setters
      */
@@ -499,4 +494,9 @@ public abstract class GoGameScreen extends ScreenAdapter implements MusicalScree
     public void displayDialog(RageGoDialog dialog) {
         dialog.centerOnViewport(hudViewport).displayOn(hudStage);
     }
+
+    /**
+     * Gets the map to be loaded for this Go Game screen.
+     */
+    protected abstract String getMapToLoad();
 }
