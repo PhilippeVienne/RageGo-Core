@@ -174,29 +174,29 @@ public class ScoreCounter implements GameListener {
                 }
             }
         }
-        String[] lines = new String[score.length];
-        for (int i = 0; i < lines.length; i++) {
-            final String s = String.valueOf(i);
-            lines[i] = " " + s;
-            switch (s.length()) {
-                case 1:
-                    lines[i] += "  ";
-                    break;
-                case 2:
-                default:
-                    lines[i] += " ";
-            }
-        }
-        for (Player[] aScore : score) {
-            for (int i1 = 0; i1 < aScore.length; i1++) {
-                Player anAScore = aScore[i1];
-                lines[i1] += board.getLetterForPlayer(anAScore);
-                lines[i1] += "  ";
-            }
-        }
-        for (String line : lines) {
-            System.out.println(line);
-        }
+//        String[] lines = new String[score.length];
+//        for (int i = 0; i < lines.length; i++) {
+//            final String s = String.valueOf(i);
+//            lines[i] = " " + s;
+//            switch (s.length()) {
+//                case 1:
+//                    lines[i] += "  ";
+//                    break;
+//                case 2:
+//                default:
+//                    lines[i] += " ";
+//            }
+//        }
+//        for (Player[] aScore : score) {
+//            for (int i1 = 0; i1 < aScore.length; i1++) {
+//                Player anAScore = aScore[i1];
+//                lines[i1] += board.getLetterForPlayer(anAScore);
+//                lines[i1] += "  ";
+//            }
+//        }
+//        for (String line : lines) {
+//            System.out.println(line);
+//        }
     }
 
     private ArrayList<Intersection> linkedDeadStones(Marker marker, ArrayList<Intersection> territory, Player player) {

@@ -17,16 +17,16 @@ package com.ragego.engine;
  * <li>If (i+di, j+dj) is outside the board or occupied we also continue with the next direction.</li>
  * <li>Let S be the strength of the influence at (i, j). The influence propagated to (i+di, j+dj) from this
  * intersection is given by P*(1/A)*D*S, where the three different kinds of damping are:
- * <li>The permeability ‘P’, which is a property of the board intersections. Normally this is one, i.e. unrestricted
+ * <li>The permeability P, which is a property of the board intersections. Normally this is one, i.e. unrestricted
  * propagation, but to stop propagation through e.g. one step jumps, the permeability is set to zero at such
  * intersections through pattern matching. This is further discussed below.</li>
- * <li>The attenuation ‘A’, which is a property of the influence source and different in different directions.
+ * <li>The attenuation A, which is a property of the influence source and different in different directions.
  * By default this has the value 3 except diagonally where the number is twice as much. By modifying the attenuation
  * value it is possible to obtain influence sources with a larger or a smaller effective range.</li>
- * <li>The directional damping ‘D’, which is the squared cosine of the angle between (di,dj) and (i,j) - (m,n).
+ * <li>The directional damping D, which is the squared cosine of the angle between (di,dj) and (i,j) - (m,n).
  * The idea is to stop influence from "bending" around an interfering stone and get a continuous behavior at the
  * right angle cutoff. The choice of the squared cosine for this purpose is rather arbitrary, but has the advantage
- * that it can be expressed as a rational function of ‘m’, ‘n’, ‘i’, ‘j’, ‘di’, and ‘dj’, without involving any trigonometric
+ * that it can be expressed as a rational function of m, n, i, j, di and dj, without involving any trigonometric
  * or square root computations. When we are visiting the influence source we let by convention this factor be one.</li>
  * </ol>
  * <p>Influence is typically contributed from up to three neighbors "between" this intersection and the influence

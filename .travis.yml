@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-    - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=22.0.1   ANDROID_SDK_TOOLS=24.1.2
+    - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=22.0.2   ANDROID_SDK_TOOLS=24.1.2
 before_install:
     # Install base Android SDK
     - sudo apt-get update -qq

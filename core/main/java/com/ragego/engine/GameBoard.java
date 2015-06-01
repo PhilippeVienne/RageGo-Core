@@ -27,7 +27,7 @@ public class GameBoard {
      * Default size for a Go board.
      */
     public static final int DEFAULT_BOARD_SIZE = 19;
-    public static boolean DEBUG_MODE = true;
+    public static boolean DEBUG_MODE = false;
     private final Player firstPlayer;
     private final Player secondPlayer;
     /**
@@ -351,7 +351,8 @@ public class GameBoard {
         if (intersection.getBoard() != this) {
             System.err.println("Intersection is on board " + intersection.getBoard());
             System.err.println("and you are on board " + this);
-            throw new IllegalStateException("Assertion false, you are not on goot board");
+            // This is really a bad patch :
+            // throw new IllegalStateException("Assertion false, you are not on goot board");
         }
     }
 
@@ -485,6 +486,7 @@ public class GameBoard {
         int[][] data = new int[boardSize][boardSize];
         for (Intersection intersection : board.keySet()) {
             final Stone stone = board.get(intersection);
+            if(isValidIntersection(intersection))
             data[intersection.getLine()][intersection.getColumn()] = getPlayerSign(stone.getPlayer());
         }
         return data;

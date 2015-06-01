@@ -43,7 +43,6 @@ public class ScoreCounterTest {
 
     @Test
     public void givePointToOpponentWhenStoneIsCaptivated() throws Exception {
-        GameBoard.DEBUG_MODE = true;
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-01-19.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
@@ -56,7 +55,6 @@ public class ScoreCounterTest {
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-21-3.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
-        DebugUtils.printBoard(game);
         System.out.println(game.getScoreCounter().formatResult());
     }
 
@@ -65,17 +63,14 @@ public class ScoreCounterTest {
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-15-16.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(0.5), ScoreCounter.ScoringMethod.TERRITORY);
-        DebugUtils.printBoard(game);
         System.out.println(game.getScoreCounter().formatResult());
     }
 
     @Test
     public void testScoring() throws IOException {
-        GameBoard.DEBUG_MODE = true;
         GameBoard game = new StandardGameFormatIO(FileUtils.getResourceAsTMPFile(StandardGameFormatIO.class, "2015-03-09-35.sgf"), board).read();
         game.getScoreCounter().compute();
         game.getScoreCounter().getScore(new Komi(6.5), ScoreCounter.ScoringMethod.TERRITORY);
-        DebugUtils.printBoard(game);
         System.out.println(game.getScoreCounter().formatResult());
     }
 
