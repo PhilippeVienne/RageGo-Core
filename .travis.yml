@@ -1,18 +1,23 @@
 language: java
 jdk:
   - oraclejdk8
+android:
+  components:
+    - build-tools-21.1.2
+    - android-22
+    - extra
 env:
     - ANDROID_SDKS=android-22   ANDROID_TARGET=android-22   ANDROID_PT=21.1.2   ANDROID_SDK_TOOLS=24.1.2
 before_install:
     # Install base Android SDK
-    - sudo apt-get update -qq
-    - if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
-    - wget http://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
-    - tar xzf android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
-    - export ANDROID_HOME=$PWD/android-sdk-linux
-    - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+    #- sudo apt-get update -qq
+    #- if [ `uname -m` = x86_64 ]; then sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch; fi
+    #- wget http://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
+    #- tar xzf android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz
+    #- export ANDROID_HOME=$PWD/android-sdk-linux
+    #- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
     # Install required Android components.
-    - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --filter platform-tools,build-tools-$ANDROID_PT,extra-android-support,$ANDROID_SDKS --no-ui --force
+    #- ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --filter platform-tools,build-tools-$ANDROID_PT,extra-android-support,$ANDROID_SDKS --no-ui --force
 notifications:
   webhooks:
     urls:
