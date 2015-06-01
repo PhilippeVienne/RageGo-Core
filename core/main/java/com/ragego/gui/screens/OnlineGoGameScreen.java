@@ -70,7 +70,7 @@ public class OnlineGoGameScreen extends GoGameScreen {
 
     @Override
     protected String getMapToLoad() {
-        return "Goban_19_summer";
+        return "goban_19_summer";
     }
 
     /**

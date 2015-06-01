@@ -91,7 +91,7 @@ public class OnlineScreen extends ScreenAdapter {
         Skin uiSkin = RageGoGame.getUiSkin();
         RageGoAssetManager manager = RageGoGame.getAssetManager();
         manager.load("com/ragego/gui/splash/island_background.png", Texture.class);
-        Gdx.app.log(MenuScreen.class.getCanonicalName(), "Assets loaded");
+        Gdx.app.log(OnlineScreen.class.getCanonicalName(), "Assets loaded");
 
         Texture backTex = manager.get("com/ragego/gui/splash/island_background.png");
         backTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
