@@ -77,7 +77,7 @@ public class Intersection {
             int column = ((int) coordinate.charAt(0)) - 'a', line = ((int) coordinate.charAt(1)) - 'a';
             return get(column, line, board);
         } else { // It's not a SGF standard format
-            throw new IllegalArgumentException("Can not create an intersection with coordinate " + coordinate);
+            return null;
         }
 
     }

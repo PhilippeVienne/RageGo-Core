@@ -1,6 +1,7 @@
 package com.ragego.desktop;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.ragego.gui.RageGoGame;
@@ -25,7 +26,11 @@ public class DesktopLauncher {
 		config.title = "RageGo";
 
 		new LwjglApplication(RageGoGame.getInstance(), config);
-		if(IS_PRODUCTION)
+		if(IS_PRODUCTION) {
+			for (Graphics.DisplayMode displayMode : Gdx.graphics.getDisplayModes()) {
+				System.out.println(displayMode);
+			}
 			Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
+		}
 	}
 }

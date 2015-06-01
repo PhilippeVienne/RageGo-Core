@@ -1,5 +1,7 @@
 package com.ragego.gui.screens;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.ragego.engine.GameBoard;
 import com.ragego.engine.Player;
 import com.ragego.engine.TurnListener;
@@ -25,6 +27,14 @@ public class OnlineGoGameScreen extends GoGameScreen {
      * Timer to timeout the game.
      */
     private PlayerTimer timer;
+    /**
+     * Turn label
+     */
+    private Label turnLabel = new Label("It's your turn !", RageGoGame.getUiSkin());
+    
+    {
+        turnLabel.setColor(Color.BLACK);
+    }
 
     /**
      * Create a new game screen for an online game.
@@ -66,6 +76,12 @@ public class OnlineGoGameScreen extends GoGameScreen {
         new HexaFrameBottomButton(hexaFrameBottom, 1, "inactive");
         this.hexaFrameBottom.getButtons().get(2).remove();
         new HexaFrameBottomButton(hexaFrameBottom, 2, "inactive");
+
+        float prefHeight = turnLabel.getPrefHeight();
+        float prefWidth = turnLabel.getPrefWidth();
+        turnLabel.setPosition(hudViewport.getScreenWidth() / 2 - prefWidth / 2, hudViewport.getScreenHeight() / 2 - prefHeight / 2);
+        hudStage.addActor(turnLabel);
+        turnLabel.setVisible(false);
     }
 
     @Override
@@ -82,6 +98,19 @@ public class OnlineGoGameScreen extends GoGameScreen {
             timer.stopTimer();
         timer = new PlayerTimer(player);
         timer.start();
+        if(player == RageGoServer.getLocalPlayer()){
+            turnLabel.setVisible(true);
+            new Thread("YourTurnLabelThread"){
+                public void run(){
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    turnLabel.setVisible(false);
+                }
+            }.start();
+        }
     }
 
     /**

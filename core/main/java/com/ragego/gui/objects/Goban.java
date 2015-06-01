@@ -420,7 +420,6 @@ public class Goban {
         public void run() {
             while (gameRunning && !board.isGameEnded())
                 board.nextMove();
-            endGame();
         }
     }
 }
