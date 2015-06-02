@@ -2,7 +2,7 @@
 
 RageGo : Role-play and Aesthetic Game Engine for Go
 
-DOC : http://ragego.github.io/RageGo/javadoc/
+DOC : http://doc.ragego.com/
 
 [![Build Status](https://travis-ci.org/RageGo/RageGo.svg?branch=master)](https://travis-ci.org/RageGo/RageGo)
 
@@ -26,7 +26,7 @@ him to the game of Go. If he succeeds at beating them all, he will be allowed to
 Allows two players to play on a single device, with acts as a virtual Goban medium.
 This mode will allow us to develop the Go Game Engine, create the GUI, and implement the link between them.
 
-- Online Mode (Stretch Goal)
+- Online Mode (Short-Term Goal)
 Allows multiplayer play and possible exchanges between players.
 Will allow us to test the game in real time together, since we do not have many occasions to work at the same place and the same time.
 Will also permit a better understanding on how to better implement the game and to adapt the GUI to particular cases.
