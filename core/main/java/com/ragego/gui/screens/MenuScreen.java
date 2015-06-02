@@ -186,6 +186,7 @@ public class MenuScreen extends ScreenAdapter implements MusicalScreen{
 
         //Parameters Button
         final HexagonalMenuButton parametersButton = new HexagonalMenuButton(menu, HexagonalMenu.Position.LEFT_BOTTOM, "settings");
+        parametersButton.setDisabled(true);
         buttons.put(6, parametersButton);
         parametersButton.addListener(new ClickListener() {
             @Override

@@ -11,6 +11,7 @@ import com.ragego.engine.*;
 import com.ragego.gui.RageGoGame;
 import com.ragego.gui.elements.RageGoDialog;
 import com.ragego.gui.screens.GoGameScreen;
+import com.ragego.gui.screens.OnlineGoGameScreen;
 import com.ragego.utils.GuiUtils;
 import com.ragego.utils.StandardGameFormatIO;
 
@@ -420,6 +421,9 @@ public class Goban {
         public void run() {
             while (gameRunning && !board.isGameEnded())
                 board.nextMove();
+            if(!(screen instanceof OnlineGoGameScreen)){
+                endGame();
+            }
         }
     }
 }
