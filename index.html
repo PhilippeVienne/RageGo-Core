@@ -1,97 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Ragego by PhilippeGeek</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>RageGo by RageGo</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">Ragego</h1>
-        <p class="header">Go game with a dragon quest</p>
+    <header>
+      <div class="inner">
+        <h1>RageGo</h1>
+        <h2>Rapport Final (French only sorry)</h2>
+        <a href="https://github.com/RageGo/RageGo" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/PhilippeGeek/RageGo/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/PhilippeGeek/RageGo/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/PhilippeGeek/RageGo">View On GitHub</a></li>
-        </ul>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h1>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/PhilippeGeek">PhilippeGeek</a></p>
-
-
-      </header>
-      <section>
-        <h1>
-<a id="ragego" class="anchor" href="#ragego" aria-hidden="true"><span class="octicon octicon-link"></span></a>RageGo</h1>
-
-<p><a href="https://travis-ci.org/PhilippeGeek/RageGo"><img src="https://travis-ci.org/PhilippeGeek/RageGo.svg?branch=master" alt="Build Status"></a></p>
-
-<p>RageGo : Role-play and Aesthetic Game Engine for Go</p>
-
-<iframe style="margin: 20px auto" width="560" height="315" src="https://www.youtube.com/embed/4L0HdEqx_jU" frameborder="0" allowfullscreen></iframe>
+<p>Ce document a pour vocation d’offrir une vue générale au lecteur du logiciel libre “RageGo, a Role-Play and Aesthetic Game Engine for Go”, créé par Philippe VIENNE et Benoit RENAULT dans le cadre d’un projet de fin de classe prépartoire à l’INSA de Lyon. Afin de connaître dans le détail toutes les fonctionnalités du programme, il sera nécessaire de se référer à la documentation disponible sur <a href="http://doc.ragego.com/">http://doc.ragego.com/</a> (anglais). Il est également possible de consulter les sources du logiciel ainsi que des assets sur <a href="https://github.com/RageGo">https://github.com/RageGo</a>.</p>
 
 <h1>
-<a id="about" class="anchor" href="#about" aria-hidden="true"><span class="octicon octicon-link"></span></a>About</h1>
+<a id="cahier-des-charges" class="anchor" href="#cahier-des-charges" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cahier des charges</h1>
 
-<p>RageGo is an application which aims to revive the ancient game of Go by adding an adventurous RPG twist to it.
-The aim is not only to implement a traditional WeiQi (other name for the game) but to create a universe around it, with
-an interesting storyline so that the player may enjoy discovering the principles and background of the game while
-being able to see his progress through the RPG side of the thing.</p>
+<p>Comme son nom l’indique, ce programme a pour vocation d’apporter sa pierre à l’édifice des implémentations logicielles de jeux de go, en fournissant un moteur de jeu alternatif ainsi qu’une interface graphique d’un style nouveau. A longue échéance, un mode aventure permettra à l’utilisateur de découvrir cet ancien jeu sous un nouveau jour, plus moderne et proche des attentes et exigences des joueurs actuels. Nous reviendrons sur cela dans la partie “Futur du Projet”.</p>
 
-<h1>
-<a id="story-draft-wip" class="anchor" href="#story-draft-wip" aria-hidden="true"><span class="octicon octicon-link"></span></a>Story Draft (!WIP!)</h1>
-
-<p>The player incarnates a young thief who goes in the spirit world to steal a powerful artifact (yet unknown) from the
-dragon people. He thus triggers their anger, and they will stop at nothing to prevent him from getting out this parallel
-dimension alive. But dragons are no savages, and rather than simply go and chop his head off, they decide to challenge
-him to the game of Go. If he succeeds at beating them all, he will be allowed to return safely, with the artifact.</p>
-
-<h1>
-<a id="gameplay" class="anchor" href="#gameplay" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gameplay</h1>
-
-<p>--&gt; Game modes</p>
+<p>Ainsi, on comprendra que le développement de ce logiciel s’inscrit dans une démarche prévue sur le long terme, et nous en présenterons ici la version 0.2-rc dans laquelle nous avions prévu l’implémentation des fonctionnalités suivantes :</p>
 
 <ul>
-<li><p>Skirmish (Main Feature)
-The player will be able to train against spirits AI or already vanquished enemies
-This mode will allow us to develop the Go Game Engine, test the AI, and create the GUI.
-It is the most critical feature, as all others will be built from it.</p></li>
-<li><p>Adventure/Story (Second Main Feature)
-Allows the player to live the story built for the game and chose his path to earn his freedom back.(Details to be added)
-This mode is supposed to be implemented as soon as the Skirmish mode is ready enough.</p></li>
-<li><p>Tutorial (Secondary Feature)
-Permits to learn the basics of Go playing with exercises to understand the rules and underlying principles
-This will be implemented before creating the AI, as an exercise to familiarize with the use of the engine and thus ease
-the implementation of the AI.</p></li>
-<li><p>Online Mode (Stretch Goal)
-Allows multiplayer play and possible exchanges between players.
-Will only be implemented if described above features are so.</p></li>
-</ul>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		          <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-60747348-2");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+<li>Être une application réellement multi-plateforme 
 
+<ul>
+<li>Supporter Windows, Mac, Linux &amp; Android</li>
+<li>Garder le code potentiellement compatible IOS, HTML5 et BlackBerry</li>
+</ul>
+</li>
+<li>Posséder une interface utilisateur originale et spécialement adaptée
+
+<ul>
+<li>Designer l’interface, créer les assets et les packager</li>
+<li>Adopter une approche axée données pour faciliter l’ajout de contenu et améliorer les performances (usage des textureAtlas et Skins de LibGDX)</li>
+</ul>
+</li>
+<li>Représenter le terrain de jeu selon un point de vue 3D isométrique (ou 2.5D)
+
+<ul>
+<li>Adopter une approche axée données pour faciliter l’ajout de contenu (format de map .tmx)</li>
+<li>Gérer les différents systèmes d’entrée (écran, souris, clavier) pour transmettre les coordonnées d’un coup dans le référentiel du moteur de jeu</li>
+<li>Faciliter la future intégration des terrains de jeu dans le futur monde virtuel du mode aventure</li>
+</ul>
+</li>
+<li>Être capable de calculer et jouer une partie de jeu de Go
+
+<ul>
+<li>Représenter un jeu de Go sous la forme d’objets informatique</li>
+<li>Implémenter un set de règles de jeu de Go cohérentes</li>
+<li>Permettre une édition dynamique du plateau de jeu (retour en arrière, avant, passer son tour…)</li>
+<li>Gérer le plateau de jeu indépendamment de la partie graphique de manière performante (usage d’un thread dédié)</li>
+<li>Calculer l’influence des pierres de chaque joueur en fin de partie et en déduire automatiquement le score</li>
+<li>Prévoir la futur implémentation de l’IA et des coups spéciaux (triche) qu’elle pourra faire</li>
+</ul>
+</li>
+<li>Supporter le format .sgf (standard game format)
+
+<ul>
+<li>Permettre la sauvegarde sur PC en jeu d’une partie</li>
+<li>Permettre l’usage de parties déjà jouées et scorées à des fins de test unitaires uniquement</li>
+</ul>
+</li>
+<li>Créer des tests unitaires pour le moteur de jeu
+
+<ul>
+<li>Donner un moyen de contrôler en permanence la viabilité de l’ajout de nouveau code (cf. Travis, <a href="https://travis-ci.org/RageGo/RageGo">https://travis-ci.org/RageGo/RageGo</a>)</li>
+<li>Vérifier la justesse de l’implémentation des règles et du calcul de score</li>
+</ul>
+</li>
+<li>Implémenter un menu principal
+
+<ul>
+<li>Permettre l’accès aux différents modes de jeu</li>
+<li>Prévoir l’ajout des futures fonctionnalités</li>
+</ul>
+</li>
+<li>Implémenter le mode multijoueur local (1vs1)
+
+<ul>
+<li>Implémenter les fonctionnalités de sauvegarde et édition du plateau de jeu</li>
+<li>Afficher les nombres de pierres adverses capturées à tout instant de la partie</li>
+<li>Offrir une ébauche d’interface de pré-paramétrage du terrain de jeu dont la taille et l’apparence seront réglables</li>
+</ul>
+</li>
+<li>Implémenter une ébauche du mode de jeu multijoueur en ligne (1vs1, chronométré)
+
+<ul>
+<li>Implémenter un serveur stockant de façon temporaire les données à échanger (Ruby On Rails, voir <a href="http://github.com/RageGo/server">http://github.com/RageGo/server</a>)</li>
+<li>Gérer les utilisateurs au moyen de clefs uniques</li>
+<li>Utiliser le protocole HTTP pour permettre une connexion dans la majorité des circonstances réseau (ex: proxy universitaire)</li>
+<li>Vérifier la disponibilité de la connexion en tâche de fond de façon régulière (thread dédié)</li>
+<li>Limiter les possibilités d’édition de la carte (pas de retours avant/arrière)</li>
+<li>Affecter une durée limite aux tours de chaque joueur pour éviter les cas d’inactivité prolongée</li>
+</ul>
+</li>
+</ul>
+
+<h1>
+<a id="problèmes-et-solutions" class="anchor" href="#probl%C3%A8mes-et-solutions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Problèmes et solutions</h1>
+
+<p>Étant donné le nombre de problématiques que nous avons rencontré lors du développement, nous évoquerons chacun plutôt quelques morceaux choisis nous ayant plus particulièrement marqué. Ainsi, le lecteur bénéficiera d’un aperçu de notre cheminement sans pour autant se perdre dans des méandres de détails.</p>
+
+<h2>
+<a id="philippe-parle--le-moteur-et-le-réseau" class="anchor" href="#philippe-parle--le-moteur-et-le-r%C3%A9seau" aria-hidden="true"><span class="octicon octicon-link"></span></a>Philippe parle : “Le moteur et le réseau”</h2>
+
+<h3>
+<a id="calcul-du-jeu" class="anchor" href="#calcul-du-jeu" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calcul du jeu</h3>
+
+<p>Le calcul du jeu est un problème que l’on a au départ largement sous-estimé. En effet le jeu de Go a des règles simples mais assez floues d’un point de vue informatique et il est donc difficile de les faire valider par un ordinateur. D’autre part il était aussi important pour nous que le calcul soit le plus optimal possible, le jeu devant fonctionner même sur un smartphone ayant peu de puissance de calcul.</p>
+
+<p>Pour ajuster l’interprétation des règles, j’ai donc créé des petits fichiers de test en .sgf pour les données et dès qu’un test passait, c’était que la règle testée dans le fichier était valide. Cela a impliqué de commencer par implémenter la lecture du format .sgf puis de valider celle-ci pour pouvoir écrire les vérifications des règles.</p>
+
+<h3>
+<a id="transmissions-des-coups-par-le-réseau" class="anchor" href="#transmissions-des-coups-par-le-r%C3%A9seau" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transmissions des coups par le réseau</h3>
+
+<p>Le jeu en réseau implique que deux ordinateurs se transmettent les données du jeu à calculer. L’idéal pour ce genre de problématique serait qu’un serveur reçoive une donnée en entrée et donne le résultat au deux joueurs. Cependant dans notre contexte et avec les technologies que nous choisies ce n’était pas le plus adapté.</p>
+
+<p>J’ai donc opté pour une solution s’inspirant du format .sgf, c’est à dire que je décris la partie sous la forme d’un arbre où chaque noeud est un coup joué dans le jeu. Le jeu est ainsi représenté par une succession de coups qui nous permettent de recalculer l’état du jeu. Afin de garantir que le calcul du jeu est exact, un hash md5 de la situation du plateau est aussi fourni dans le noeud. Les ordinateurs n’ont donc plus qu’à se transmettre les noeuds par le biais du serveur. Afin de faciliter le transfert, les noeuds sont transformés en chaînes de caractères sérialisées.</p>
+
+<h3>
+<a id="calcul-du-score" class="anchor" href="#calcul-du-score" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calcul du score</h3>
+
+<p>Le calcul du score au jeu de go n’est pas chose aisée, car il faut déterminer à la fois le nombre de pièces capturés par l’adversaire mais en plus les territoires conquis, ce dernier point étant le plus compliqué.    Afin de faire cela, j’ai utilisé un algorithme A* pour établir le propriétaire d’une zone. Cependant cela a causé un autre problème car une pierre du joueur noir peut se trouver isolé dans une grande zone blanche. Or dans ce cas l’algorithme en A* n’est pas suffisant pour trancher sur la propriété de territoire.</p>
+
+<h3>
+<a id="calcul-de-linfluence" class="anchor" href="#calcul-de-linfluence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calcul de l’influence</h3>
+
+<p>Le calcul d’influence est un élément qui s’est révélé être essentiel dans le cadre du calcul du score. En effet, à la fin d’une partie réelle, les deux joueurs se mettent directement d’accord sur les pièces à enlever en fin de partie car le fait de constater qu’une pièce est morte est une tâche assez facile pour un cerveau humain. Cependant, on est obligé dans le cadre d’un programme de lui donner une règle stricte pour estimer une pierre comme morte. C’est ici que l’influence entre en jeu : on peut considérer une pièce perdue si l'adversaire a dessus une plus grande influence que le joueur.</p>
+
+<p>Pour les règles de calcul de cette influence, je me suis référé à l’algorithme présenté par GNU Go (cf. Bibliographie). Cependant, afin de l'appliquer à notre jeu, les constantes de départ ont du être déterminées par un processus expérimental itératif.</p>
+
+<h3>
+<a id="la-connexion-moteurgraphique" class="anchor" href="#la-connexion-moteurgraphique" aria-hidden="true"><span class="octicon octicon-link"></span></a>La connexion Moteur/Graphique</h3>
+
+<p>Malgré tous nos efforts pour améliorer la performance du moteur de jeu, nous nous sommes retrouvés face à un problème de concurrence des actions, l’ordinateur ne pouvant pas effectuer le rafraîchissement graphique tant qu’il est en train de calculer la partie.</p>
+
+<p>La solution a donc été de travailler dans des Threads Java différents : de cette façon, le thread du jeu attend une entrée de l’utilisateur puis calcule de son coté sans gêner la partie graphique et ensuite appelle celle-ci pour lui donner les pièces à ajouter et à enlever. On a du aussi développer la même technique pour le mode en ligne afin d’attendre les valeurs du serveur.</p>
+
+<h2>
+<a id="benoit-parle--la-game-user-interface" class="anchor" href="#benoit-parle--la-game-user-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Benoit parle : “La Game User Interface”</h2>
+
+<h3>
+<a id="coordonnées-écran--isométriques--goban-terrain-de-jeu" class="anchor" href="#coordonn%C3%A9es-%C3%A9cran--isom%C3%A9triques--goban-terrain-de-jeu" aria-hidden="true"><span class="octicon octicon-link"></span></a>Coordonnées écran → isométriques → goban (terrain de jeu)</h3>
+
+<p>La première problématique qui s’est posée dès le début du projet, puisque l’on souhaitait alors déjà réaliser l’affichage du plateau de jeu sous la forme d’une terrain en 3D isométrique, a été de trouver un moyen de transformer le clic de l’utilisateur sur l’écran en une coordonnée que le moteur de jeu puisse accepter.</p>
+
+<p>Tout d’abord, il faut savoir que LibGDX possède des notions de programmation de jeu avancées comme le concept de différentiation entre coordonnées du monde et coordonnées de l’écran. Pour bien le comprendre, dans le cas 2D qui nous intéresse ici, il suffit de visualiser un plan infini imaginaire sur lequel vous placez vos éléments graphiques, leur taille en pixels étant égale à leur taille en unités de longueur de ce monde virtuel. Imaginez maintenant une caméra qui va se déplacer à la surface de ce plan et filmer donc tout ce qu’elle voit dans son champ de vision. Cette caméra transmet ce qu’elle voit à l’écran, qui va alors les afficher en utilisant le ratio entre unités de l’écran et unités du monde approprié. Ainsi, de la même manière on peut projeter des coordonnées de l’écran en coordonnées du monde avec des fonctions natives de LibGDX. Et ceci est le point de départ vers l’implémentation de la conversion.</p>
+
+<p>Le coin gauche de la carte étant placé en l’origine du plan imaginaire, l’origine du repère orthonormal est confondue avec celle du repère isométrique de la carte, qui a en fait la forme d’un parallélogramme. La première méthode que j’ai donc développé était un changement de repère du premier vers le second, ce qui se faisait moyennant quelques calculs de trigonométrie. Néanmoins, devoir faire appel à des fonctions mathématiques comme arctangente à chaque changement de coordonnées n’était guère excellent d’un point de vue performance (La méthode est toujours disponible dans le code mais en <a href="https://github.com/Deprecated" class="user-mention">@Deprecated</a>). Après de plus amples recherches sur le web, j’ai trouvé cet excellent article écrit par Clint Bellanger, développeur du jeu en 3D isométrique “Flare” : <a href="http://clintbellanger.net/articles/isometric_math/">http://clintbellanger.net/articles/isometric_math/</a>.</p>
+
+<p>En adaptant légèrement les équations qu’ils présentait (pivotement du repère et déplacement de l’origine de la case en son centre), j’ai pu créer une nouvelle méthode alternative, bien plus économe en ressources. Finalement, l’origine du goban dépendant des coordonnées où la personne créant la carte la peint, en ajoutant une propriété au fichier de la carte, il était enfin possible de translater la coordonnée voulue dans le système de coordonnées du Goban, et de rendre ainsi la communication entre l’utilisateur et la partie “Engine” possible.</p>
+
+<p>Pour voir le code :
+<a href="https://github.com/RageGo/RageGo/blob/master/core/main/java/com/ragego/utils/GuiUtils.java">https://github.com/RageGo/RageGo/blob/master/core/main/java/com/ragego/utils/GuiUtils.java</a></p>
+
+<h1>
+<a id="structuration-des-données" class="anchor" href="#structuration-des-donn%C3%A9es" aria-hidden="true"><span class="octicon octicon-link"></span></a>Structuration des données</h1>
+
+<p>Le nombre de classes de l’application étant assez conséquent, nous ne ferons dans cette partie qu’une rapide description globale de leur hiérarchie, et nous vous inviterons à consulter le diagramme UML (<a href="http://uml.ragego.com">http://uml.ragego.com</a>) ainsi que la JavaDoc (<a href="http://doc.ragego.com">http://doc.ragego.com</a>) du projet afin de comprendre plus en détail.</p>
+
+<p>Le projet se divise d’abord en deux sous-projets, l’un “desktop”, l’autre “android”, contenant les spécifications particulières aux deux systèmes. Le second contient également  les assets du jeu (images, fonts, musiques….) pour des raisons de compatibilités. Vient ensuite leur dépendance “core” qui comme son nom l’indique, contient tout le “code” à proprement parler.</p>
+
+<p>Celle-ci est constituée d’un dossier “main” et d’un dossier “test”, l’un contenant les classes servant à faire fonctionner le projet, l’autre contenant les tests unitaires. Les deux partagent la même hiérarchie interne et pour “main” on a :</p>
+
+<ul>
+<li>com.ragego.engine contient toutes les classes relatives à l'implémentation du jeu de go en elle-même. Elle contient plusieurs types d’objets, tout d’abord :
+
+<ul>
+<li>GameBoard, Stone, StoneGroup et Shape qui sont les classes qui représentent les objets d’un jeu de go et disposent des méthodes adéquates pour les manipuler.</li>
+<li>GameNode qui représente un coup.</li>
+<li>Player, IAPlayer, HumanPlayer qui sont les classes définissant un joueur, les deux dernières étant les filles de la première.</li>
+</ul>
+</li>
+<li>TurnListener et GameListener qui permettent respectivement d’écouter les tours ou alors tous les évènements d’un jeu.</li>
+<li>Les autres classes sont plus à considérer comme des aides pour certains aspects qui étaient plus évidents à extraire comme des classes.</li>
+<li>com.ragego.gui contient trois packages dont les classes étendent pour la plupart directement des classes de LibGDX à l’exception du package objects. Ceux-ci définissent tout l’aspect graphique du jeu.</li>
+<li>com.ragego.network contient toutes les classes non-graphiques relatives à la gestion du mode online.</li>
+<li>com.ragego.utils permet quant à lui d’externaliser diverses méthodes généralement statiques qui sont utilisées par d’autres packages. L’intérêt est d’alléger les autres packages de ces méthodes et classes. Il contient également tous nécessaire pour l’import/export de fichiers .sgf.</li>
+</ul>
+
+<h1>
+<a id="futur-du-projet" class="anchor" href="#futur-du-projet" aria-hidden="true"><span class="octicon octicon-link"></span></a>Futur du projet</h1>
+
+<p>Vous trouverez ci-dessous les prospections futures pour le jeu dans l’ordre du plus court-terme, au plus long-terme.</p>
+
+<h2>
+<a id="partage-avec-la-communauté" class="anchor" href="#partage-avec-la-communaut%C3%A9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Partage avec la communauté</h2>
+
+<p>Comme exprimé dans l’introduction, notre intention est de produire un jeu libre : le code est sous licence GNU GPL v.3, et tous les assets sont disponibles sous licence Creative Commons By-SA 3.0. L’idée est un peu de “rendre” à la communauté du libre ce qu’elle nous a donné (LibGDX est sous licence libre Apache 2.0). Cela est d’autant plus intéressant que le nombre de jeux libres est peu important, et que notre application contribue à remplir ce manque.</p>
+
+<p>Le premier aspect d’intérêt avec le fait de produire un logiciel libre et gratuit est que les barrières pour l’utiliser sont quasi-inexistantes, d’autant plus que le jeu est disponible sur de nombreuses plateformes et que son téléchargement est facile d’accès (ex : application sur le Play Store d’Android). Ainsi cela devrait contribuer à le rendre plus connu, et plus rapidement. Il est d’ailleurs prévu à court terme (vacances d’été à venir) de mettre en place le site web, ainsi qu’envoyer quelques propositions de brèves sur des sites spécialisés afin d’attirer l’attention sur le jeu.</p>
+
+<p>L’autre aspect intéressant de faire un jeu libre, c’est que tout le monde peut proposer une contribution au projet, et nous espérons qu’au fur et à mesure que celui-ci prendra de l’ampleur, de plus en plus de personnes viendront apporter leur pierre à l’édifice et créer ainsi une expérience de jeu mémorable. C’est d’ailleurs à cet effet qu’un bouton “Crédits” est présent sur le menu principal afin de créditer tous les futurs contributeurs.</p>
+
+<h2>
+<a id="mode-aventure" class="anchor" href="#mode-aventure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mode aventure</h2>
+
+<p>Une des spécifications du jeu qui nous tient le plus à coeur et qui fera sûrement l’objet de la prochaine mise à jour majeure, est le mode Aventure. L’idée est de développer une véritable couche Role-Play, où le joueur sera amené à incarner un personnage devant accomplir des quêtes, résoudre des énigmes et parcourir des donjons qui lui permettront d’apprendre à jouer au jeu de Go et de s’entraîner contre des intelligences artificielles sans que cet exercice ne soit perceptible. En résumé, créer un véritable RPG où les mécaniques de combat et de réflexion usuelles seraient remplacées par des énigmes et parties de jeu de Go scénarisées.</p>
+
+<p>Ce mode est d’ailleurs déjà en quelque sorte partiellement implémenté, ou du moins les outils et technologies nécessaires le sont : le fonctionnement par map, les texturesAtlas, les Skins, tous sont déjà là, et fonctionnels. Le contenu, lui, sera sûrement au final ce qui prendra le plus de temps à faire (les scénarios, les ambiances, les assets, les musiques…).
+Lobby pour le mode multijoueur en ligne</p>
+
+<p>La version actuelle des écrans de configuration des modes multijoueur est temporaire. Il sera nécessaire, au fur et à mesure que le jeu grandira de les redéfinir et de les étoffer avec de nouvelles options. Notamment, pour le mode en ligne, la création d’un lobby de connexion avec une zone de dialogue pour que des joueurs ne se connaissant pas puisse jouer ensemble sans avoir à en convenir sur un support extérieur (forum, réseau social…) est une feature qu’il sera important d’implémenter. Un support des serveurs déjà populaires de jeux de go en ligne comme le KGS serait un plus non négligeable pour attirer de nouveaux joueurs.</p>
+
+<h1>
+<a id="bibliographie" class="anchor" href="#bibliographie" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bibliographie</h1>
+
+<p>Note : Ne contient que les éléments d’importance majeure.</p>
+
+<h2>
+<a id="libgdx" class="anchor" href="#libgdx" aria-hidden="true"><span class="octicon octicon-link"></span></a>LibGDX</h2>
+
+<p>BALAKRISHNAN NAIR Suryakumar, OEHLKE Andreas. Learning LibGDX Game Development. 2nd Ed. Birmingham, UK : PackPublishing, 2015, 478p. ISBN 9781783554775
+Un livre de référence sur LibGDX, écrit par deux développeurs et utilisateurs très actifs du moteur. Constitue une excellente ressource pour tous niveaux, même si une connaissance de Java est un plus particulièrement appréciable.</p>
+
+<p>SALTARES MARQUEZ David, CEJAS SANCHEZ Alberto. Libgdx Cross-platform Game Development Cookbook. Birmingham, UK : PackPublishing, 2014, 516p. ISBN 9781783287291
+Un livre de référence sur LibGDX, écrit par deux développeurs et utilisateurs très actifs du moteur. Constitue une excellente ressource pour ceux ayant déjà de solides notions de Java, et ayant déjà touché au développement de jeux-vidéos.</p>
+
+<p>LIBGDX COMMUNITY. LibGDX Github Wiki Homepage [En ligne]. Disponible sur : 
+<a href="https://github.com/libgdx/libgdx/wiki">https://github.com/libgdx/libgdx/wiki</a> (consulté le 01/06/2015)
+Une véritable mine d’informations sur le moteur de jeu LibGDX. Particulièrement utile pour des recherches sur la façon d’utiliser une fonction particulière, ou comprendre la manière dont fonctionne une technologie.</p>
+
+<p>LIBGDX COMMUNITY. LibGDX JavaDoc [En ligne]. Disponible sur :
+<a href="http://libgdx.badlogicgames.com/nightlies/docs/api/">http://libgdx.badlogicgames.com/nightlies/docs/api/</a> (consulté le 01/06/2015)
+Cette interface est particulièrement pratique pour consulter la JavaDoc de LibGX. S’utilise en complément de recherche quand le wiki ou les livres ne suffisent plus.</p>
+
+<p>GAMEFROMSCRATCH. LibGDX Tutorial series [En ligne]. Disponible sur :
+<a href="http://www.gamefromscratch.com/page/LibGDX-Tutorial-series.aspx">http://www.gamefromscratch.com/page/LibGDX-Tutorial-series.aspx</a> (consulté le 01/06/2015)
+Un site web proposant de bons tutoriels pour commencer à manipuler LibGDX. On y trouve notamment quelques exemples d’utilisation de TiledMaps donnant un aperçu des pratiques possibles.</p>
+
+<h2>
+<a id="tiled" class="anchor" href="#tiled" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tiled</h2>
+
+<p>LINDEIJER Thorbjørn. Tiled Github Wiki Homepage [En ligne]. Disponible sur : 
+<a href="https://github.com/bjorn/tiled/wiki">https://github.com/bjorn/tiled/wiki</a> (consulté le 01/06/2015)
+Une référence incontournable pour comprendre correctement le fonctionnement du format .tmx et du logiciel Tiled. Le forum disponible sur le site mère est aussi d’une grande aide dans la résolution de problème particuliers.</p>
+
+<h2>
+<a id="jeu-de-go" class="anchor" href="#jeu-de-go" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jeu de Go</h2>
+
+<p>SENSEIS COMMUNITY. Standard Go Format [En ligne]. Disponible sur : <a href="http://senseis.xmp.net/?SGF">http://senseis.xmp.net/?SGF</a> (consulté le 01/06/2015)
+Description du format .sgf pour stocker les parties.</p>
+
+<p>GNUGO PROJECT. The Influence Function [En ligne]. Disponible sur : <a href="http://www.gnu.org/software/gnugo/gnugo_13.html">http://www.gnu.org/software/gnugo/gnugo_13.html</a> (consulté le 01/06/2015)
+Description de la fonction d’influence du jeu de Go</p>
+
+<p>WIKIPEDIA COMMUNITY. Go (Game) [En Ligne]. Disponible sur : <a href="http://en.wikipedia.org/wiki/Go_%28game%29">http://en.wikipedia.org/wiki/Go_%28game%29</a> (consulté le 01/06/2015)
+Explication du jeu de Go et description complète des règles.</p>
+
+<p>GITHUB DEVELOPPER DTOPLIN. CountScore.java [En ligne] Disponible sur : <a href="https://github.com/dtolpin/uct/blob/master/codes/gogui-1.4.2/src/net/sf/gogui/go/CountScore.java">https://github.com/dtolpin/uct/blob/master/codes/gogui-1.4.2/src/net/sf/gogui/go/CountScore.java</a> (consulté le 01/06/2015)
+Exemple de décompte du score en Java pour une partie de jeu de Go. Cela a été utile pour l’utilisation de la fonction d’influence.</p>
+
+<p>DRAGO COMMUNITY. Drago (software) [En ligne] Disponible sur : <a href="http://www.godrago.net/">http://www.godrago.net/</a> (consulté le 01/06/2015)
+Édition de fichiers .sgf pour les tests unitaires.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/RageGo/RageGo/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/RageGo/RageGo/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/RageGo/RageGo"></a> is maintained by <a href="https://github.com/RageGo">RageGo</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
   </body>
 </html>
