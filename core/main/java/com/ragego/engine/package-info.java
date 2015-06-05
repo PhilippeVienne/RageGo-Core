@@ -2,7 +2,6 @@
  - RageGo is a Game and GameEngine for Go Game (Jeu de Go)                    -
  - Copyright (C) 2015  Philippe VIENNE (for code)                             -
  - Copyright (C) 2015  Benoit RENAULT (for code and graphics)                 -
- - Copyright (C) 2015  Pierre-Armand NICQ (for graphics)                      -
  -                                                                            -
  - This program is free software: you can redistribute it and/or modify       -
  - it under the terms of the GNU General Public License as published by       -
@@ -24,7 +23,8 @@
  -----------------------------------------------------------------------------*/
 
 /**
- * Define how we can play to a Go Game on a computer.
- * This package implements a go game with
+ * Defines how we can play to a Go Game on a computer.
+ * This package implements a go game with japanese rules, leaving a possibility
+ * for the future AI to cheat for gameplay purposes.
  */
 package com.ragego.engine;
